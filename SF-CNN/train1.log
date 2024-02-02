@@ -1,0 +1,822 @@
+2024-02-01 17:32:58.570299: I tensorflow/core/util/port.cc:113] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2024-02-01 17:32:58.592291: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:9261] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2024-02-01 17:32:58.592322: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:607] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2024-02-01 17:32:58.592981: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1515] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2024-02-01 17:32:58.596444: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-02-01 17:32:58.982941: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+1
+0.0986406216899441
+(1000, 16, 32, 4) (1000, 16, 32, 4)
+1
+(999, 16, 32, 4) (999, 16, 32, 4)
+1
+0.09876178958511994
+(1000, 16, 32, 4) (1000, 16, 32, 4)
+1
+(999, 16, 32, 4) (999, 16, 32, 4)
+0.020829969236160626
+Epoch 1/200
+
+Epoch 1: val_loss improved from inf to 0.01876, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+/home/tim/.local/lib/python3.10/site-packages/keras/src/engine/training.py:3103: UserWarning: You are saving your model as an HDF5 file via `model.save()`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')`.
+  saving_api.save_model(
+8/8 - 4s - loss: 0.4752 - val_loss: 0.0188 - 4s/epoch - 473ms/step
+Epoch 2/200
+
+Epoch 2: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.4243 - val_loss: 0.0193 - 2s/epoch - 211ms/step
+Epoch 3/200
+
+Epoch 3: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.3781 - val_loss: 0.0204 - 2s/epoch - 217ms/step
+Epoch 4/200
+
+Epoch 4: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.3223 - val_loss: 0.0219 - 2s/epoch - 214ms/step
+Epoch 5/200
+
+Epoch 5: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.2550 - val_loss: 0.0221 - 2s/epoch - 220ms/step
+Epoch 6/200
+
+Epoch 6: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.1885 - val_loss: 0.0200 - 2s/epoch - 223ms/step
+Epoch 7/200
+
+Epoch 7: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.1304 - val_loss: 0.0202 - 2s/epoch - 225ms/step
+Epoch 8/200
+
+Epoch 8: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0895 - val_loss: 0.0226 - 2s/epoch - 227ms/step
+Epoch 9/200
+
+Epoch 9: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0610 - val_loss: 0.0271 - 2s/epoch - 232ms/step
+Epoch 10/200
+
+Epoch 10: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0457 - val_loss: 0.0298 - 2s/epoch - 238ms/step
+Epoch 11/200
+
+Epoch 11: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0385 - val_loss: 0.0300 - 2s/epoch - 227ms/step
+Epoch 12/200
+
+Epoch 12: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0327 - val_loss: 0.0287 - 2s/epoch - 231ms/step
+Epoch 13/200
+
+Epoch 13: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0303 - val_loss: 0.0276 - 2s/epoch - 229ms/step
+Epoch 14/200
+
+Epoch 14: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0278 - val_loss: 0.0273 - 2s/epoch - 243ms/step
+Epoch 15/200
+
+Epoch 15: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0267 - val_loss: 0.0257 - 2s/epoch - 282ms/step
+Epoch 16/200
+
+Epoch 16: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0257 - val_loss: 0.0257 - 2s/epoch - 232ms/step
+Epoch 17/200
+
+Epoch 17: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0242 - val_loss: 0.0251 - 2s/epoch - 240ms/step
+Epoch 18/200
+
+Epoch 18: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0238 - val_loss: 0.0239 - 2s/epoch - 232ms/step
+Epoch 19/200
+
+Epoch 19: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0227 - val_loss: 0.0229 - 2s/epoch - 232ms/step
+Epoch 20/200
+
+Epoch 20: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0223 - val_loss: 0.0229 - 2s/epoch - 242ms/step
+Epoch 21/200
+
+Epoch 21: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0216 - val_loss: 0.0219 - 2s/epoch - 234ms/step
+Epoch 22/200
+
+Epoch 22: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0213 - val_loss: 0.0220 - 2s/epoch - 236ms/step
+Epoch 23/200
+
+Epoch 23: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0206 - val_loss: 0.0212 - 2s/epoch - 234ms/step
+Epoch 24/200
+
+Epoch 24: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0202 - val_loss: 0.0211 - 2s/epoch - 233ms/step
+Epoch 25/200
+
+Epoch 25: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0199 - val_loss: 0.0204 - 2s/epoch - 236ms/step
+Epoch 26/200
+
+Epoch 26: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0198 - val_loss: 0.0206 - 2s/epoch - 236ms/step
+Epoch 27/200
+
+Epoch 27: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0193 - val_loss: 0.0201 - 2s/epoch - 238ms/step
+Epoch 28/200
+
+Epoch 28: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0190 - val_loss: 0.0200 - 2s/epoch - 233ms/step
+Epoch 29/200
+
+Epoch 29: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0187 - val_loss: 0.0197 - 2s/epoch - 238ms/step
+Epoch 30/200
+
+Epoch 30: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0185 - val_loss: 0.0194 - 2s/epoch - 249ms/step
+Epoch 31/200
+
+Epoch 31: val_loss did not improve from 0.01876
+8/8 - 3s - loss: 0.0183 - val_loss: 0.0194 - 3s/epoch - 335ms/step
+Epoch 32/200
+
+Epoch 32: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0181 - val_loss: 0.0192 - 2s/epoch - 237ms/step
+Epoch 33/200
+
+Epoch 33: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0179 - val_loss: 0.0191 - 2s/epoch - 240ms/step
+Epoch 34/200
+
+Epoch 34: val_loss did not improve from 0.01876
+8/8 - 2s - loss: 0.0175 - val_loss: 0.0188 - 2s/epoch - 244ms/step
+Epoch 35/200
+
+Epoch 35: val_loss improved from 0.01876 to 0.01867, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0173 - val_loss: 0.0187 - 2s/epoch - 245ms/step
+Epoch 36/200
+
+Epoch 36: val_loss improved from 0.01867 to 0.01849, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0171 - val_loss: 0.0185 - 2s/epoch - 243ms/step
+Epoch 37/200
+
+Epoch 37: val_loss improved from 0.01849 to 0.01831, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0170 - val_loss: 0.0183 - 2s/epoch - 241ms/step
+Epoch 38/200
+
+Epoch 38: val_loss improved from 0.01831 to 0.01818, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0168 - val_loss: 0.0182 - 3s/epoch - 336ms/step
+Epoch 39/200
+
+Epoch 39: val_loss improved from 0.01818 to 0.01801, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0168 - val_loss: 0.0180 - 2s/epoch - 242ms/step
+Epoch 40/200
+
+Epoch 40: val_loss improved from 0.01801 to 0.01787, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0166 - val_loss: 0.0179 - 2s/epoch - 267ms/step
+Epoch 41/200
+
+Epoch 41: val_loss improved from 0.01787 to 0.01767, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0164 - val_loss: 0.0177 - 3s/epoch - 359ms/step
+Epoch 42/200
+
+Epoch 42: val_loss improved from 0.01767 to 0.01754, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0162 - val_loss: 0.0175 - 2s/epoch - 245ms/step
+Epoch 43/200
+
+Epoch 43: val_loss improved from 0.01754 to 0.01736, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0161 - val_loss: 0.0174 - 2s/epoch - 291ms/step
+Epoch 44/200
+
+Epoch 44: val_loss improved from 0.01736 to 0.01719, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0160 - val_loss: 0.0172 - 3s/epoch - 353ms/step
+Epoch 45/200
+
+Epoch 45: val_loss improved from 0.01719 to 0.01707, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0158 - val_loss: 0.0171 - 2s/epoch - 271ms/step
+Epoch 46/200
+
+Epoch 46: val_loss improved from 0.01707 to 0.01690, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0156 - val_loss: 0.0169 - 2s/epoch - 239ms/step
+Epoch 47/200
+
+Epoch 47: val_loss improved from 0.01690 to 0.01677, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0155 - val_loss: 0.0168 - 3s/epoch - 398ms/step
+Epoch 48/200
+
+Epoch 48: val_loss improved from 0.01677 to 0.01662, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0156 - val_loss: 0.0166 - 2s/epoch - 241ms/step
+Epoch 49/200
+
+Epoch 49: val_loss improved from 0.01662 to 0.01647, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0153 - val_loss: 0.0165 - 2s/epoch - 256ms/step
+Epoch 50/200
+
+Epoch 50: val_loss improved from 0.01647 to 0.01630, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0153 - val_loss: 0.0163 - 2s/epoch - 253ms/step
+Epoch 51/200
+
+Epoch 51: val_loss improved from 0.01630 to 0.01615, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0153 - val_loss: 0.0161 - 3s/epoch - 378ms/step
+Epoch 52/200
+
+Epoch 52: val_loss improved from 0.01615 to 0.01601, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0151 - val_loss: 0.0160 - 2s/epoch - 243ms/step
+Epoch 53/200
+
+Epoch 53: val_loss improved from 0.01601 to 0.01587, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0151 - val_loss: 0.0159 - 2s/epoch - 255ms/step
+Epoch 54/200
+
+Epoch 54: val_loss improved from 0.01587 to 0.01575, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0149 - val_loss: 0.0157 - 3s/epoch - 370ms/step
+Epoch 55/200
+
+Epoch 55: val_loss improved from 0.01575 to 0.01566, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0149 - val_loss: 0.0157 - 2s/epoch - 252ms/step
+Epoch 56/200
+
+Epoch 56: val_loss improved from 0.01566 to 0.01556, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0148 - val_loss: 0.0156 - 2s/epoch - 240ms/step
+Epoch 57/200
+
+Epoch 57: val_loss improved from 0.01556 to 0.01548, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0148 - val_loss: 0.0155 - 3s/epoch - 387ms/step
+Epoch 58/200
+
+Epoch 58: val_loss improved from 0.01548 to 0.01535, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0146 - val_loss: 0.0154 - 2s/epoch - 252ms/step
+Epoch 59/200
+
+Epoch 59: val_loss improved from 0.01535 to 0.01529, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0146 - val_loss: 0.0153 - 3s/epoch - 375ms/step
+Epoch 60/200
+
+Epoch 60: val_loss improved from 0.01529 to 0.01520, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0145 - val_loss: 0.0152 - 2s/epoch - 241ms/step
+Epoch 61/200
+
+Epoch 61: val_loss improved from 0.01520 to 0.01511, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0145 - val_loss: 0.0151 - 2s/epoch - 260ms/step
+Epoch 62/200
+
+Epoch 62: val_loss improved from 0.01511 to 0.01501, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0146 - val_loss: 0.0150 - 3s/epoch - 372ms/step
+Epoch 63/200
+
+Epoch 63: val_loss improved from 0.01501 to 0.01493, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0143 - val_loss: 0.0149 - 2s/epoch - 247ms/step
+Epoch 64/200
+
+Epoch 64: val_loss improved from 0.01493 to 0.01486, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0143 - val_loss: 0.0149 - 2s/epoch - 256ms/step
+Epoch 65/200
+
+Epoch 65: val_loss improved from 0.01486 to 0.01480, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0143 - val_loss: 0.0148 - 3s/epoch - 374ms/step
+Epoch 66/200
+
+Epoch 66: val_loss improved from 0.01480 to 0.01470, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0142 - val_loss: 0.0147 - 2s/epoch - 241ms/step
+Epoch 67/200
+
+Epoch 67: val_loss improved from 0.01470 to 0.01461, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0141 - val_loss: 0.0146 - 3s/epoch - 384ms/step
+Epoch 68/200
+
+Epoch 68: val_loss improved from 0.01461 to 0.01457, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0142 - val_loss: 0.0146 - 2s/epoch - 245ms/step
+Epoch 69/200
+
+Epoch 69: val_loss improved from 0.01457 to 0.01454, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0141 - val_loss: 0.0145 - 2s/epoch - 252ms/step
+Epoch 70/200
+
+Epoch 70: val_loss improved from 0.01454 to 0.01451, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0140 - val_loss: 0.0145 - 3s/epoch - 363ms/step
+Epoch 71/200
+
+Epoch 71: val_loss improved from 0.01451 to 0.01446, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0141 - val_loss: 0.0145 - 2s/epoch - 257ms/step
+Epoch 72/200
+
+Epoch 72: val_loss improved from 0.01446 to 0.01440, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0140 - val_loss: 0.0144 - 3s/epoch - 377ms/step
+Epoch 73/200
+
+Epoch 73: val_loss improved from 0.01440 to 0.01435, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0138 - val_loss: 0.0143 - 2s/epoch - 250ms/step
+Epoch 74/200
+
+Epoch 74: val_loss improved from 0.01435 to 0.01434, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0138 - val_loss: 0.0143 - 2s/epoch - 255ms/step
+Epoch 75/200
+
+Epoch 75: val_loss did not improve from 0.01434
+8/8 - 3s - loss: 0.0138 - val_loss: 0.0143 - 3s/epoch - 371ms/step
+Epoch 76/200
+
+Epoch 76: val_loss did not improve from 0.01434
+8/8 - 2s - loss: 0.0137 - val_loss: 0.0143 - 2s/epoch - 237ms/step
+Epoch 77/200
+
+Epoch 77: val_loss improved from 0.01434 to 0.01434, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0137 - val_loss: 0.0143 - 3s/epoch - 355ms/step
+Epoch 78/200
+
+Epoch 78: val_loss improved from 0.01434 to 0.01426, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0137 - val_loss: 0.0143 - 2s/epoch - 278ms/step
+Epoch 79/200
+
+Epoch 79: val_loss improved from 0.01426 to 0.01424, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0136 - val_loss: 0.0142 - 2s/epoch - 241ms/step
+Epoch 80/200
+
+Epoch 80: val_loss did not improve from 0.01424
+8/8 - 3s - loss: 0.0136 - val_loss: 0.0143 - 3s/epoch - 387ms/step
+Epoch 81/200
+
+Epoch 81: val_loss did not improve from 0.01424
+8/8 - 2s - loss: 0.0135 - val_loss: 0.0143 - 2s/epoch - 238ms/step
+Epoch 82/200
+
+Epoch 82: val_loss improved from 0.01424 to 0.01418, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0134 - val_loss: 0.0142 - 3s/epoch - 370ms/step
+Epoch 83/200
+
+Epoch 83: val_loss improved from 0.01418 to 0.01416, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0134 - val_loss: 0.0142 - 2s/epoch - 254ms/step
+Epoch 84/200
+
+Epoch 84: val_loss did not improve from 0.01416
+8/8 - 2s - loss: 0.0134 - val_loss: 0.0142 - 2s/epoch - 233ms/step
+Epoch 85/200
+
+Epoch 85: val_loss improved from 0.01416 to 0.01414, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0133 - val_loss: 0.0141 - 3s/epoch - 381ms/step
+Epoch 86/200
+
+Epoch 86: val_loss improved from 0.01414 to 0.01411, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0134 - val_loss: 0.0141 - 2s/epoch - 240ms/step
+Epoch 87/200
+
+Epoch 87: val_loss improved from 0.01411 to 0.01410, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0133 - val_loss: 0.0141 - 3s/epoch - 382ms/step
+Epoch 88/200
+
+Epoch 88: val_loss improved from 0.01410 to 0.01410, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0133 - val_loss: 0.0141 - 2s/epoch - 249ms/step
+Epoch 89/200
+
+Epoch 89: val_loss improved from 0.01410 to 0.01405, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0132 - val_loss: 0.0140 - 2s/epoch - 291ms/step
+Epoch 90/200
+
+Epoch 90: val_loss improved from 0.01405 to 0.01403, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0132 - val_loss: 0.0140 - 3s/epoch - 314ms/step
+Epoch 91/200
+
+Epoch 91: val_loss improved from 0.01403 to 0.01398, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0131 - val_loss: 0.0140 - 2s/epoch - 275ms/step
+Epoch 92/200
+
+Epoch 92: val_loss improved from 0.01398 to 0.01396, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0131 - val_loss: 0.0140 - 3s/epoch - 380ms/step
+Epoch 93/200
+
+Epoch 93: val_loss improved from 0.01396 to 0.01395, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0132 - val_loss: 0.0139 - 2s/epoch - 241ms/step
+Epoch 94/200
+
+Epoch 94: val_loss did not improve from 0.01395
+8/8 - 3s - loss: 0.0130 - val_loss: 0.0140 - 3s/epoch - 360ms/step
+Epoch 95/200
+
+Epoch 95: val_loss did not improve from 0.01395
+8/8 - 2s - loss: 0.0130 - val_loss: 0.0140 - 2s/epoch - 262ms/step
+Epoch 96/200
+
+Epoch 96: val_loss improved from 0.01395 to 0.01392, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0130 - val_loss: 0.0139 - 2s/epoch - 241ms/step
+Epoch 97/200
+
+Epoch 97: val_loss improved from 0.01392 to 0.01382, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0129 - val_loss: 0.0138 - 3s/epoch - 383ms/step
+Epoch 98/200
+
+Epoch 98: val_loss did not improve from 0.01382
+8/8 - 2s - loss: 0.0129 - val_loss: 0.0138 - 2s/epoch - 248ms/step
+Epoch 99/200
+
+Epoch 99: val_loss did not improve from 0.01382
+8/8 - 3s - loss: 0.0129 - val_loss: 0.0138 - 3s/epoch - 374ms/step
+Epoch 100/200
+
+Epoch 100: val_loss did not improve from 0.01382
+8/8 - 2s - loss: 0.0128 - val_loss: 0.0138 - 2s/epoch - 236ms/step
+Epoch 101/200
+
+Epoch 101: val_loss improved from 0.01382 to 0.01378, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0128 - val_loss: 0.0138 - 3s/epoch - 390ms/step
+Epoch 102/200
+
+Epoch 102: val_loss improved from 0.01378 to 0.01373, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0128 - val_loss: 0.0137 - 2s/epoch - 245ms/step
+Epoch 103/200
+
+Epoch 103: val_loss did not improve from 0.01373
+8/8 - 3s - loss: 0.0128 - val_loss: 0.0137 - 3s/epoch - 344ms/step
+Epoch 104/200
+
+Epoch 104: val_loss did not improve from 0.01373
+8/8 - 2s - loss: 0.0128 - val_loss: 0.0138 - 2s/epoch - 233ms/step
+Epoch 105/200
+
+Epoch 105: val_loss did not improve from 0.01373
+8/8 - 3s - loss: 0.0128 - val_loss: 0.0137 - 3s/epoch - 406ms/step
+Epoch 106/200
+
+Epoch 106: val_loss did not improve from 0.01373
+8/8 - 2s - loss: 0.0128 - val_loss: 0.0137 - 2s/epoch - 231ms/step
+Epoch 107/200
+
+Epoch 107: val_loss did not improve from 0.01373
+8/8 - 2s - loss: 0.0127 - val_loss: 0.0138 - 2s/epoch - 237ms/step
+Epoch 108/200
+
+Epoch 108: val_loss improved from 0.01373 to 0.01373, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0127 - val_loss: 0.0137 - 3s/epoch - 390ms/step
+Epoch 109/200
+
+Epoch 109: val_loss improved from 0.01373 to 0.01372, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0127 - val_loss: 0.0137 - 2s/epoch - 247ms/step
+Epoch 110/200
+
+Epoch 110: val_loss did not improve from 0.01372
+8/8 - 3s - loss: 0.0127 - val_loss: 0.0137 - 3s/epoch - 375ms/step
+Epoch 111/200
+
+Epoch 111: val_loss did not improve from 0.01372
+8/8 - 2s - loss: 0.0126 - val_loss: 0.0137 - 2s/epoch - 236ms/step
+Epoch 112/200
+
+Epoch 112: val_loss did not improve from 0.01372
+8/8 - 3s - loss: 0.0127 - val_loss: 0.0137 - 3s/epoch - 387ms/step
+Epoch 113/200
+
+Epoch 113: val_loss improved from 0.01372 to 0.01368, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0126 - val_loss: 0.0137 - 2s/epoch - 242ms/step
+Epoch 114/200
+
+Epoch 114: val_loss improved from 0.01368 to 0.01363, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0126 - val_loss: 0.0136 - 3s/epoch - 368ms/step
+Epoch 115/200
+
+Epoch 115: val_loss improved from 0.01363 to 0.01363, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0125 - val_loss: 0.0136 - 2s/epoch - 255ms/step
+Epoch 116/200
+
+Epoch 116: val_loss did not improve from 0.01363
+8/8 - 2s - loss: 0.0125 - val_loss: 0.0137 - 2s/epoch - 245ms/step
+Epoch 117/200
+
+Epoch 117: val_loss did not improve from 0.01363
+8/8 - 3s - loss: 0.0126 - val_loss: 0.0136 - 3s/epoch - 380ms/step
+Epoch 118/200
+
+Epoch 118: val_loss did not improve from 0.01363
+8/8 - 2s - loss: 0.0126 - val_loss: 0.0136 - 2s/epoch - 236ms/step
+Epoch 119/200
+
+Epoch 119: val_loss improved from 0.01363 to 0.01362, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0125 - val_loss: 0.0136 - 3s/epoch - 349ms/step
+Epoch 120/200
+
+Epoch 120: val_loss improved from 0.01362 to 0.01360, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0124 - val_loss: 0.0136 - 2s/epoch - 240ms/step
+Epoch 121/200
+
+Epoch 121: val_loss improved from 0.01360 to 0.01358, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0125 - val_loss: 0.0136 - 3s/epoch - 414ms/step
+Epoch 122/200
+
+Epoch 122: val_loss improved from 0.01358 to 0.01351, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0125 - val_loss: 0.0135 - 2s/epoch - 250ms/step
+Epoch 123/200
+
+Epoch 123: val_loss improved from 0.01351 to 0.01349, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0123 - val_loss: 0.0135 - 3s/epoch - 356ms/step
+Epoch 124/200
+
+Epoch 124: val_loss improved from 0.01349 to 0.01348, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0124 - val_loss: 0.0135 - 2s/epoch - 271ms/step
+Epoch 125/200
+
+Epoch 125: val_loss did not improve from 0.01348
+8/8 - 2s - loss: 0.0123 - val_loss: 0.0135 - 2s/epoch - 278ms/step
+Epoch 126/200
+
+Epoch 126: val_loss improved from 0.01348 to 0.01347, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0123 - val_loss: 0.0135 - 3s/epoch - 343ms/step
+Epoch 127/200
+
+Epoch 127: val_loss improved from 0.01347 to 0.01345, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0123 - val_loss: 0.0135 - 2s/epoch - 255ms/step
+Epoch 128/200
+
+Epoch 128: val_loss improved from 0.01345 to 0.01341, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0123 - val_loss: 0.0134 - 3s/epoch - 367ms/step
+Epoch 129/200
+
+Epoch 129: val_loss improved from 0.01341 to 0.01339, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0122 - val_loss: 0.0134 - 2s/epoch - 253ms/step
+Epoch 130/200
+
+Epoch 130: val_loss improved from 0.01339 to 0.01337, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0122 - val_loss: 0.0134 - 3s/epoch - 379ms/step
+Epoch 131/200
+
+Epoch 131: val_loss improved from 0.01337 to 0.01333, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0122 - val_loss: 0.0133 - 2s/epoch - 244ms/step
+Epoch 132/200
+
+Epoch 132: val_loss did not improve from 0.01333
+8/8 - 2s - loss: 0.0122 - val_loss: 0.0134 - 2s/epoch - 260ms/step
+Epoch 133/200
+
+Epoch 133: val_loss did not improve from 0.01333
+8/8 - 3s - loss: 0.0122 - val_loss: 0.0134 - 3s/epoch - 368ms/step
+Epoch 134/200
+
+Epoch 134: val_loss did not improve from 0.01333
+8/8 - 2s - loss: 0.0122 - val_loss: 0.0134 - 2s/epoch - 240ms/step
+Epoch 135/200
+
+Epoch 135: val_loss did not improve from 0.01333
+8/8 - 3s - loss: 0.0122 - val_loss: 0.0134 - 3s/epoch - 381ms/step
+Epoch 136/200
+
+Epoch 136: val_loss improved from 0.01333 to 0.01332, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0122 - val_loss: 0.0133 - 2s/epoch - 245ms/step
+Epoch 137/200
+
+Epoch 137: val_loss improved from 0.01332 to 0.01329, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0122 - val_loss: 0.0133 - 2s/epoch - 312ms/step
+Epoch 138/200
+
+Epoch 138: val_loss did not improve from 0.01329
+8/8 - 3s - loss: 0.0121 - val_loss: 0.0133 - 3s/epoch - 320ms/step
+Epoch 139/200
+
+Epoch 139: val_loss did not improve from 0.01329
+8/8 - 2s - loss: 0.0122 - val_loss: 0.0133 - 2s/epoch - 246ms/step
+Epoch 140/200
+
+Epoch 140: val_loss did not improve from 0.01329
+8/8 - 3s - loss: 0.0122 - val_loss: 0.0133 - 3s/epoch - 384ms/step
+Epoch 141/200
+
+Epoch 141: val_loss improved from 0.01329 to 0.01329, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0121 - val_loss: 0.0133 - 2s/epoch - 260ms/step
+Epoch 142/200
+
+Epoch 142: val_loss improved from 0.01329 to 0.01327, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0121 - val_loss: 0.0133 - 3s/epoch - 367ms/step
+Epoch 143/200
+
+Epoch 143: val_loss improved from 0.01327 to 0.01323, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0120 - val_loss: 0.0132 - 2s/epoch - 252ms/step
+Epoch 144/200
+
+Epoch 144: val_loss improved from 0.01323 to 0.01323, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0120 - val_loss: 0.0132 - 2s/epoch - 245ms/step
+Epoch 145/200
+
+Epoch 145: val_loss improved from 0.01323 to 0.01320, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0119 - val_loss: 0.0132 - 3s/epoch - 348ms/step
+Epoch 146/200
+
+Epoch 146: val_loss improved from 0.01320 to 0.01313, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0119 - val_loss: 0.0131 - 3s/epoch - 356ms/step
+Epoch 147/200
+
+Epoch 147: val_loss improved from 0.01313 to 0.01311, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0119 - val_loss: 0.0131 - 2s/epoch - 305ms/step
+Epoch 148/200
+
+Epoch 148: val_loss improved from 0.01311 to 0.01311, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0119 - val_loss: 0.0131 - 2s/epoch - 242ms/step
+Epoch 149/200
+
+Epoch 149: val_loss did not improve from 0.01311
+8/8 - 3s - loss: 0.0120 - val_loss: 0.0131 - 3s/epoch - 383ms/step
+Epoch 150/200
+
+Epoch 150: val_loss did not improve from 0.01311
+8/8 - 2s - loss: 0.0120 - val_loss: 0.0131 - 2s/epoch - 243ms/step
+Epoch 151/200
+
+Epoch 151: val_loss improved from 0.01311 to 0.01309, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0119 - val_loss: 0.0131 - 3s/epoch - 384ms/step
+Epoch 152/200
+
+Epoch 152: val_loss improved from 0.01309 to 0.01306, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0119 - val_loss: 0.0131 - 2s/epoch - 244ms/step
+Epoch 153/200
+
+Epoch 153: val_loss improved from 0.01306 to 0.01302, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0118 - val_loss: 0.0130 - 3s/epoch - 356ms/step
+Epoch 154/200
+
+Epoch 154: val_loss did not improve from 0.01302
+8/8 - 2s - loss: 0.0118 - val_loss: 0.0130 - 2s/epoch - 273ms/step
+Epoch 155/200
+
+Epoch 155: val_loss improved from 0.01302 to 0.01301, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0119 - val_loss: 0.0130 - 2s/epoch - 245ms/step
+Epoch 156/200
+
+Epoch 156: val_loss improved from 0.01301 to 0.01300, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0119 - val_loss: 0.0130 - 3s/epoch - 352ms/step
+Epoch 157/200
+
+Epoch 157: val_loss improved from 0.01300 to 0.01298, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0118 - val_loss: 0.0130 - 2s/epoch - 243ms/step
+Epoch 158/200
+
+Epoch 158: val_loss did not improve from 0.01298
+8/8 - 3s - loss: 0.0117 - val_loss: 0.0130 - 3s/epoch - 425ms/step
+Epoch 159/200
+
+Epoch 159: val_loss did not improve from 0.01298
+8/8 - 2s - loss: 0.0117 - val_loss: 0.0130 - 2s/epoch - 238ms/step
+Epoch 160/200
+
+Epoch 160: val_loss did not improve from 0.01298
+8/8 - 2s - loss: 0.0118 - val_loss: 0.0130 - 2s/epoch - 241ms/step
+Epoch 161/200
+
+Epoch 161: val_loss improved from 0.01298 to 0.01298, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0117 - val_loss: 0.0130 - 3s/epoch - 387ms/step
+Epoch 162/200
+
+Epoch 162: val_loss improved from 0.01298 to 0.01297, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0117 - val_loss: 0.0130 - 2s/epoch - 262ms/step
+Epoch 163/200
+
+Epoch 163: val_loss improved from 0.01297 to 0.01293, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0117 - val_loss: 0.0129 - 3s/epoch - 384ms/step
+Epoch 164/200
+
+Epoch 164: val_loss improved from 0.01293 to 0.01293, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0117 - val_loss: 0.0129 - 2s/epoch - 243ms/step
+Epoch 165/200
+
+Epoch 165: val_loss improved from 0.01293 to 0.01290, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0116 - val_loss: 0.0129 - 2s/epoch - 246ms/step
+Epoch 166/200
+
+Epoch 166: val_loss improved from 0.01290 to 0.01287, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0116 - val_loss: 0.0129 - 3s/epoch - 402ms/step
+Epoch 167/200
+
+Epoch 167: val_loss improved from 0.01287 to 0.01285, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0116 - val_loss: 0.0128 - 2s/epoch - 248ms/step
+Epoch 168/200
+
+Epoch 168: val_loss improved from 0.01285 to 0.01285, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0116 - val_loss: 0.0128 - 2s/epoch - 254ms/step
+Epoch 169/200
+
+Epoch 169: val_loss did not improve from 0.01285
+8/8 - 3s - loss: 0.0116 - val_loss: 0.0129 - 3s/epoch - 393ms/step
+Epoch 170/200
+
+Epoch 170: val_loss did not improve from 0.01285
+8/8 - 2s - loss: 0.0115 - val_loss: 0.0129 - 2s/epoch - 247ms/step
+Epoch 171/200
+
+Epoch 171: val_loss improved from 0.01285 to 0.01284, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0115 - val_loss: 0.0128 - 3s/epoch - 395ms/step
+Epoch 172/200
+
+Epoch 172: val_loss did not improve from 0.01284
+8/8 - 2s - loss: 0.0115 - val_loss: 0.0128 - 2s/epoch - 242ms/step
+Epoch 173/200
+
+Epoch 173: val_loss did not improve from 0.01284
+8/8 - 3s - loss: 0.0115 - val_loss: 0.0129 - 3s/epoch - 356ms/step
+Epoch 174/200
+
+Epoch 174: val_loss did not improve from 0.01284
+8/8 - 2s - loss: 0.0115 - val_loss: 0.0128 - 2s/epoch - 268ms/step
+Epoch 175/200
+
+Epoch 175: val_loss improved from 0.01284 to 0.01283, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0115 - val_loss: 0.0128 - 2s/epoch - 245ms/step
+Epoch 176/200
+
+Epoch 176: val_loss improved from 0.01283 to 0.01282, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0115 - val_loss: 0.0128 - 3s/epoch - 390ms/step
+Epoch 177/200
+
+Epoch 177: val_loss did not improve from 0.01282
+8/8 - 2s - loss: 0.0115 - val_loss: 0.0128 - 2s/epoch - 249ms/step
+Epoch 178/200
+
+Epoch 178: val_loss improved from 0.01282 to 0.01279, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0115 - val_loss: 0.0128 - 2s/epoch - 262ms/step
+Epoch 179/200
+
+Epoch 179: val_loss improved from 0.01279 to 0.01275, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0114 - val_loss: 0.0127 - 3s/epoch - 371ms/step
+Epoch 180/200
+
+Epoch 180: val_loss improved from 0.01275 to 0.01273, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0114 - val_loss: 0.0127 - 2s/epoch - 248ms/step
+Epoch 181/200
+
+Epoch 181: val_loss improved from 0.01273 to 0.01273, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0114 - val_loss: 0.0127 - 3s/epoch - 395ms/step
+Epoch 182/200
+
+Epoch 182: val_loss improved from 0.01273 to 0.01272, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0114 - val_loss: 0.0127 - 2s/epoch - 248ms/step
+Epoch 183/200
+
+Epoch 183: val_loss did not improve from 0.01272
+8/8 - 3s - loss: 0.0115 - val_loss: 0.0127 - 3s/epoch - 386ms/step
+Epoch 184/200
+
+Epoch 184: val_loss did not improve from 0.01272
+8/8 - 2s - loss: 0.0114 - val_loss: 0.0127 - 2s/epoch - 239ms/step
+Epoch 185/200
+
+Epoch 185: val_loss did not improve from 0.01272
+8/8 - 3s - loss: 0.0113 - val_loss: 0.0127 - 3s/epoch - 386ms/step
+Epoch 186/200
+
+Epoch 186: val_loss did not improve from 0.01272
+8/8 - 2s - loss: 0.0114 - val_loss: 0.0127 - 2s/epoch - 237ms/step
+Epoch 187/200
+
+Epoch 187: val_loss improved from 0.01272 to 0.01271, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0113 - val_loss: 0.0127 - 2s/epoch - 245ms/step
+Epoch 188/200
+
+Epoch 188: val_loss improved from 0.01271 to 0.01271, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0114 - val_loss: 0.0127 - 3s/epoch - 385ms/step
+Epoch 189/200
+
+Epoch 189: val_loss improved from 0.01271 to 0.01269, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0113 - val_loss: 0.0127 - 2s/epoch - 246ms/step
+Epoch 190/200
+
+Epoch 190: val_loss did not improve from 0.01269
+8/8 - 3s - loss: 0.0113 - val_loss: 0.0127 - 3s/epoch - 391ms/step
+Epoch 191/200
+
+Epoch 191: val_loss did not improve from 0.01269
+8/8 - 2s - loss: 0.0113 - val_loss: 0.0127 - 2s/epoch - 242ms/step
+Epoch 192/200
+
+Epoch 192: val_loss improved from 0.01269 to 0.01269, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0113 - val_loss: 0.0127 - 3s/epoch - 356ms/step
+Epoch 193/200
+
+Epoch 193: val_loss did not improve from 0.01269
+8/8 - 2s - loss: 0.0113 - val_loss: 0.0127 - 2s/epoch - 274ms/step
+Epoch 194/200
+
+Epoch 194: val_loss did not improve from 0.01269
+8/8 - 2s - loss: 0.0113 - val_loss: 0.0127 - 2s/epoch - 238ms/step
+Epoch 195/200
+
+Epoch 195: val_loss improved from 0.01269 to 0.01268, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0113 - val_loss: 0.0127 - 3s/epoch - 390ms/step
+Epoch 196/200
+
+Epoch 196: val_loss improved from 0.01268 to 0.01266, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0113 - val_loss: 0.0127 - 2s/epoch - 246ms/step
+Epoch 197/200
+
+Epoch 197: val_loss improved from 0.01266 to 0.01266, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0112 - val_loss: 0.0127 - 3s/epoch - 389ms/step
+Epoch 198/200
+
+Epoch 198: val_loss improved from 0.01266 to 0.01265, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 2s - loss: 0.0112 - val_loss: 0.0126 - 2s/epoch - 243ms/step
+Epoch 199/200
+
+Epoch 199: val_loss improved from 0.01265 to 0.01264, saving model to CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5
+8/8 - 3s - loss: 0.0112 - val_loss: 0.0126 - 3s/epoch - 387ms/step
+Epoch 200/200
+
+Epoch 200: val_loss did not improve from 0.01264
+8/8 - 2s - loss: 0.0112 - val_loss: 0.0126 - 2s/epoch - 241ms/step
+ 1/32 [..............................] - ETA: 4s 4/32 [==>...........................] - ETA: 0s 6/32 [====>.........................] - ETA: 0s 8/32 [======>.......................] - ETA: 0s10/32 [========>.....................] - ETA: 0s12/32 [==========>...................] - ETA: 0s14/32 [============>.................] - ETA: 0s16/32 [==============>...............] - ETA: 0s18/32 [===============>..............] - ETA: 0s20/32 [=================>............] - ETA: 0s22/32 [===================>..........] - ETA: 0s24/32 [=====================>........] - ETA: 0s26/32 [=======================>......] - ETA: 0s28/32 [=========================>....] - ETA: 0s30/32 [===========================>..] - ETA: 0s32/32 [==============================] - 1s 26ms/step
+0.8902655945595724

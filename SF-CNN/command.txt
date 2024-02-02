@@ -1,0 +1,6 @@
+command:
+python SF_CNN_2fre_train.py > train1.log 2>&1
+python SF_CNN_2fre_train_further.py > train2.log 2>&1
+python SF_CNN_2fre_test.py > test.log 2>&1
+
+有修改部份: lr 改成 learning_rate
