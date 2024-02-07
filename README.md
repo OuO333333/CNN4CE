@@ -16,3 +16,8 @@ loss function 必須使用 MSE,
 要自己刻 transformer, 可以用網路上別人刻好的來移植,  
 transformer 需容易修改其架構。  
 transformer 的結果必須比 CNN 好, 以比較 NMSE 為準。
+
+有試過用這個人的 transformer 去替換  
+https://github.com/hyunwoongko/transformer  
+有成功移植, 但他的 loss function 是用 cross entropy,  
+我需要用 MSE 的。
