@@ -1,6 +1,6 @@
 # CNN4CE
 This code is modify from https://github.com/phdong21/CNN4CE.  
-https://github.com/phdong21/CNN4CE/blob/main/SF-CNN/SF_CNN_2fre_train.py
+https://github.com/phdong21/CNN4CE/blob/main/SF-CNN/SF_CNN_2fre_train.py  
 SF_CNN_2fre_train.py 是要改模型的地方, 125 - 156 行。
 原版的是用 CNN 做矩陣的估計,  
 前面的 src, trg 怎麽生出來的可以不用知道,  
