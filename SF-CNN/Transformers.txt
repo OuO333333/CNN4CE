@@ -1,0 +1,129 @@
+Transformers:
+sequence to sequence,
+Input a sequence, output a sequence.
+The output length is determined by model.
+如:
+輸入聲音訊號, 輸出對應的文字。
+輸入中文, 輸出對應的英文。
+輸入英文聲音訊號, 輸出對應的中文文字。
+QA can be done by seq2seq.
+question, context -> seq2seq -> answer
+
+--------------------------------------------------------------------
+
+Seq2seq for Syntactic Parsing:
+Deep learning is very powerful.
+(S (NP Deep learning) (VP is) (ADJV very powerful))
+Grammar as a Foreign Language
+
+--------------------------------------------------------------------
+
+Seq2seq for Multi-label Classification
+An object can belong to multiple classes.
+context -> seq2seq -> class 9, class 7, class 13
+
+--------------------------------------------------------------------
+
+Seq2seq for Object Detection
+
+--------------------------------------------------------------------
+
+Seq2seq
+Input sequence -> Encoder -> Decoder -> output sequence
+
+--------------------------------------------------------------------
+
+Encoder:
+在做的事情就是給一排 vector, 輸出一排 vector。
+可以使用 self attention, CNN, RNN。
+
+Input sequence a  + Positional Encoding -> self attention -> b ->
+b = a + b(residual) -> norm -> ^b ->
+fully connected -> c -> c = ^b + c(residual) -> norm ->
+output(這才是一個 block 的輸出),
+Input sequence a + Positional Encoding 放進 self attention 後, 輸出 vector b,
+然後 a + b 做 norm(Layer norm: [x1, x2, ...] -> norm -> [x1', x2', ...]),
+做完 norm 的輸出, 才是 fully connected 的輸入,
+fully connected 結束後一樣 residual + norm, 這才是一個 block 的輸出。
+
+On Layer Normalization in the Transformer Architecture
+Power Norm: Rethinking Batch Normalization in Transformers
+上上面那篇論文研究了 norm 要放在哪,
+結果顯示放在 self attention, fully connected 之前比較好。
+上面那篇論文研究了一種效果更好的 Power Norm。
+
+--------------------------------------------------------------------
+
+Decoder:
+Autoregressive, speech recognition as example,
+一段語音訊號 -> Encoder -> vectors + (BEGIN(非由 Encoder 產生), output 1, output 2, ...) ->
+Decoder -> output 1-> soft-max ->
+output 1(size 為 vocabulary size, 如 output 1 的結果為機: 0.8, 器: 0, 學: 0, 習: 0.1),
+得到 output 1 為"機"後, "BEGIN + 機"會作為 input 輸入 Decoder, 得到第二個 output 為"器",
+"BEGIN + 機器"會作為 input 輸入 Decoder, 得到第三個 output 為 "學"。
+簡單來說, vectors + BEGIN -> Decoder -> output 1,
+vectors + BEGIN  + output 1 -> Decoder -> output 2,
+vectors + BEGIN  + output 1  + output 2 -> Decoder -> output 3。
+
+--------------------------------------------------------------------
+
+Decoder 的第一部份為 Masked self attention,
+他的 input 為上一個 Decoder block 的 output。
+Masked self attention:
+qi 與 ki相乘時, 只看左逼的部份, 如
+b2 = soft-max(q2 * k1) * v1 + soft-max(q2 + k2) * v2,
+原本的 self attention 是全看:
+b2 = soft-max(q2 * k1) * v1 + soft-max(q2 + k2) * v2
++ soft-max(q2 + k4) * v4 + soft-max(q2 + k4) * v4
+
+--------------------------------------------------------------------
+
+vocabulary: END
+需要 Decoder 輸出結束, 因此我們要在 vocabulary 中加入一個 END,
+讓 Decoder 能輸出 END。
+
+--------------------------------------------------------------------
+
+Decoder:
+Non-Autoregressive(NAT)。
+
+兩者比較:
+Autoregressive: vectors + (BEGIN, w1, w2, w3) -> Decoder -> (w1, w2, w3, w4),
+Non-Autoregressive: vectors + (BEGIN, BEGIN, BEGIN, BEGIN) -> Decoder -> (w1, w2, w3, w4)
+
+How to decide the output length for NAT decoder?
+1. Another predictor for output length.
+2. Output a very long sequence, ignores tokens after END.
+
+Advantage: parallel, controllable output length
+NAT is usually worse than AT(why?Multi-modality)
+
+--------------------------------------------------------------------
+
+Decoder block 的第二部份為 self attention(Cross attention),
+Encoder, Decoder 間是怎麽傳遞資訊的: Cross attention
+Cross attention 在做什麽:
+1. (a1, a2, a3) -> Encoder -> (b1, b2, b3)
+2. 產生 (k1, v1), (k2, v2), (k3, v3),
+k1 = b1 * Wk, k2 = b2 * Wk, k3 = b3 * Wk,
+v1 = b1 * Wv, v2 = b2 * Wv, v3 = b3 * Wv。
+3. BEGIN -> Masked self attention -> mb1,
+q1 = mb1 * Wq
+4. v1 = soft-max(q1 * k1) * v1 + soft-max(q1 * k2) * v2 + soft-max(q1 * k3) * v3
+5. v1 -> fully connected -> output 1
+
+6. "BEGIN, 機"(機非 output 1, output 1 後面還會做一堆步驟才會得到"機") ->
+Masked self attention -> mb2(回到步驟 3)
+...
+
+--------------------------------------------------------------------
+
+teacher forcing: using the groud truth as input
+簡單來說, 原本是這樣,
+vectors + BEGIN -> Decoder -> output 1,
+vectors + BEGIN  + output 1 -> Decoder -> output 2,
+vectors + BEGIN  + output 1  + output 2 -> Decoder -> output 3。
+使用 teacher forcing 變這樣,
+vectors + BEGIN -> Decoder -> output 1,
+vectors + BEGIN  + groud truth 1 -> Decoder -> output 2,
+vectors + BEGIN  + groud truth 1  + groud truth 2 -> Decoder -> output 3。

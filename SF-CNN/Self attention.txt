@@ -1,0 +1,113 @@
+Self attention:
+今天要做一個詞性分析的問題
+如丟入 I saw a saw(我看到一個鋸子),
+我們期待 network 他會輸出第一個 saw 為動詞, 第二個 saw 為名詞,
+但丟進一個 fully connected network 明顯無法做到,
+因為對 network 來說第一個跟第二個是相同的, 會輸出相同的結果,
+因此我們希望丟進 network 的是有考慮到上下文的,
+所以我們需要 self attention,
+input 為 I = [a1, a2, a3, a4],
+經過 self attention 後,
+得到 output O = [b1, b2, b3, b4], 這些是有考慮到上下文的,
+因此將這些 output 丟進一個 fully connected network,
+是有可能得出不同結果的(因為有考慮到上下文, a2 跟 a4 會不一樣)。
+
+self attention 是怎麽做的:
+input 為 I = [a1, a2, a3, a4],
+我們要 train 出 3 個矩陣 Wq, Wk, Wv,
+我們會先計算出a(1, 2), 即為 a1 與 a2 的 attention score,
+q1 = Wq * a1,
+k1 = Wk * a1, k2 = Wk * a2, k3 = Wk * a3, k4 = Wk * a4,
+a(1, 2) = q1 * k2, 以此類推 a(1, 1) = q1 * k1, a(1, 3) = q1 * k3, a(1, 4) = q1 * k4,
+我們會將 a(1, 2) 通過一層 soft-max, 得到 ^a(1, 2)。
+計算 v1 = Wv * a1, v2 = Wv * a2, v3 = Wv * a3, v4 = Wv * a4,
+a1 對應的 output b1 = v1^a(1, 1) + v2^a(1, 2) + v3^a(1, 3) + v4^a(1, 4),
+可以看出來, 誰的 attention score 越大, 就會越接近誰的 v。
+一些式子:
+Q = Wq * I,
+K = Wk * I,
+V = Wv * I,
+A = KT * Q,
+^A = soft-max(A),
+O = V * ^A
+
+--------------------------------------------------------------------
+
+multi-head Self attention 是怎麽做的:
+2 heads as example,
+ai 先得到 qi, ki, vi
+qi = Wq * ai,
+ki = Wk * ai,
+vi = Wv * ai,
+q(i, 1) = W(q, 1) * qi,
+q(i, 2) = W(q, 2) * qi,
+qi 得到 q(i, 1), q(i, 2),
+ki 得到 k(i, 1), k(i, 2),
+vi 得到 v(i, 1), v(i, 2),
+b(1, 1) =
+soft-max(q(1, 1) * k(1, 1)) * v(1, 1) + soft-max(q(1, 1) * k(1, 1)) * v(1, 1),
+b(1, 2) =
+soft-max(q(i, 2) * k(i, 2)) * v(i, 2) + soft-max(q(1, 2) * k(2, 2)) * v(2, 2),
+b1 = WO * [b(1, 1) b(1, 2)]T
+
+--------------------------------------------------------------------
+
+Positional encoding:
+self attention 是不知道位置的, 是分不出 a1, a2, ... 的順序的,
+因此我們會加入 positional vector ei,
+ai = ei + ai,
+Positional encoding 是可以 learned from data, 或是 hand-crafted 的。
+
+--------------------------------------------------------------------
+
+Truncated self attention:
+當 input size 太大時, 如語音辨識, input size 為 L,
+則計算 A (attention matrix)時要計算 L * L 個 element(A 的邊長為 L),
+Truncated self attention 就是在做 self attention 時,
+不看所有的 sequence, 只看部份的 sequence。
+
+--------------------------------------------------------------------
+
+self attention for image:
+如一張 5 * 10 的圖片, 有 R, G, B 三個 channel,
+我們可以將每個 pixel 視為一個 vector(長度為 3),
+則整張圖片就是5 * 10 個向量。
+
+--------------------------------------------------------------------
+
+self attention vs CNN
+CNN 只關注該 pixel 與鄰近的 pixel(receptive field 中的),
+self attention 的 pixel 關注整張圖片的 pixel,
+整張圖片的 pixel 皆可與該 pixel self attention。
+因此可以說 CNN 是 self attention 的簡化版。
+self attention 會自己學出 receptive field(學出該 pixel 要與哪些 pixel 是相關的)。
+On the Relationship between Self-Attention and Convolutional Layers。
+換句話說, CNN 是限制比較多的 self attention,
+Google 有做過這個實驗,
+在訓練的資料量較少時(10M), CNN 的表現比 self attention 好,
+在訓練的資料量較多時(300 M), self attention 的表現比 CNN 好。
+這是因為 self attention的彈性較大, 所以需要較大的訓練資料量, 訓練資料量少的時候會 over fitting,
+CNN 彈性較小, 訓練資料量少時結果較好, 但因彈性較小, 因此在訓練資料量大時, 無法得到好處。
+
+--------------------------------------------------------------------
+
+self attention vs RNN
+self attention 是可以平行執行的,
+RNN 不能。
+Transformers are RNNs: Fast Autoregressive Transformers with Linear Attention
+
+--------------------------------------------------------------------
+
+self attention for Graph:
+計算 attention matrix 時只要計算 node 有相連的就好,
+不需要讓 self attention 去學哪些是有關聯的。
+Graph Neural Network
+
+--------------------------------------------------------------------
+
+Long Range Arena: A Benchmark for Efficient Transformers
+上面那篇論文比較了不同的 self attention 的變形。
+self attention 的計算量非常大, 因此解決計算量是一個重點
+
+Efficient Transformers: A Survey
+上面那篇比較了不同的 Transformers。
