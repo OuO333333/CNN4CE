@@ -24,6 +24,7 @@ Nt_beam=32
 Nr=16
 Nr_beam=16
 SNR=10.0**(-10/10.0) # transmit power
+print("SNR = ", SNR)
 # DFT matrix
 def DFT_matrix(N):
     m, n = np.meshgrid(np.arange(N), np.arange(N))
@@ -132,7 +133,7 @@ print(((H_test)**2).mean())
 K=3
 input_dim=(Nr,Nt,2*fre)
 num_heads = 4  # Number of attention heads
-ff_dim = 64  # Hidden layer size in feed forward network inside transformer
+ff_dim = 32  # Hidden layer size in feed forward network inside transformer
 dropout_rate = 0.1
 
 # Define the input layer
