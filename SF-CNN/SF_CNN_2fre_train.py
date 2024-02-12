@@ -14,6 +14,11 @@ config = tf.compat.v1.ConfigProto()
 config.gpu_options.allow_growth=True   #allow growth
 import scipy.io as sio
 
+from tensorflow.keras.layers.experimental.preprocessing import Rescaling
+from tensorflow.keras.layers import Add
+from tensorflow.keras.layers import Conv2D
+
+
 Nt=32
 Nt_beam=32
 Nr=16
@@ -126,26 +131,41 @@ print(((H_test)**2).mean())
 
 K=3
 input_dim=(Nr,Nt,2*fre)
-model = Sequential()
-model.add(Convolution2D(filters=64, kernel_size=(K,K), padding='Same', activation='relu', input_shape=input_dim))
-model.add(BatchNormalization())
-model.add(Convolution2D(filters=64, kernel_size=(K,K), padding='Same', activation='relu'))
-model.add(BatchNormalization())
-model.add(Convolution2D(filters=64, kernel_size=(K,K), padding='Same', activation='relu'))
-model.add(BatchNormalization())
-model.add(Convolution2D(filters=64, kernel_size=(K,K), padding='Same', activation='relu'))
-model.add(BatchNormalization())
-model.add(Convolution2D(filters=64, kernel_size=(K,K), padding='Same', activation='relu'))
-model.add(BatchNormalization())
-model.add(Convolution2D(filters=64, kernel_size=(K,K), padding='Same', activation='relu'))
-model.add(BatchNormalization())
-model.add(Convolution2D(filters=64, kernel_size=(K,K), padding='Same', activation='relu'))
-model.add(BatchNormalization())
-model.add(Convolution2D(filters=64, kernel_size=(K,K), padding='Same', activation='relu'))
-model.add(BatchNormalization())
-model.add(Convolution2D(filters=64, kernel_size=(K,K), padding='Same', activation='relu'))
-model.add(BatchNormalization())
-model.add(Convolution2D(filters=2*fre, kernel_size=(K,K), padding='Same', activation='tanh'))
+num_heads = 4  # Number of attention heads
+ff_dim = 64  # Hidden layer size in feed forward network inside transformer
+dropout_rate = 0.1
+
+# Define the input layer
+inputs = Input(shape=input_dim)
+
+# Add a rescaling layer to normalize inputs
+x = Rescaling(scale=1.0 / scale)(inputs)
+
+# Transformer Encoder Layer
+for _ in range(8):  # Repeat the encoder five times
+    # Multi-Head Attention
+    attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=input_dim[-1], dropout=dropout_rate)(x, x)
+    # Add & Norm
+    x = Add()([x, attn_output])
+    x = LayerNormalization(epsilon=1e-6)(x)
+
+    # CNN Layer
+    x = Conv2D(filters=64, kernel_size=(K, K), padding='Same', activation='relu')(x)
+    x = BatchNormalization()(x)
+
+# Output layer
+outputs = Conv2D(filters=2*fre, kernel_size=(K, K), padding='Same', activation='tanh')(x)
+
+# Create the model
+model = Model(inputs=inputs, outputs=outputs)
+
+# Compile the model
+adam=Adam(learning_rate=1e-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+model.compile(optimizer='adam', loss='mse')
+
+# Print model summary
+model.summary()
+
 
 # checkpoint
 filepath='CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5'
@@ -153,8 +173,8 @@ filepath='CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5'
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
 callbacks_list = [checkpoint]
 
-adam=Adam(learning_rate=1e-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
-model.compile(optimizer=adam, loss='mse')
+#adam=Adam(learning_rate=1e-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+#model.compile(optimizer=adam, loss='mse')
 model.fit(H_train_noisy, H_train, epochs=200, batch_size=128, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
 
 # load model
