@@ -5,11 +5,17 @@ python3 SF_CNN_2fre_test.py > test.log 2>&1
 
 有修改部份: lr 改成 learning_rate
 
-result:
+transformers result:
 epochs_num =  40
 batch_size_num =  32
 encoder_block_num =  9
 learning_rate_num =  0.0001
 SNR =  0.1
-
 NMSE = 0.8134316863427159
+
+CNN result:
+epochs_num =  200
+batch_size_num =  128
+learning_rate_num =  0.0001
+SNR = 0.1
+NMSE = 0.8902655945595724
