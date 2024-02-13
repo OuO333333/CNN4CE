@@ -14,11 +14,19 @@ config = tf.compat.v1.ConfigProto()
 config.gpu_options.allow_growth=True   #allow growth
 import scipy.io as sio
 
+epochs_num = 200
+batch_size_num = 128
+learning_rate_num = 1e-4
+print("epochs_num = ", epochs_num)
+print("batch_size_num = ", batch_size_num)
+print("learning_rate_num = ", learning_rate_num)
+
 Nt=32
 Nt_beam=32
 Nr=16
 Nr_beam=16
 SNR=10.0**(-10/10.0) # transmit power
+print("SNR = ", SNR)
 # DFT matrix
 def DFT_matrix(N):
     m, n = np.meshgrid(np.arange(N), np.arange(N))
@@ -153,9 +161,9 @@ filepath='CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5'
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
 callbacks_list = [checkpoint]
 
-adam=Adam(learning_rate=1e-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+adam=Adam(learning_rate=learning_rate_num, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
 model.compile(optimizer=adam, loss='mse')
-model.fit(H_train_noisy, H_train, epochs=200, batch_size=128, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
+model.fit(H_train_noisy, H_train, epochs=epochs_num, batch_size=batch_size_num, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
 
 # load model
 CNN = load_model('CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5')
