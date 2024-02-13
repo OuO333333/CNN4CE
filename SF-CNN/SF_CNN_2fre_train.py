@@ -18,7 +18,7 @@ from tensorflow.keras.layers.experimental.preprocessing import Rescaling
 from tensorflow.keras.layers import Add
 from tensorflow.keras.layers import Conv2D
 
-epochs_num = 40
+epochs_num = 200
 batch_size_num = 32
 encoder_block_num = 9
 learning_rate_num = 1e-4
@@ -30,7 +30,8 @@ Nt=32
 Nt_beam=32
 Nr=16
 Nr_beam=16
-SNR=10.0**(-10/10.0) # transmit power
+SNR_dB = 20
+SNR=10.0**(SNR_dB/10.0) # transmit power
 print("SNR = ", SNR)
 # DFT matrix
 def DFT_matrix(N):
