@@ -3,55 +3,50 @@ python3 SF_CNN_2fre_train.py > train1.log 2>&1
 python3 SF_CNN_2fre_train_further.py > train2.log 2>&1
 python3 SF_CNN_2fre_test.py > test.log 2>&1
 
+GPU: NVIDIA GeForce RTX 3060 Ti
+cuda: 12.3
+cudnn: 8.9.7
+tensorflow: 2.15.0
+https://jackfrisht.medium.com/install-nvidia-driver-via-ppa-in-ubuntu-18-04-fc9a8c4658b9
+
 有修改部份: lr 改成 learning_rate
 
-transformers result:
-epochs_num =  40
-batch_size_num =  32
-encoder_block_num =  9
-learning_rate_num =  0.0001
-SNR =  0.1
-NMSE = 0.8134316863427159
-
-CNN result:
-epochs_num =  200
-batch_size_num =  128
-learning_rate_num =  0.0001
-SNR_dB = -10
-NMSE = 0.8902655945595724
-
-epochs_num =  200
-batch_size_num =  128
-learning_rate_num =  0.0001
-SNR_dB = -5
-NMSE = 0.5751199399355023
-
-epochs_num =  200
-batch_size_num =  128
-learning_rate_num =  0.0001
-SNR_dB = 0
-NMSE = 0.36848606844546833
-
-epochs_num =  200
-batch_size_num =  128
-learning_rate_num =  0.0001
-SNR_dB = 5
-NMSE = 0.29410193315144156
-
-epochs_num =  200
-batch_size_num =  128
-learning_rate_num =  0.0001
-SNR_dB = 10
-NMSE = 0.2553683132455284
-
-epochs_num =  200
-batch_size_num =  128
-learning_rate_num =  0.0001
-SNR_dB = 15
-NMSE = 0.23459051626799857
-
-epochs_num =  200
-batch_size_num =  128
-learning_rate_num =  0.0001
-SNR_dB = 20
-NMSE = 0.2303461244047422
+CNN, epochs = 200, lr = 0.0001, batch_size = 128
+SNR(dB)		NMSE
+    -10		0.8902655945595724
+     -5		0.5751199399355023
+      0		0.36848606844546833
+      5		0.29410193315144156
+     10		0.2553683132455284
+     15		0.23459051626799857
+     20		0.2303461244047422
+     
+CNN, epochs = 200, lr = 0.0001, batch_size = 32
+SNR(dB)		NMSE
+    -10		0.810673524905295
+     -5		0.4919532945371677
+      0		0.2643258475639457
+      5		0.16703036852743622
+     10		0.11317730937141791
+     15		0.09042117733683336
+     20		0.07431391089906239
+     
+Transformers(Encoder), epochs = 40, lr = 0.0001, batch_size = 32
+SNR(dB)		NMSE
+    -10		0.9770831849262505, 0.8134316863427159
+     -5		0.7012182835272307
+      0		0.49189052603046274
+      5		0.39420415368532674
+     10		0.23643466031546911
+     15		0.19068080361620274
+     20		0.14560928882392193
+     
+Transformers(Encoder), epochs = 200, lr = 0.0001, batch_size = 32
+SNR(dB)		NMSE
+    -10		0.9228426684052887
+     -5		0.6831239491929525
+      0		0.2941315855551049
+      5		0.14006600876597874(better than CNN)
+     10		0.1021696856387804(better than CNN)
+     15		0.06976020783386723(better than CNN)
+     20		0.04713466330402714(better than CNN)

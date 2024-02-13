@@ -15,7 +15,7 @@ config.gpu_options.allow_growth=True   #allow growth
 import scipy.io as sio
 
 epochs_num = 200
-batch_size_num = 128
+batch_size_num = 32
 learning_rate_num = 1e-4
 print("TensorFlow 版本:", tf.__version__)
 print("epochs_num = ", epochs_num)
