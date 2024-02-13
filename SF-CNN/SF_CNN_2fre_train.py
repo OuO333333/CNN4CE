@@ -8,7 +8,7 @@ from numpy import *
 import numpy as np
 import numpy.linalg as LA
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import tensorflow as tf
 config = tf.compat.v1.ConfigProto()
 config.gpu_options.allow_growth=True   #allow growth
