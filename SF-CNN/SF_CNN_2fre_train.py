@@ -8,7 +8,7 @@ from numpy import *
 import numpy as np
 import numpy.linalg as LA
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import tensorflow as tf
 config = tf.compat.v1.ConfigProto()
 config.gpu_options.allow_growth=True   #allow growth
@@ -18,7 +18,14 @@ from tensorflow.keras.layers.experimental.preprocessing import Rescaling
 from tensorflow.keras.layers import Add
 from tensorflow.keras.layers import Conv2D
 
-
+epochs_num = 40
+batch_size_num = 32
+encoder_block_num = 9
+learning_rate_num = 1e-4
+print("epochs_num = ", epochs_num)
+print("batch_size_num = ", batch_size_num)
+print("encoder_block_num = ", encoder_block_num)
+print("learning_rate_num = ", learning_rate_num)
 Nt=32
 Nt_beam=32
 Nr=16
@@ -143,7 +150,7 @@ inputs = Input(shape=input_dim)
 x = Rescaling(scale=1.0 / scale)(inputs)
 
 # Transformer Encoder Layer
-for _ in range(8):  # Repeat the encoder five times
+for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     # Multi-Head Attention
     attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=input_dim[-1], dropout=dropout_rate)(x, x)
     # Add & Norm
@@ -161,7 +168,7 @@ outputs = Conv2D(filters=2*fre, kernel_size=(K, K), padding='Same', activation='
 model = Model(inputs=inputs, outputs=outputs)
 
 # Compile the model
-adam=Adam(learning_rate=1e-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+adam=Adam(learning_rate=learning_rate_num, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
 model.compile(optimizer='adam', loss='mse')
 
 # Print model summary
@@ -176,7 +183,7 @@ callbacks_list = [checkpoint]
 
 #adam=Adam(learning_rate=1e-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
 #model.compile(optimizer=adam, loss='mse')
-model.fit(H_train_noisy, H_train, epochs=200, batch_size=128, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
+model.fit(H_train_noisy, H_train, epochs=epochs_num, batch_size=batch_size_num, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
 
 # load model
 CNN = load_model('CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5')
