@@ -1,9 +1,9 @@
 Encoder 架構:
-一層 multi head attention, 4 個 heads, 電腦有點爛, 跑不動 6 個 heads。
-Add 跟 Norm。
+一層 multi head attention, 4 個 heads,
+Add 跟 Norm,
 一層 CNN layer,
 Batch normalization。
 
-重複 8 個 Encoder block, 電腦有點爛, 跑不動 8 個以上的 Encoder block,
+重複 9 個 Encoder block,
 最後接一層 ouput layer。
 https://github.com/OuO333333/CNN4CE/blob/transformer2/SF-CNN/SF_CNN_2fre_train.py
