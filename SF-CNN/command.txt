@@ -48,4 +48,54 @@ SNR(dB)		NMSE
       5		0.14006600876597874(better than CNN)
      10		0.1021696856387804(better than CNN)
      15		0.06976020783386723(better than CNN)
-     20		0.04713466330402714(better than CNN)
+     20		0.04713466330402714, 0.116335418982825(better than CNN)
+     
+Transformers(Encoder), epochs = 300, lr = 0.0001, batch_size = 32
+SNR(dB)		NMSE
+    -10		?
+     -5		?
+      0		?
+      5		?
+     10		?
+     15		?
+     20		0.16487412999163725, 0.10413806225359455
+     
+Transformers(Encoder, .tf, fully connected network * 1(1024), fully connected network * 1(4), add , norm), epochs = 200, lr = 0.0001, batch_size = 32
+SNR(dB)		NMSE
+    -10		?
+     -5		?
+      0		?
+      5		?
+     10		?
+     15		?
+     20		0.0716656497221961
+
+Transformers(Encoder, .tf, fully connected network * 1(1024), fully connected network * 1(4), add , norm), epochs = 300, lr = 0.0001, batch_size = 32
+SNR(dB)		NMSE
+    -10		?
+     -5		?
+      0		?
+      5		?
+     10		?
+     15		?
+     20		0.06968912843906024
+
+Transformers(Encoder, .tf, fully connected network * 1(256), BatchNormalization), epochs = 200, lr = 0.0001, batch_size = 32
+SNR(dB)		NMSE
+    -10		?
+     -5		?
+      0		?
+      5		?
+     10		?
+     15		?
+     20		0.1283346126488441
+
+Transformers(Encoder, .tf, fully connected network * 1(450), BatchNormalization), epochs = 200, lr = 0.0001, batch_size = 32
+SNR(dB)		NMSE
+    -10		?
+     -5		?
+      0		?
+      5		?
+     10		?
+     15		?
+     20		0.18648088606445837

@@ -22,7 +22,7 @@ from tensorflow.keras.layers import GlobalAveragePooling1D
 # from positional_encodings.torch_encodings import PositionalEncoding1D, PositionalEncoding2D, PositionalEncoding3D, Summer
 
 
-epochs_num = 1
+epochs_num = 300
 batch_size_num = 32
 encoder_block_num = 9
 learning_rate_num = 1e-4
@@ -162,6 +162,19 @@ def positional_encoding(input_dim):
                     pos_encodings[pos, t, i] = np.cos(pos / 10000 ** (2 * i / input_dim[-1]))
     return pos_encodings
 
+# Function to create positional encodings
+def positional_encoding2(input_dim):
+    Nr, Nt, _ = input_dim
+    pos_encodings = np.zeros(input_dim)
+    for i in range(input_dim[-1]):
+        for j in range(Nr):
+            for k in range(Nt):
+                if (j * k + k) % 2 == 0:
+                    pos_encodings[j, k, i] = np.sin(pos / 10000 ** (2 * (j * k + k) / Nr * Nt))
+                else:
+                    pos_encodings[j, k, i] = np.cos(pos / 10000 ** (2 * (j * k + k) / Nr * Nt))
+    return pos_encodings
+
 # Define the input layer
 inputs = Input(shape=input_dim)
 
@@ -174,7 +187,7 @@ print("x shape = ", x.shape)
 print("position_encodings shape = ", position_encodings.shape)
 # The shape of the positional encoding is adjusted to (1, 16, 32, 4).
 position_encodings = np.expand_dims(position_encodings, axis=0)
-x = Add()([x, position_encodings])
+# x = Add()([x, position_encodings])
 print("x + position_encodings shape = ", x.shape)
 
 # Transformer Encoder Layer
@@ -188,8 +201,8 @@ for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     # Feed Forward Layer
     ff_output = Dense(units=1024, activation='relu')(x)
     ff_output = Dense(units=4, activation='relu')(ff_output)
-    # x = Conv2D(filters=64, kernel_size=(K, K), padding='Same', activation='relu')(x)
-    # x = BatchNormalization()(ff_output)
+    #x = Conv2D(filters=64, kernel_size=(K, K), padding='Same', activation='relu')(x)
+    #x = BatchNormalization()(x)
     x = Add()([x, ff_output])
     x = LayerNormalization(epsilon=1e-6)(x)
 
@@ -208,7 +221,7 @@ model.summary()
 
 
 # checkpoint
-filepath='CNN_UMi_3path_2fre_SNRminus10dB_200ep.tf'
+filepath='CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5'
 
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
 callbacks_list = [checkpoint]
@@ -218,7 +231,7 @@ callbacks_list = [checkpoint]
 model.fit(H_train_noisy, H_train, epochs=epochs_num, batch_size=batch_size_num, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
 
 # load model
-CNN = tf.keras.models.load_model('CNN_UMi_3path_2fre_SNRminus10dB_200ep.tf')
+CNN = tf.keras.models.load_model('CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5')
 
 decoded_channel = CNN.predict(H_test_noisy)
 nmse2=zeros((data_num_test-len(row_num),1), dtype=float)
