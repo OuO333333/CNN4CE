@@ -17,11 +17,16 @@ import scipy.io as sio
 from tensorflow.keras.layers.experimental.preprocessing import Rescaling
 from tensorflow.keras.layers import Add
 from tensorflow.keras.layers import Conv2D
+from tensorflow.keras.layers import Flatten
+from tensorflow.keras.layers import GlobalAveragePooling1D
+# from positional_encodings.torch_encodings import PositionalEncoding1D, PositionalEncoding2D, PositionalEncoding3D, Summer
 
-epochs_num = 200
+
+epochs_num = 1
 batch_size_num = 32
 encoder_block_num = 9
 learning_rate_num = 1e-4
+print("TensorFlow 版本:", tf.__version__)
 print("epochs_num = ", epochs_num)
 print("batch_size_num = ", batch_size_num)
 print("encoder_block_num = ", encoder_block_num)
@@ -144,11 +149,33 @@ num_heads = 4  # Number of attention heads
 ff_dim = 32  # Hidden layer size in feed forward network inside transformer
 dropout_rate = 0.1
 
+# Function to create positional encodings
+def positional_encoding(input_dim):
+    Nr, Nt, _ = input_dim
+    pos_encodings = np.zeros(input_dim)
+    for pos in range(Nr):
+        for t in range(Nt):
+            for i in range(input_dim[-1]):
+                if i % 2 == 0:
+                    pos_encodings[pos, t, i] = np.sin(pos / 10000 ** (2 * i / input_dim[-1]))
+                else:
+                    pos_encodings[pos, t, i] = np.cos(pos / 10000 ** (2 * i / input_dim[-1]))
+    return pos_encodings
+
 # Define the input layer
 inputs = Input(shape=input_dim)
 
 # Add a rescaling layer to normalize inputs
 x = Rescaling(scale=1.0 / scale)(inputs)
+
+# Add positional encodings to the input
+position_encodings = positional_encoding(input_dim)
+print("x shape = ", x.shape)
+print("position_encodings shape = ", position_encodings.shape)
+# The shape of the positional encoding is adjusted to (1, 16, 32, 4).
+position_encodings = np.expand_dims(position_encodings, axis=0)
+x = Add()([x, position_encodings])
+print("x + position_encodings shape = ", x.shape)
 
 # Transformer Encoder Layer
 for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
@@ -158,9 +185,13 @@ for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     x = Add()([x, attn_output])
     x = LayerNormalization(epsilon=1e-6)(x)
 
-    # CNN Layer
-    x = Conv2D(filters=64, kernel_size=(K, K), padding='Same', activation='relu')(x)
-    x = BatchNormalization()(x)
+    # Feed Forward Layer
+    ff_output = Dense(units=1024, activation='relu')(x)
+    ff_output = Dense(units=4, activation='relu')(ff_output)
+    # x = Conv2D(filters=64, kernel_size=(K, K), padding='Same', activation='relu')(x)
+    # x = BatchNormalization()(ff_output)
+    x = Add()([x, ff_output])
+    x = LayerNormalization(epsilon=1e-6)(x)
 
 # Output layer
 outputs = Conv2D(filters=2*fre, kernel_size=(K, K), padding='Same', activation='tanh')(x)
@@ -177,7 +208,7 @@ model.summary()
 
 
 # checkpoint
-filepath='CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5'
+filepath='CNN_UMi_3path_2fre_SNRminus10dB_200ep.tf'
 
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
 callbacks_list = [checkpoint]
@@ -187,7 +218,7 @@ callbacks_list = [checkpoint]
 model.fit(H_train_noisy, H_train, epochs=epochs_num, batch_size=batch_size_num, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
 
 # load model
-CNN = load_model('CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5')
+CNN = tf.keras.models.load_model('CNN_UMi_3path_2fre_SNRminus10dB_200ep.tf')
 
 decoded_channel = CNN.predict(H_test_noisy)
 nmse2=zeros((data_num_test-len(row_num),1), dtype=float)
