@@ -22,10 +22,11 @@ from tensorflow.keras.layers import GlobalAveragePooling1D
 # from positional_encodings.torch_encodings import PositionalEncoding1D, PositionalEncoding2D, PositionalEncoding3D, Summer
 
 
-epochs_num = 300
+epochs_num = 1
 batch_size_num = 32
 encoder_block_num = 9
 learning_rate_num = 1e-4
+key_dim_num = 4
 print("TensorFlow 版本:", tf.__version__)
 print("epochs_num = ", epochs_num)
 print("batch_size_num = ", batch_size_num)
@@ -145,6 +146,7 @@ print(((H_test)**2).mean())
 
 K=3
 input_dim=(Nr,Nt,2*fre)
+reshape_input_dim = (1, int(2048 / key_dim_num), key_dim_num)
 num_heads = 4  # Number of attention heads
 ff_dim = 32  # Hidden layer size in feed forward network inside transformer
 dropout_rate = 0.1
@@ -162,21 +164,11 @@ def positional_encoding(input_dim):
                     pos_encodings[pos, t, i] = np.cos(pos / 10000 ** (2 * i / input_dim[-1]))
     return pos_encodings
 
-# Function to create positional encodings
-def positional_encoding2(input_dim):
-    Nr, Nt, _ = input_dim
-    pos_encodings = np.zeros(input_dim)
-    for i in range(input_dim[-1]):
-        for j in range(Nr):
-            for k in range(Nt):
-                if (j * k + k) % 2 == 0:
-                    pos_encodings[j, k, i] = np.sin(pos / 10000 ** (2 * (j * k + k) / Nr * Nt))
-                else:
-                    pos_encodings[j, k, i] = np.cos(pos / 10000 ** (2 * (j * k + k) / Nr * Nt))
-    return pos_encodings
-
 # Define the input layer
-inputs = Input(shape=input_dim)
+# change here
+#inputs = Input(shape=input_dim)
+#key_dim = 4
+inputs = Input(shape=reshape_input_dim)
 
 # Add a rescaling layer to normalize inputs
 x = Rescaling(scale=1.0 / scale)(inputs)
@@ -193,21 +185,21 @@ print("x + position_encodings shape = ", x.shape)
 # Transformer Encoder Layer
 for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     # Multi-Head Attention
-    attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=input_dim[-1], dropout=dropout_rate)(x, x)
+    # key_dim 為 query 要看多少其他的 key
+    attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, x)
     # Add & Norm
     x = Add()([x, attn_output])
     x = LayerNormalization(epsilon=1e-6)(x)
 
     # Feed Forward Layer
-    ff_output = Dense(units=1024, activation='relu')(x)
-    ff_output = Dense(units=4, activation='relu')(ff_output)
+    ff_output = Dense(units=key_dim_num, activation='relu')(x)
     #x = Conv2D(filters=64, kernel_size=(K, K), padding='Same', activation='relu')(x)
     #x = BatchNormalization()(x)
     x = Add()([x, ff_output])
     x = LayerNormalization(epsilon=1e-6)(x)
 
 # Output layer
-outputs = Conv2D(filters=2*fre, kernel_size=(K, K), padding='Same', activation='tanh')(x)
+outputs = Conv2D(filters=key_dim_num, kernel_size=(K, K), padding='Same', activation='tanh')(x)
 
 # Create the model
 model = Model(inputs=inputs, outputs=outputs)
@@ -226,14 +218,24 @@ filepath='CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5'
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
 callbacks_list = [checkpoint]
 
-#adam=Adam(learning_rate=1e-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
-#model.compile(optimizer=adam, loss='mse')
+# 将 H_train_noisy 调整为形状为 (None, 1, int(2048 / key_dim_num), key_dim_num) 的数组
+H_train_noisy = np.reshape(H_train_noisy, (-1, 1, int(2048 / key_dim_num), key_dim_num))
+
+# 将 H_train 调整为形状为 (None, 1, int(2048 / key_dim_num), key_dim_num) 的数组
+H_train = np.reshape(H_train, (-1, 1, int(2048 / key_dim_num), key_dim_num))
 model.fit(H_train_noisy, H_train, epochs=epochs_num, batch_size=batch_size_num, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
 
 # load model
 CNN = tf.keras.models.load_model('CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5')
-
+print("int(2048 / key_dim_num): ", int(2048 / key_dim_num))
+print("H_test_noisy shape: ", H_test_noisy.shape)
+# 将 H_test_noisy, H_test 调整为形状为 (None, 1, int(2048 / key_dim_num), key_dim_num) 的数组
+H_test_noisy = np.reshape(H_test_noisy, (-1, 1, int(2048 / key_dim_num), key_dim_num))
+H_test = np.reshape(H_test, (-1, 1, int(2048 / key_dim_num), key_dim_num))
 decoded_channel = CNN.predict(H_test_noisy)
+# 将 H_test 和 decoded_channel 重塑为相同的形状
+H_test = H_test.reshape(-1, 1, 1, 2048)
+decoded_channel = decoded_channel.reshape(-1, 1, 1, 2048)
 nmse2=zeros((data_num_test-len(row_num),1), dtype=float)
 for n in range(data_num_test-len(row_num)):
     MSE=((H_test[n,:,:,:]-decoded_channel[n,:,:,:])**2).sum()
