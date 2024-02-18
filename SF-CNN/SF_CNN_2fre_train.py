@@ -22,11 +22,11 @@ from tensorflow.keras.layers import GlobalAveragePooling1D
 # from positional_encodings.torch_encodings import PositionalEncoding1D, PositionalEncoding2D, PositionalEncoding3D, Summer
 
 
-epochs_num = 1
+epochs_num = 200
 batch_size_num = 32
 encoder_block_num = 9
 learning_rate_num = 1e-4
-key_dim_num = 4
+key_dim_num = 256
 print("TensorFlow 版本:", tf.__version__)
 print("epochs_num = ", epochs_num)
 print("batch_size_num = ", batch_size_num)
@@ -36,7 +36,7 @@ Nt=32
 Nt_beam=32
 Nr=16
 Nr_beam=16
-SNR_dB = 20
+SNR_dB = 0
 SNR=10.0**(SNR_dB/10.0) # transmit power
 print("SNR = ", SNR)
 # DFT matrix
@@ -174,12 +174,12 @@ inputs = Input(shape=reshape_input_dim)
 x = Rescaling(scale=1.0 / scale)(inputs)
 
 # Add positional encodings to the input
-position_encodings = positional_encoding(input_dim)
+position_encodings = positional_encoding(reshape_input_dim)
 print("x shape = ", x.shape)
 print("position_encodings shape = ", position_encodings.shape)
 # The shape of the positional encoding is adjusted to (1, 16, 32, 4).
 position_encodings = np.expand_dims(position_encodings, axis=0)
-# x = Add()([x, position_encodings])
+#x = Add()([x, position_encodings])
 print("x + position_encodings shape = ", x.shape)
 
 # Transformer Encoder Layer
@@ -217,11 +217,14 @@ filepath='CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5'
 
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
 callbacks_list = [checkpoint]
-
+reshape_type = (0, 1, 2, 3)
 # 将 H_train_noisy 调整为形状为 (None, 1, int(2048 / key_dim_num), key_dim_num) 的数组
+H_train_noisy = np.transpose(H_train_noisy, reshape_type)
 H_train_noisy = np.reshape(H_train_noisy, (-1, 1, int(2048 / key_dim_num), key_dim_num))
 
+
 # 将 H_train 调整为形状为 (None, 1, int(2048 / key_dim_num), key_dim_num) 的数组
+H_train = np.transpose(H_train, reshape_type)
 H_train = np.reshape(H_train, (-1, 1, int(2048 / key_dim_num), key_dim_num))
 model.fit(H_train_noisy, H_train, epochs=epochs_num, batch_size=batch_size_num, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
 
@@ -230,6 +233,8 @@ CNN = tf.keras.models.load_model('CNN_UMi_3path_2fre_SNRminus10dB_200ep.hdf5')
 print("int(2048 / key_dim_num): ", int(2048 / key_dim_num))
 print("H_test_noisy shape: ", H_test_noisy.shape)
 # 将 H_test_noisy, H_test 调整为形状为 (None, 1, int(2048 / key_dim_num), key_dim_num) 的数组
+H_test_noisy = np.transpose(H_test_noisy, reshape_type)
+H_test = np.transpose(H_test, reshape_type)
 H_test_noisy = np.reshape(H_test_noisy, (-1, 1, int(2048 / key_dim_num), key_dim_num))
 H_test = np.reshape(H_test, (-1, 1, int(2048 / key_dim_num), key_dim_num))
 decoded_channel = CNN.predict(H_test_noisy)

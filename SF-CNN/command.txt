@@ -30,7 +30,7 @@ SNR(dB)		NMSE
      15		0.09042117733683336
      20		0.07431391089906239
      
-Transformers(Encoder), epochs = 40, lr = 0.0001, batch_size = 32
+Transformers(Encoder, v1), epochs = 40, lr = 0.0001, batch_size = 32
 SNR(dB)		NMSE
     -10		0.9770831849262505, 0.8134316863427159
      -5		0.7012182835272307
@@ -40,7 +40,7 @@ SNR(dB)		NMSE
      15		0.19068080361620274
      20		0.14560928882392193
      
-Transformers(Encoder), epochs = 200, lr = 0.0001, batch_size = 32
+Transformers(Encoder, v1), epochs = 200, lr = 0.0001, batch_size = 32
 SNR(dB)		NMSE
     -10		0.9228426684052887
      -5		0.6831239491929525
@@ -50,53 +50,32 @@ SNR(dB)		NMSE
      15		0.06976020783386723(better than CNN)
      20		0.04713466330402714, 0.116335418982825(better than CNN)
      
-Transformers(Encoder), epochs = 300, lr = 0.0001, batch_size = 32
+Transformers(Encoder, new version, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
 SNR(dB)		NMSE
-    -10		?
-     -5		?
-      0		?
-      5		?
-     10		?
-     15		?
-     20		0.16487412999163725, 0.10413806225359455
+    -10		1.0034997822283107
+     -5		1.0022078917963781
+      0		0.42036374677900773
+      5		0.24588232616118508
+     10		0.13356168133422286
+     15		0.08693595202165977
+     20		0.055574757864449695
      
-Transformers(Encoder, .tf, fully connected network * 1(1024), fully connected network * 1(4), add , norm), epochs = 200, lr = 0.0001, batch_size = 32
+Transformers(Encoder, new version, (4 * 16 * 32)), epochs = 200, lr = 0.0001, batch_size = 32
 SNR(dB)		NMSE
-    -10		?
-     -5		?
-      0		?
-      5		?
-     10		?
-     15		?
-     20		0.0716656497221961
-
-Transformers(Encoder, .tf, fully connected network * 1(1024), fully connected network * 1(4), add , norm), epochs = 300, lr = 0.0001, batch_size = 32
+    -10		1.0056178096656145
+     -5		1.0051167132633074
+      0		1.0047594643512026
+      5		1.0135836603921828
+     10		1.0049115998872755
+     15		0.14973634341748948
+     20		0.10742040065425469
+     
+Transformers(Encoder, new version, (32 * 16 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
 SNR(dB)		NMSE
-    -10		?
-     -5		?
-      0		?
-      5		?
-     10		?
-     15		?
-     20		0.06968912843906024, 0.06802410884832424
-
-
-Transformers(Encoder, .tf, fully connected network * 1(256), BatchNormalization), epochs = 200, lr = 0.0001, batch_size = 32
-SNR(dB)		NMSE
-    -10		?
-     -5		?
-      0		?
-      5		?
-     10		?
-     15		?
-     20		0.1283346126488441
-
-Transformers(Encoder, .tf, fully connected network * 1(450), BatchNormalization), epochs = 200, lr = 0.0001, batch_size = 32
-SNR(dB)		NMSE
-    -10		?
-     -5		?
-      0		?
-      5		?
-     10		?
-     15		?
-     20		0.18648088606445837
+    -10		1.005581103661059
+     -5		1.023077848010152
+      0		1.0091059088906147
+      5		1.0158015911275906
+     10		0.13586349671622336
+     15		0.0907570120291898
+     20		0.052233937396309695
