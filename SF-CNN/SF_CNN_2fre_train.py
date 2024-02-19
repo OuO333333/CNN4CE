@@ -8,28 +8,18 @@ from numpy import *
 import numpy as np
 import numpy.linalg as LA
 import os
-# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import tensorflow as tf
-# config = tf.compat.v1.ConfigProto()
-# config.gpu_options.allow_growth=True   #allow growth
+config = tf.compat.v1.ConfigProto()
+config.gpu_options.allow_growth=True   #allow growth
 import scipy.io as sio
 
-import torch
-import torch.nn as nn
-import torch.optim as optim
-from torch.utils.data import Dataset
-from torch.utils.data import DataLoader
-import copy
-import math
-import torch.nn.functional as FFF
-# 检查 GPU 是否可用
-if torch.cuda.is_available():
-  print('GPU is available!')
-# 选择要使用的 GPU 设备
-device = torch.cuda.set_device(0)
-
-
-# from positional_encodings.torch_encodings import PositionalEncoding1D, PositionalEncoding2D, PositionalEncoding3D, Summer
+from tensorflow.keras.layers.experimental.preprocessing import Rescaling
+from tensorflow.keras.layers import Add
+from tensorflow.keras.layers import Conv2D
+from tensorflow.keras.layers import Flatten
+from tensorflow.keras.layers import GlobalMaxPooling2D, GlobalAveragePooling2D
+from tf_encodings import TFPositionalEncoding1D, TFSummer
 
 
 epochs_num = 200
@@ -154,205 +144,105 @@ print(len(row_num))
 print(H_test.shape, H_test_noisy.shape)
 print(((H_test)**2).mean())
 
+K=3
+input_dim=(Nr,Nt,2*fre)
+reshape_input_dim = (1, int(2048 / key_dim_num), key_dim_num)
+num_heads = 4  # Number of attention heads
+dropout_rate = 0.1
 
-def clones(module, N):
-    "Produce N identical layers."
-    return nn.ModuleList([copy.deepcopy(module) for _ in range(N)])
-    
-# 模型
-class Encoder(nn.Module):
-    "Core encoder is a stack of N layers"
-    def __init__(self, layer, N):
-        super(Encoder, self).__init__()
-        self.layers = clones(layer, N)
-        self.norm = LayerNorm(layer.size)
-        
-    def forward(self, x, mask):
-        "Pass the input (and mask) through each layer in turn."
-        for layer in self.layers:
-            x = layer(x, mask)
-        return self.norm(x)
+# Define the input layer
+# change here
+# inputs = Input(shape=input_dim)
+# key_dim_num = 4
+inputs = Input(shape=reshape_input_dim)
+reshape_type = (0, 1, 2, 3)
 
-class LayerNorm(nn.Module):
-    "Construct a layernorm module (See citation for details)."
-    def __init__(self, features, eps=1e-6):
-        super(LayerNorm, self).__init__()
-        self.a_2 = nn.Parameter(torch.ones(features))
-        self.b_2 = nn.Parameter(torch.zeros(features))
-        self.eps = eps
+# transpose
+H_train_noisy = np.transpose(H_train_noisy, reshape_type)
+H_train = np.transpose(H_train, reshape_type)
+H_test_noisy = np.transpose(H_test_noisy, reshape_type)
+H_test = np.transpose(H_test, reshape_type)
+# 将 H_train_noisy, H_train, H_test_noisy, H_test 调整为形状为 (None, 1, int(2048 / key_dim_num), key_dim_num) 的数组
+H_train_noisy = np.reshape(H_train_noisy, (-1, 1, int(2048 / key_dim_num), key_dim_num))
+H_train = np.reshape(H_train, (-1, 1, int(2048 / key_dim_num), key_dim_num))
+H_test_noisy = np.reshape(H_test_noisy, (-1, 1, int(2048 / key_dim_num), key_dim_num))
+H_test = np.reshape(H_test, (-1, 1, int(2048 / key_dim_num), key_dim_num))
 
-    def forward(self, x):
-        mean = x.mean(-1, keepdim=True)
-        std = x.std(-1, keepdim=True)
-        return self.a_2 * (x - mean) / (std + self.eps) + self.b_2
+# Add a rescaling layer to normalize inputs
+x = Rescaling(scale=1.0 / scale)(inputs)
 
-class SublayerConnection(nn.Module):
-    """
-    A residual connection followed by a layer norm.
-    Note for code simplicity the norm is first as opposed to last.
-    """
-    def __init__(self, size, dropout):
-        super(SublayerConnection, self).__init__()
-        self.norm = LayerNorm(size)
-        self.dropout = nn.Dropout(dropout)
+# learn positional encoding
+#position_encoding = Conv2D(filters=key_dim_num, kernel_size=(K, K), padding='Same', activation='relu')(x)
+# Returns the position encoding only
+positional_encoding_model = TFPositionalEncoding1D(256)
+position_encoding = positional_encoding_model(tf.zeros((1,int(2048 / key_dim_num),key_dim_num)))
+position_encoding = tf.expand_dims(position_encoding, axis=0)
+print("x shape = ", x.shape)
+print("position_encoding shape = ", position_encoding.shape)
+# x = Add()([x, position_encoding])
+position_encoding = tf.tile(position_encoding, multiples=[999, 1, 1, 1])
+H_train_noisy = Add()([H_train_noisy, position_encoding])
+H_train = Add()([H_train, position_encoding])
+H_test_noisy = Add()([H_test_noisy, position_encoding])
+H_test = Add()([H_test, position_encoding])
 
-    def forward(self, x, sublayer):
-        "Apply residual connection to any sublayer with the same size."
-        return x + self.dropout(sublayer(self.norm(x)))
 
-class EncoderLayer(nn.Module):
-    "Encoder is made up of self-attn and feed forward (defined below)"
-    def __init__(self, size, self_attn, feed_forward, dropout):
-        super(EncoderLayer, self).__init__()
-        self.self_attn = self_attn
-        self.feed_forward = feed_forward
-        self.sublayer = clones(SublayerConnection(size, dropout), 2)
-        self.size = size
+# Transformer Encoder Layer
+for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
+    # Multi-Head Attention
+    # key_dim 為 query 要看多少其他的 key
+    attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, x)
+    # Add & Norm
+    x = Add()([x, attn_output])
+    x = LayerNormalization(epsilon=1e-6)(x)
 
-    def forward(self, x, mask):
-        "Follow Figure 1 (left) for connections."
-        x = self.sublayer[0](x, lambda x: self.self_attn(x, x, x, mask))
-        return self.sublayer[1](x, self.feed_forward)
+    # Feed Forward Layer
+    ff_output = Dense(units=key_dim_num, activation='relu')(x)
+    #x = Conv2D(filters=64, kernel_size=(K, K), padding='Same', activation='relu')(x)
+    #x = BatchNormalization()(x)
+    x = Add()([x, ff_output])
+    x = LayerNormalization(epsilon=1e-6)(x)
 
-def attention(query, key, value, mask=None, dropout=None):
-    "Compute 'Scaled Dot Product Attention'"
-    d_k = query.size(-1)
-    scores = torch.matmul(query, key.transpose(-2, -1)) \
-             / math.sqrt(d_k)
-    if mask is not None:
-        scores = scores.masked_fill(mask == 0, -1e9)
-    # scores = torch.from_numpy(scores)
-    p_attn = FFF.softmax(scores, dim = -1)
-    if dropout is not None:
-        p_attn = dropout(p_attn)
-    return torch.matmul(p_attn, value), p_attn
+# Output layer
+outputs = Conv2D(filters=key_dim_num, kernel_size=(K, K), padding='Same', activation='tanh')(x)
 
-class MultiHeadedAttention(nn.Module):
-    def __init__(self, h, d_model, dropout=0.1):
-        "Take in model size and number of heads."
-        super(MultiHeadedAttention, self).__init__()
-        assert d_model % h == 0
-        # We assume d_v always equals d_k
-        self.d_k = d_model // h
-        self.h = h
-        self.linears = clones(nn.Linear(d_model, d_model), 4)
-        self.attn = None
-        self.dropout = nn.Dropout(p=dropout)
-        
-    def forward(self, query, key, value, mask=None):
-        "Implements Figure 2"
-        if mask is not None:
-            # Same mask applied to all h heads.
-            mask = mask.unsqueeze(1)
-        nbatches = query.size(0)
-        
-        # 1) Do all the linear projections in batch from d_model => h x d_k 
-        query, key, value = \
-            [l(x).view(nbatches, -1, self.h, self.d_k).transpose(1, 2)
-             for l, x in zip(self.linears, (query, key, value))]
-        
-        # 2) Apply attention on all the projected vectors in batch. 
-        x, self.attn = attention(query, key, value, mask=mask, 
-                                 dropout=self.dropout)
-        
-        # 3) "Concat" using a view and apply a final linear. 
-        x = x.transpose(1, 2).contiguous() \
-             .view(nbatches, -1, self.h * self.d_k)
-        return self.linears[-1](x)
+# Create the model
+model = Model(inputs=inputs, outputs=outputs)
 
-class PositionwiseFeedForward(nn.Module):
-    "Implements FFN equation."
-    def __init__(self, d_model, d_ff, dropout=0.1):
-        super(PositionwiseFeedForward, self).__init__()
-        self.w_1 = nn.Linear(d_model, d_ff)
-        self.w_2 = nn.Linear(d_ff, d_model)
-        self.dropout = nn.Dropout(dropout)
+# Compile the model
+adam=Adam(learning_rate=learning_rate_num, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+model.compile(optimizer='adam', loss='mse')
 
-    def forward(self, x):
-        return self.w_2(self.dropout(FFF.relu(self.w_1(x))))
+# Print model summary
+model.summary()
 
-class MyDataset(Dataset):
-    def __init__(self, src, trg):
-        self.src = src
-        self.trg = trg
 
-    def __len__(self):
-        return len(self.src)
+# checkpoint
+filepath='CNN_UMi_3path_2fre_SNRminus10dB_200ep.tf'
 
-    def __getitem__(self, index):
-        src_item = self.src[index]
-        trg_item = self.trg[index]
-        return src_item, trg_item
+checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
+callbacks_list = [checkpoint]
 
-# 设置参数
-epochs = 1
-batch_size = 32
+model.fit(H_train_noisy, H_train, epochs=epochs_num, batch_size=batch_size_num, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
 
-# 定义预处理步骤
-def preprocess(data):
-    # 将数据展平
-    data = data.reshape(data.shape[0], -1)
-    # 将数据转换为张量
-    data = torch.from_numpy(data)
-    # 将数据类型转换为 double
-    data = data.float()
-    # 檢查數據類型
-    print("data type = ", data.dtype)
-    return data
-# 预处理数据
-print("H_train_noisy type = ", type(H_train_noisy))
-H_train_noisy = preprocess(H_train_noisy)
-H_train = preprocess(H_train)
-H_test_noisy = preprocess(H_test_noisy)
-H_test = preprocess(H_test)
+# load model
+CNN = tf.keras.models.load_model('CNN_UMi_3path_2fre_SNRminus10dB_200ep.tf')
+print("int(2048 / key_dim_num): ", int(2048 / key_dim_num))
+print("H_test_noisy shape: ", H_test_noisy.shape)
 
-train_dataset = MyDataset(H_train_noisy, H_train)
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-
-# 创建 EncoderLayer 实例
-N=6
-d_model=2048
-d_ff=2048
-h=8
-dropout=0.1
-c = copy.deepcopy
-attn = MultiHeadedAttention(h, d_model)
-ff = PositionwiseFeedForward(d_model, d_ff, dropout)
-encoder_layer = EncoderLayer(d_model, c(attn), c(ff), dropout)
-
-model = Encoder(encoder_layer, 6)  # 创建编码器对象
-optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
-loss_fn = nn.MSELoss()  # 示例损失函数，根据您的任务进行调整
-
-for epoch in range(epochs):
-    for batch in train_loader:
-        x, y = batch
-        x.cuda()
-        y.cuda()
-        print("x: ", x.device)
-        print("y: ", y.device)
-        outputs = model(x, mask=None)  # 假设不需要 mask
-        loss = loss_fn(outputs, y)
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-
-    # 打印训练进度
-    print(f"Epoch {epoch}: loss = {loss}")
-
-# 保存模型
-torch.save(model, "model.pt")
-
-# 加載模型
-model = torch.load("model.pt")
-
-# 预测输出
-outputs = model(H_test_noisy, mask = None)  # 假设不需要 mask
-
-# 計算 NMSE
-#nmse2=zeros((data_num_test-len(row_num),1), dtype=float)
-#for n in range(data_num_test-len(row_num)):
-#    MSE=((H_test[n,:,:,:]-outputs[n,:,:,:])**2).sum()
-#    norm_real=((H_test[n,:,:,:])**2).sum()
-#    nmse2[n]=MSE/norm_real
-#print(nmse2.sum()/(data_num_test-len(row_num)))  # calculate NMSE of current training stage
+decoded_channel = CNN.predict(H_test_noisy)
+# 将 H_test 和 decoded_channel 重塑为相同的形状
+# tf.experimental.numpy.experimental_enable_numpy_behavior()
+#H_test = H_test.reshape(-1, 1, 1, 2048)
+#decoded_channel = decoded_channel.reshape(-1, 1, 1, 2048)
+nmse2=zeros((data_num_test-len(row_num),1), dtype=float)
+for n in range(data_num_test-len(row_num)):
+    MSE = tf.reduce_sum(tf.square(H_test - decoded_channel))
+    norm_real = tf.reduce_sum(tf.square(H_test))
+    nmse2[n]=MSE/norm_real
+# tf.print("position_encoding =", position_encoding, float_format=".3f")
+max_value = tf.reduce_max(position_encoding)
+min_value = tf.reduce_min(position_encoding)
+print("Maximum value of position_encoding:", max_value.numpy())
+print("Minimum value of position_encoding:", min_value.numpy())
+print(nmse2.sum()/(data_num_test-len(row_num)))  # calculate NMSE of current training stage
