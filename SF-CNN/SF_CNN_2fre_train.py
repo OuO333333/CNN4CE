@@ -17,9 +17,7 @@ import scipy.io as sio
 from tensorflow.keras.layers.experimental.preprocessing import Rescaling
 from tensorflow.keras.layers import Add
 from tensorflow.keras.layers import Conv2D
-from tensorflow.keras.layers import Flatten
-from tensorflow.keras.layers import GlobalMaxPooling2D, GlobalAveragePooling2D
-from tf_encodings import TFPositionalEncoding1D, TFSummer
+from tf_encodings import TFPositionalEncoding1D
 
 
 epochs_num = 200
@@ -144,7 +142,7 @@ print(len(row_num))
 print(H_test.shape, H_test_noisy.shape)
 print(((H_test)**2).mean())
 
-K=3
+K = 3
 input_dim=(Nr,Nt,2*fre)
 reshape_input_dim = (1, int(2048 / key_dim_num), key_dim_num)
 num_heads = 4  # Number of attention heads
@@ -155,13 +153,14 @@ dropout_rate = 0.1
 # inputs = Input(shape=input_dim)
 # key_dim_num = 4
 inputs = Input(shape=reshape_input_dim)
-reshape_type = (0, 1, 2, 3)
+reshape_type = (0, 3, 1, 2)
 
 # transpose
 H_train_noisy = np.transpose(H_train_noisy, reshape_type)
 H_train = np.transpose(H_train, reshape_type)
 H_test_noisy = np.transpose(H_test_noisy, reshape_type)
 H_test = np.transpose(H_test, reshape_type)
+# change here
 # 将 H_train_noisy, H_train, H_test_noisy, H_test 调整为形状为 (None, 1, int(2048 / key_dim_num), key_dim_num) 的数组
 H_train_noisy = np.reshape(H_train_noisy, (-1, 1, int(2048 / key_dim_num), key_dim_num))
 H_train = np.reshape(H_train, (-1, 1, int(2048 / key_dim_num), key_dim_num))
@@ -172,14 +171,11 @@ H_test = np.reshape(H_test, (-1, 1, int(2048 / key_dim_num), key_dim_num))
 x = Rescaling(scale=1.0 / scale)(inputs)
 
 # learn positional encoding
-#position_encoding = Conv2D(filters=key_dim_num, kernel_size=(K, K), padding='Same', activation='relu')(x)
+# position_encoding = Conv2D(filters=key_dim_num, kernel_size=(K, K), padding='Same', activation='relu')(x)
 # Returns the position encoding only
 positional_encoding_model = TFPositionalEncoding1D(256)
 position_encoding = positional_encoding_model(tf.zeros((1,int(2048 / key_dim_num),key_dim_num)))
 position_encoding = tf.expand_dims(position_encoding, axis=0)
-print("x shape = ", x.shape)
-print("position_encoding shape = ", position_encoding.shape)
-# x = Add()([x, position_encoding])
 position_encoding = tf.tile(position_encoding, multiples=[999, 1, 1, 1])
 H_train_noisy = Add()([H_train_noisy, position_encoding])
 H_train = Add()([H_train, position_encoding])
@@ -231,10 +227,7 @@ print("int(2048 / key_dim_num): ", int(2048 / key_dim_num))
 print("H_test_noisy shape: ", H_test_noisy.shape)
 
 decoded_channel = CNN.predict(H_test_noisy)
-# 将 H_test 和 decoded_channel 重塑为相同的形状
-# tf.experimental.numpy.experimental_enable_numpy_behavior()
-#H_test = H_test.reshape(-1, 1, 1, 2048)
-#decoded_channel = decoded_channel.reshape(-1, 1, 1, 2048)
+
 nmse2=zeros((data_num_test-len(row_num),1), dtype=float)
 for n in range(data_num_test-len(row_num)):
     MSE = tf.reduce_sum(tf.square(H_test - decoded_channel))
@@ -245,4 +238,4 @@ max_value = tf.reduce_max(position_encoding)
 min_value = tf.reduce_min(position_encoding)
 print("Maximum value of position_encoding:", max_value.numpy())
 print("Minimum value of position_encoding:", min_value.numpy())
-print(nmse2.sum()/(data_num_test-len(row_num)))  # calculate NMSE of current training stage
+print("NMSE = ", nmse2.sum()/(data_num_test-len(row_num)))  # calculate NMSE of current training stage
