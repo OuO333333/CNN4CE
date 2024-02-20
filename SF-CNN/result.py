@@ -71,3 +71,29 @@ plt.savefig('Comparison of CNN and Transformers(Encoder with positional encoding
 # display the plot
 plt.grid(True)
 plt.show()
+
+####################################################################################################################
+
+# data
+x = [-10, -5, 0, 5, 10, 15, 20]
+
+# draw
+
+plt.plot(x, y2, marker='o', label='Transformers(Encoder), (Nt * Nr * channel)')
+plt.plot(x, y3, marker='o', label='Transformers(Encoder), (Nr * Nt * channel)')
+plt.plot(x, y4, marker='o', label='Transformers(Encoder), (channel * Nr * Nt)')
+
+# add title and axis labels
+plt.title('Transformers(Encoder with positional encoding)')
+plt.xlabel('SNR (dB)')
+plt.ylabel('NMSE')
+
+# add legend
+plt.legend()
+
+# save the plot
+plt.savefig('Transformers(Encoder with positional encoding)')
+
+# display the plot
+plt.grid(True)
+plt.show()
