@@ -51,11 +51,16 @@ y3 = [0.030377166345715523, 0.020921865478157997, 0.01644887961447239, 0.0136764
 
 # Transformers(Encoder, new version, with positional encoder, (4 * 16 * 32)), epochs = 200, lr = 0.0001, batch_size = 32
 y4 = [0.035654228180646896, 0.025894038379192352, 0.01961899921298027, 0.01625351794064045, 0.0141898263245821, 0.013078039512038231, 0.012580392882227898]
+
+# Transformers(Encoder, new version, with positional encoder, originnal shape), epochs = 200, lr = 0.0001, batch_size = 32
+y5 = [0.11000585556030273, 0.05076548457145691, 0.04574974998831749, 0.02721697837114334, 0.02782992459833622, 0.028809938579797745, 0.022801632061600685]
+
 # draw
 plt.plot(x, y1, marker='o', label='CNN')
 plt.plot(x, y2, marker='o', label='Transformers(Encoder), (Nt * Nr * channel)')
 plt.plot(x, y3, marker='o', label='Transformers(Encoder), (Nr * Nt * channel)')
 plt.plot(x, y4, marker='o', label='Transformers(Encoder), (channel * Nr * Nt)')
+plt.plot(x, y5, marker='o', label='Transformers(Encoder), original shape')
 
 # add title and axis labels
 plt.title('Comparison of CNN and Transformers(Encoder with positional encoding)')

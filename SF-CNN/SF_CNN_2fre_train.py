@@ -34,7 +34,7 @@ Nt=32
 Nt_beam=32
 Nr=16
 Nr_beam=16
-SNR_dB = 20
+SNR_dB = -10
 SNR=10.0**(SNR_dB/10.0) # transmit power
 print("SNR = ", SNR)
 # DFT matrix
@@ -150,10 +150,10 @@ dropout_rate = 0.1
 
 # Define the input layer
 # change here
-# inputs = Input(shape=input_dim)
-# key_dim_num = 4
-inputs = Input(shape=reshape_input_dim)
-reshape_type = (0, 3, 1, 2)
+inputs = Input(shape=input_dim)
+key_dim_num = 4
+# inputs = Input(shape=reshape_input_dim)
+reshape_type = (0, 1, 2, 3)
 
 # transpose
 H_train_noisy = np.transpose(H_train_noisy, reshape_type)
@@ -162,10 +162,10 @@ H_test_noisy = np.transpose(H_test_noisy, reshape_type)
 H_test = np.transpose(H_test, reshape_type)
 # change here
 # 将 H_train_noisy, H_train, H_test_noisy, H_test 调整为形状为 (None, 1, int(2048 / key_dim_num), key_dim_num) 的数组
-H_train_noisy = np.reshape(H_train_noisy, (-1, 1, int(2048 / key_dim_num), key_dim_num))
-H_train = np.reshape(H_train, (-1, 1, int(2048 / key_dim_num), key_dim_num))
-H_test_noisy = np.reshape(H_test_noisy, (-1, 1, int(2048 / key_dim_num), key_dim_num))
-H_test = np.reshape(H_test, (-1, 1, int(2048 / key_dim_num), key_dim_num))
+#H_train_noisy = np.reshape(H_train_noisy, (-1, 1, int(2048 / key_dim_num), key_dim_num))
+#H_train = np.reshape(H_train, (-1, 1, int(2048 / key_dim_num), key_dim_num))
+#H_test_noisy = np.reshape(H_test_noisy, (-1, 1, int(2048 / key_dim_num), key_dim_num))
+#H_test = np.reshape(H_test, (-1, 1, int(2048 / key_dim_num), key_dim_num))
 
 # Add a rescaling layer to normalize inputs
 x = Rescaling(scale=1.0 / scale)(inputs)
@@ -174,7 +174,9 @@ x = Rescaling(scale=1.0 / scale)(inputs)
 # position_encoding = Conv2D(filters=key_dim_num, kernel_size=(K, K), padding='Same', activation='relu')(x)
 # Returns the position encoding only
 positional_encoding_model = TFPositionalEncoding1D(256)
-position_encoding = positional_encoding_model(tf.zeros((1,int(2048 / key_dim_num),key_dim_num)))
+# change here
+#position_encoding = positional_encoding_model(tf.zeros((1,int(2048 / key_dim_num),key_dim_num)))
+position_encoding = positional_encoding_model(tf.zeros((16, 32, 4)))
 position_encoding = tf.expand_dims(position_encoding, axis=0)
 position_encoding = tf.tile(position_encoding, multiples=[999, 1, 1, 1])
 H_train_noisy = Add()([H_train_noisy, position_encoding])
