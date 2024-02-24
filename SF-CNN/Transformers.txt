@@ -70,7 +70,7 @@ vectors + BEGIN  + output 1  + output 2 -> Decoder -> output 3。
 Decoder 的第一部份為 Masked self attention,
 他的 input 為上一個 Decoder block 的 output。
 Masked self attention:
-qi 與 ki相乘時, 只看左逼的部份, 如
+qi 與 ki相乘時, 只看左邊的部份, 如
 b2 = soft-max(q2 * k1) * v1 + soft-max(q2 + k2) * v2,
 原本的 self attention 是全看:
 b2 = soft-max(q2 * k1) * v1 + soft-max(q2 + k2) * v2

@@ -22,13 +22,15 @@ from tf_encodings import TFPositionalEncoding1D
 
 epochs_num = 200
 batch_size_num = 32
-encoder_block_num = 9
+encoder_block_num = 0
+decoder_block_num = 9
 learning_rate_num = 1e-4
 key_dim_num = 256
 print("TensorFlow 版本:", tf.__version__)
 print("epochs_num = ", epochs_num)
 print("batch_size_num = ", batch_size_num)
 print("encoder_block_num = ", encoder_block_num)
+print("decoder_block_num = ", decoder_block_num)
 print("learning_rate_num = ", learning_rate_num)
 Nt=32
 Nt_beam=32
@@ -184,11 +186,10 @@ H_train = Add()([H_train, position_encoding])
 H_test_noisy = Add()([H_test_noisy, position_encoding])
 H_test = Add()([H_test, position_encoding])
 
-
+enc_output = None
 # Transformer Encoder Layer
 for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     # Multi-Head Attention
-    # key_dim 為 query 要看多少其他的 key
     attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, x)
     # Add & Norm
     x = Add()([x, attn_output])
@@ -196,10 +197,34 @@ for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
 
     # Feed Forward Layer
     ff_output = Dense(units=key_dim_num, activation='relu')(x)
-    #x = Conv2D(filters=64, kernel_size=(K, K), padding='Same', activation='relu')(x)
-    #x = BatchNormalization()(x)
     x = Add()([x, ff_output])
     x = LayerNormalization(epsilon=1e-6)(x)
+enc_output = x
+
+# Transformer Decoder Layer
+for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
+    # sequence mask
+    mask = tf.sequence_mask([8], maxlen=8, dtype=tf.float32)
+    mask = tf.expand_dims(tf.expand_dims(mask, axis=0), axis=0)
+
+    # Masked Multi-Head Attention (self-attention on decoder inputs)
+    attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, x, attention_mask=mask)
+    # Add & Norm
+    x = Add()([x, attn_output])
+    x = LayerNormalization(epsilon=1e-6)(x)
+
+    # Multi-Head Attention (attention to encoder outputs)
+    enc_output = enc_output  # Assuming encoder output is available
+    attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, enc_output)
+    # Add & Norm
+    x = Add()([x, attn_output])
+    x = LayerNormalization(epsilon=1e-6)(x)
+
+    # Feed Forward Layer
+    ff_output = Dense(units=key_dim_num, activation='relu')(x)
+    x = Add()([x, ff_output])
+    x = LayerNormalization(epsilon=1e-6)(x)
+
 
 # Output layer
 outputs = Conv2D(filters=key_dim_num, kernel_size=(K, K), padding='Same', activation='tanh')(x)
@@ -225,8 +250,8 @@ model.fit(H_train_noisy, H_train, epochs=epochs_num, batch_size=batch_size_num, 
 
 # load model
 CNN = tf.keras.models.load_model('CNN_UMi_3path_2fre_SNRminus10dB_200ep.tf')
-print("int(2048 / key_dim_num): ", int(2048 / key_dim_num))
-print("H_test_noisy shape: ", H_test_noisy.shape)
+#print("int(2048 / key_dim_num): ", int(2048 / key_dim_num))
+#print("H_test_noisy shape: ", H_test_noisy.shape)
 
 decoded_channel = CNN.predict(H_test_noisy)
 
