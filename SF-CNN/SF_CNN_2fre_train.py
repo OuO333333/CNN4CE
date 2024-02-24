@@ -22,8 +22,8 @@ from tf_encodings import TFPositionalEncoding1D
 
 epochs_num = 200
 batch_size_num = 32
-encoder_block_num = 0
-decoder_block_num = 9
+encoder_block_num = 4
+decoder_block_num = 4
 learning_rate_num = 1e-4
 key_dim_num = 256
 print("TensorFlow 版本:", tf.__version__)
@@ -36,7 +36,7 @@ Nt=32
 Nt_beam=32
 Nr=16
 Nr_beam=16
-SNR_dB = 20
+SNR_dB = -10
 SNR=10.0**(SNR_dB/10.0) # transmit power
 print("SNR = ", SNR)
 # DFT matrix
@@ -152,9 +152,9 @@ dropout_rate = 0.1
 
 # Define the input layer
 # change here
-#inputs = Input(shape=input_dim)
-#key_dim_num = 4
-inputs = Input(shape=reshape_input_dim)
+inputs = Input(shape=input_dim)
+key_dim_num = 4
+#inputs = Input(shape=reshape_input_dim)
 reshape_type = (0, 1, 2, 3)
 
 # transpose
@@ -164,10 +164,10 @@ H_test_noisy = np.transpose(H_test_noisy, reshape_type)
 H_test = np.transpose(H_test, reshape_type)
 # change here
 # 将 H_train_noisy, H_train, H_test_noisy, H_test 调整为形状为 (None, 1, int(2048 / key_dim_num), key_dim_num) 的数组
-H_train_noisy = np.reshape(H_train_noisy, (-1, 1, int(2048 / key_dim_num), key_dim_num))
-H_train = np.reshape(H_train, (-1, 1, int(2048 / key_dim_num), key_dim_num))
-H_test_noisy = np.reshape(H_test_noisy, (-1, 1, int(2048 / key_dim_num), key_dim_num))
-H_test = np.reshape(H_test, (-1, 1, int(2048 / key_dim_num), key_dim_num))
+#H_train_noisy = np.reshape(H_train_noisy, (-1, 1, int(2048 / key_dim_num), key_dim_num))
+#H_train = np.reshape(H_train, (-1, 1, int(2048 / key_dim_num), key_dim_num))
+#H_test_noisy = np.reshape(H_test_noisy, (-1, 1, int(2048 / key_dim_num), key_dim_num))
+#H_test = np.reshape(H_test, (-1, 1, int(2048 / key_dim_num), key_dim_num))
 
 # Add a rescaling layer to normalize inputs
 x = Rescaling(scale=1.0 / scale)(inputs)
@@ -177,8 +177,8 @@ x = Rescaling(scale=1.0 / scale)(inputs)
 # Returns the position encoding only
 positional_encoding_model = TFPositionalEncoding1D(256)
 # change here
-position_encoding = positional_encoding_model(tf.zeros((1,int(2048 / key_dim_num),key_dim_num)))
-#position_encoding = positional_encoding_model(tf.zeros((16, 32, 4)))
+#position_encoding = positional_encoding_model(tf.zeros((1,int(2048 / key_dim_num),key_dim_num)))
+position_encoding = positional_encoding_model(tf.zeros((16, 32, 4)))
 position_encoding = tf.expand_dims(position_encoding, axis=0)
 position_encoding = tf.tile(position_encoding, multiples=[999, 1, 1, 1])
 H_train_noisy = Add()([H_train_noisy, position_encoding])
@@ -203,8 +203,10 @@ enc_output = x
 
 # Transformer Decoder Layer
 for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
+    # change here
     # sequence mask
-    mask = tf.sequence_mask([8], maxlen=8, dtype=tf.float32)
+    #mask = tf.sequence_mask([8], maxlen=8, dtype=tf.float32)
+    mask = tf.sequence_mask([32], maxlen=32, dtype=tf.float32)
     mask = tf.expand_dims(tf.expand_dims(mask, axis=0), axis=0)
 
     # Masked Multi-Head Attention (self-attention on decoder inputs)

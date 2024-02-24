@@ -30,27 +30,7 @@ SNR(dB)		NMSE
      15		0.09042117733683336
      20		0.07431391089906239
 ---------------------------------------------------------------------------------------------
-Transformers(Encoder, v1), epochs = 40, lr = 0.0001, batch_size = 32
-SNR(dB)		NMSE
-    -10		0.9770831849262505, 0.8134316863427159
-     -5		0.7012182835272307
-      0		0.49189052603046274
-      5		0.39420415368532674
-     10		0.23643466031546911
-     15		0.19068080361620274
-     20		0.14560928882392193
-     
-Transformers(Encoder, v1), epochs = 200, lr = 0.0001, batch_size = 32
-SNR(dB)		NMSE
-    -10		0.9228426684052887
-     -5		0.6831239491929525
-      0		0.2941315855551049
-      5		0.14006600876597874(better than CNN)
-     10		0.1021696856387804(better than CNN)
-     15		0.06976020783386723(better than CNN)
-     20		0.04713466330402714, 0.116335418982825(better than CNN)
----------------------------------------------------------------------------------------------
-Transformers(Encoder, new version, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+Transformers(Encoder without positional encoding, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
 SNR(dB)		NMSE
     -10		1.0034997822283107
      -5		1.0022078917963781
@@ -60,7 +40,7 @@ SNR(dB)		NMSE
      15		0.08693595202165977
      20		0.055574757864449695
      
-Transformers(Encoder, new version, (4 * 16 * 32)), epochs = 200, lr = 0.0001, batch_size = 32
+Transformers(Encoder without positional encoding, (4 * 16 * 32)), epochs = 200, lr = 0.0001, batch_size = 32
 SNR(dB)		NMSE
     -10		1.0056178096656145
      -5		1.0051167132633074
@@ -70,7 +50,7 @@ SNR(dB)		NMSE
      15		0.14973634341748948
      20		0.10742040065425469
      
-Transformers(Encoder, new version, (32 * 16 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+Transformers(Encoder without positional encoding, (32 * 16 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
 SNR(dB)		NMSE
     -10		1.005581103661059
      -5		1.023077848010152
@@ -80,7 +60,7 @@ SNR(dB)		NMSE
      15		0.0907570120291898
      20		0.052233937396309695
 ---------------------------------------------------------------------------------------------
-Transformers(Encoder, new version, with positional encoder, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+Transformers(Encoder, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
 SNR(dB)		NMSE
     -10		0.030377166345715523
      -5		0.020921865478157997
@@ -90,7 +70,7 @@ SNR(dB)		NMSE
      15		0.01129317656159401
      20		0.011004100553691387
      
-Transformers(Encoder, new version, with positional encoder, (4 * 16 * 32)), epochs = 200, lr = 0.0001, batch_size = 32
+Transformers(Encoder, (4 * 16 * 32)), epochs = 200, lr = 0.0001, batch_size = 32
 SNR(dB)		NMSE
     -10		0.035654228180646896
      -5		0.025894038379192352
@@ -100,7 +80,7 @@ SNR(dB)		NMSE
      15		0.013078039512038231
      20		0.012580392882227898
 
-Transformers(Encoder, new version, with positional encoder, (32 * 16 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+Transformers(Encoder, (32 * 16 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
 SNR(dB)		NMSE
     -10		0.030933775007724762
      -5		0.021904414519667625
@@ -110,7 +90,7 @@ SNR(dB)		NMSE
      15		0.011840230785310268
      20		0.011266968213021755
 
-Transformers(Encoder, new version, with positional encoder, originnal shape), epochs = 200, lr = 0.0001, batch_size = 32
+Transformers(Encoder, originnal shape), epochs = 200, lr = 0.0001, batch_size = 32
 SNR(dB)		NMSE
     -10		0.11000585556030273
      -5		0.05076548457145691
@@ -119,6 +99,46 @@ SNR(dB)		NMSE
      10		0.02782992459833622
      15		0.028809938579797745
      20		0.022801632061600685
+---------------------------------------------------------------------------------------------
+Transformers(Encoder * 4 + Decoder * 4, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+SNR(dB)		NMSE
+    -10		0.030267110094428062
+     -5		0.02098541334271431
+      0		0.01601572334766388
+      5		0.013475433923304081
+     10		0.011958678252995014
+     15		0.011369548738002777
+     20		0.010842051357030869
+
+Transformers(Encoder * 4 + Decoder * 4, (32 * 16 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+SNR(dB)		NMSE
+    -10		0.030723894014954567
+     -5		0.02155248448252678
+      0		0.016488781198859215
+      5		0.013753222301602364
+     10		0.012413587421178818
+     15		0.011544693261384964
+     20		0.011497770436108112
+
+Transformers(Encoder * 4 + Decoder * 4, (4 * 16 * 32)), epochs = 200, lr = 0.0001, batch_size = 32
+SNR(dB)		NMSE
+    -10		0.035857681185007095
+     -5		0.026454109698534012
+      0		0.019532108679413795
+      5		0.016106395050883293
+     10		0.01433786004781723
+     15		0.01295443531125784
+     20	        0.012212691828608513
+
+Transformers(Encoder * 4 + Decoder * 4, originnal shape), epochs = 200, lr = 0.0001, batch_size = 32
+SNR(dB)		NMSE
+    -10		
+     -5		
+      0		
+      5		
+     10		
+     15		
+     20	        
 ---------------------------------------------------------------------------------------------
 Transformers(Encoder * 9 + Decoder * 9, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
 SNR(dB)		NMSE
@@ -199,3 +219,23 @@ SNR(dB)		NMSE
      10		
      15		
      20		0.010852125473320484
+
+Transformers(Encoder * 5 + Decoder * 5, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+SNR(dB)		NMSE
+    -10		
+     -5		
+      0		
+      5		
+     10		
+     15		
+     20		0.011175029911100864	
+
+Transformers(Encoder * 3 + Decoder * 3, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+SNR(dB)		NMSE
+    -10		
+     -5		
+      0		
+      5		
+     10		
+     15		
+     20		0.010860620066523552
