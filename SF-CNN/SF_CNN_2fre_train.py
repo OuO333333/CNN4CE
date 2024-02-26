@@ -20,7 +20,7 @@ from tensorflow.keras.layers import Conv2D
 from tf_encodings import TFPositionalEncoding1D
 
 
-epochs_num = 1
+epochs_num = 200
 batch_size_num = 32
 encoder_block_num = 4
 decoder_block_num = 4
@@ -36,7 +36,7 @@ Nt=32
 Nt_beam=32
 Nr=16
 Nr_beam=16
-SNR_dB = -10
+SNR_dB = 20
 SNR=10.0**(SNR_dB/10.0) # transmit power
 print("SNR = ", SNR)
 # DFT matrix
@@ -155,7 +155,7 @@ dropout_rate = 0.1
 #inputs = Input(shape=input_dim)
 #key_dim_num = 4
 inputs = Input(shape=reshape_input_dim)
-reshape_type = (0, 1, 2, 3)
+reshape_type = (0, 3, 1, 2)
 
 # transpose
 H_train_noisy = np.transpose(H_train_noisy, reshape_type)
@@ -268,3 +268,9 @@ min_value = tf.reduce_min(position_encoding)
 print("Maximum value of position_encoding:", max_value.numpy())
 print("Minimum value of position_encoding:", min_value.numpy())
 print("NMSE = ", nmse2.sum()/(data_num_test-len(row_num)))  # calculate NMSE of current training stage
+def Sumrate(h_test,h_est,bandwidth):
+    numerator = np.sum((h_test-h_est)**2)
+    denominator = np.sum((h_test-np.mean(h_test))**2)
+    rate = bandwidth * np.log2(1+(2*denominator-numerator)/denominator)
+    return rate
+print("Sumrate(bandwidth = 10) = ", Sumrate(H_test, decoded_channel, 10))  # calculate NMSE of current training stage
