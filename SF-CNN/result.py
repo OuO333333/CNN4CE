@@ -118,13 +118,12 @@ y7 = [0.030267110094428062, 0.02098541334271431, 0.01601572334766388, 0.01347543
 y8 = [0.035857681185007095, 0.026454109698534012, 0.019532108679413795, 0.016106395050883293, 0.01433786004781723, 0.01295443531125784, 0.012212691828608513]
 
 # draw
-
+plt.plot(x, y4, marker='o', label='Transformers(Encoder), (channel * Nr * Nt)', color='green')
+plt.plot(x, y8, marker='o', label='Transformers(Encoder + Decoder), (channel * Nr * Nt)', color=(127/255, 255/255, 0))
 plt.plot(x, y2, marker='o', label='Transformers(Encoder), (Nt * Nr * channel)', color='blue')
-plt.plot(x, y3, marker='o', label='Transformers(Encoder), (Nr * Nt * channel)', color=(0.5, 0.5, 1))
-plt.plot(x, y4, marker='o', label='Transformers(Encoder), (channel * Nr * Nt)', color=(0, 0, 0.5))
-plt.plot(x, y6, marker='o', label='Transformers(Encoder + Decoder), (Nt * Nr * channel)', color=(1, 0.5, 0.5))
-plt.plot(x, y7, marker='o', label='Transformers(Encoder + Decoder), (Nr * Nt * channel)', color='red')
-plt.plot(x, y8, marker='o', label='Transformers(Encoder + Decoder), (channel * Nr * Nt)', color=(0.5, 0, 0))
+plt.plot(x, y6, marker='o', label='Transformers(Encoder + Decoder), (Nt * Nr * channel)', color=(102/255, 178/255, 255/255))
+plt.plot(x, y3, marker='o', label='Transformers(Encoder), (Nr * Nt * channel)', color='red')
+plt.plot(x, y7, marker='o', label='Transformers(Encoder + Decoder), (Nr * Nt * channel)', color=(255/255, 102/255, 102/255))
 # add title and axis labels
 plt.title('Comparison of Transformers(Encoder + Decoder)  and Transformers(Encoder)')
 plt.xlabel('SNR (dB)')
