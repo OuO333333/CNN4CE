@@ -176,5 +176,11 @@ for n in range(data_num_test-len(row_num)):
     MSE=((H_test[n,:,:,:]-decoded_channel[n,:,:,:])**2).sum()
     norm_real=((H_test[n,:,:,:])**2).sum()
     nmse2[n]=MSE/norm_real
-print(nmse2.sum()/(data_num_test-len(row_num)))  # calculate NMSE of current training stage
+print("NMSE = ", nmse2.sum()/(data_num_test-len(row_num)))  # calculate NMSE of current training stage
 
+def Sumrate(h_test,h_est,bandwidth):
+    numerator = np.sum((h_test-h_est)**2)
+    denominator = np.sum((h_test-np.mean(h_test))**2)
+    rate = bandwidth * np.log2(1+(2*denominator-numerator)/denominator)
+    return rate
+print("Sumrate(bandwidth = 10) = ", Sumrate(H_test, decoded_channel, 10))  # calculate NMSE of current training stage
