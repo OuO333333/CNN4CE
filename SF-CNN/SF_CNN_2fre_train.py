@@ -8,6 +8,7 @@ from numpy import *
 import numpy as np
 import numpy.linalg as LA
 import os
+import sys
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import tensorflow as tf
 config = tf.compat.v1.ConfigProto()
@@ -20,7 +21,7 @@ from tensorflow.keras.layers import Conv2D
 from tf_encodings import TFPositionalEncoding1D
 
 
-epochs_num = 200
+epochs_num = 1
 batch_size_num = 32
 encoder_block_num = 4
 decoder_block_num = 4
@@ -36,7 +37,14 @@ Nt=32
 Nt_beam=32
 Nr=16
 Nr_beam=16
-SNR_dB = 20
+SNR_dB = 15
+# get command line argv
+args = sys.argv
+if len(args) == 2:
+    try:
+        SNR_dB = int(args[1])
+    except ValueError:
+        print("intput not valid")
 SNR=10.0**(SNR_dB/10.0) # transmit power
 print("SNR = ", SNR)
 # DFT matrix
@@ -155,7 +163,7 @@ dropout_rate = 0.1
 #inputs = Input(shape=input_dim)
 #key_dim_num = 4
 inputs = Input(shape=reshape_input_dim)
-reshape_type = (0, 3, 1, 2)
+reshape_type = (0, 1, 2, 3)
 
 # transpose
 H_train_noisy = np.transpose(H_train_noisy, reshape_type)
@@ -274,3 +282,36 @@ def Sumrate(h_test,h_est,bandwidth):
     rate = bandwidth * np.log2(1+(2*denominator-numerator)/denominator)
     return rate
 print("Sumrate(bandwidth = 10) = ", Sumrate(H_test, decoded_channel, 10))  # calculate NMSE of current training stage
+
+def print_shape(reshape_type):
+    shapes = {'Nr': 0, 'Nt': 1, 'channel': 2}
+    shape_order = [None] * 3
+    for shape, index in shapes.items():
+        shape_order[index] = shape
+
+    # 重新排列形状顺序
+    reshaped_order = [shape_order[i] for i in reshape_type]
+
+    # 打印结果
+    print(f"({', '.join(reshaped_order)})")
+
+# 打开文件以写入模式
+with open('output.txt', 'a') as f:
+    # 保存原始的标准输出
+    original_stdout = sys.stdout
+    
+    # 将标准输出重定向到文件
+    sys.stdout = f
+
+    # 执行print语句，输出将被重定向到文件中
+    print("Encoder * ", encoder_block_num, ", Decoder * ", decoder_block_num, ", reshape_type = ", end='')
+    if reshape_type == (0, 1, 2, 3):
+        print("(Nr, Nt, channel)")
+    elif reshape_type == (0, 2, 1, 3):
+        print("(Nt, Nr, channel)")
+    elif reshape_type == (0, 3, 1, 2):
+        print("(channel, Nr, Nt)")
+    print("   ", '{:>3}'.format(SNR_dB), "        ", '{:>20}'.format(nmse2.sum()/(data_num_test-len(row_num))), "        ", '{:>20}'.format(Sumrate(H_test, decoded_channel, 10)))
+
+    # 恢复原始的标准输出
+    sys.stdout = original_stdout
