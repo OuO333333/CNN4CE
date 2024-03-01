@@ -1,7 +1,7 @@
 import subprocess
 import sys
 
-with open('output.txt', 'a') as f:
+with open('output.txt', 'w') as f:
     # 保存原始的标准输出
     original_stdout = sys.stdout
     

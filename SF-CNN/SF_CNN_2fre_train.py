@@ -21,7 +21,7 @@ from tensorflow.keras.layers import Conv2D
 from tf_encodings import TFPositionalEncoding1D
 
 
-epochs_num = 1
+epochs_num = 200
 batch_size_num = 32
 encoder_block_num = 4
 decoder_block_num = 4
@@ -37,7 +37,7 @@ Nt=32
 Nt_beam=32
 Nr=16
 Nr_beam=16
-SNR_dB = 15
+SNR_dB = 20
 # get command line argv
 args = sys.argv
 if len(args) == 2:
