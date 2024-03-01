@@ -19,6 +19,9 @@ from tensorflow.keras.layers.experimental.preprocessing import Rescaling
 from tensorflow.keras.layers import Add
 from tensorflow.keras.layers import Conv2D
 from tf_encodings import TFPositionalEncoding1D
+from tcan_tensorflow.layers.layers import SparseAttention
+from sparse_attention import SelfAttention
+
 
 
 epochs_num = 1
@@ -218,7 +221,11 @@ for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
     mask = tf.expand_dims(tf.expand_dims(mask, axis=0), axis=0)
 
     # Masked Multi-Head Attention (self-attention on decoder inputs)
-    attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, x, attention_mask=mask)
+    # attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, x, attention_mask=mask)
+    attn_output = SelfAttention(units=8)(x)
+    print("x shape = ", x.shape)
+    print("attn_output shape = ", attn_output.shape)
+
     # Add & Norm
     x = Add()([x, attn_output])
     x = LayerNormalization(epsilon=1e-6)(x)
