@@ -1,48 +1,42 @@
-from tensorflow.keras.layers import Layer
-from tensorflow.keras.layers import Activation
 import tensorflow as tf
 
-class SelfAttention(Layer):
-    def __init__(self, units, **kwargs):
+class SelfAttention(tf.keras.layers.Layer):
+    def __init__(self, d_k, d_v, d_model, **kwargs):
         super(SelfAttention, self).__init__(**kwargs)
-        self.units = units
+        self.d_k = d_k  # Dimension of key vector
+        self.d_v = d_v  # Dimension of value vector
+        self.d_model = d_model  # Dimension of model (same as input feature dimension)
 
-    def build(self, input_shape):
-        self.Wq = self.add_weight(name='Wq', shape=(input_shape[-1], self.units), initializer='random_normal', trainable=True)
-        self.Wk = self.add_weight(name='Wk', shape=(input_shape[-1], self.units), initializer='random_normal', trainable=True)
-        self.Wv = self.add_weight(name='Wv', shape=(input_shape[-1], self.units), initializer='random_normal', trainable=True)
-        self.softmax = Activation('softmax')
-        super(SelfAttention, self).build(input_shape)
+        # Create trainable weights with appropriate shapes
+        self.Wq = self.add_weight(name='Wq', shape=(self.d_model, d_k), initializer='glorot_uniform', trainable=True)
+        self.Wk = self.add_weight(name='Wk', shape=(self.d_model, d_k), initializer='glorot_uniform', trainable=True)
+        self.Wv = self.add_weight(name='Wv', shape=(self.d_model, d_v), initializer='glorot_uniform', trainable=True)
 
-    def call(self, inputs):
-        an = inputs
-        # (None, 1, 8, 256)
-        print("an shape = ", an.shape)
-        
-        # Compute qn and kn
-        qn = tf.matmul(an, self.Wq)
-        # (None, 1, 8, units)
-        kn = tf.matmul(an, self.Wk)
-        # (None, 1, 8, units)
-        print("qn shape = ", qn.shape)
-        print("kn shape = ", kn.shape)
-        
-        # Compute alpha_n
-        alpha_n = tf.matmul(qn, kn, transpose_b=True)
-        print("alpha_n shape = ", alpha_n.shape)
-        # Apply softmax
-        alpha_n_softmax = self.softmax(alpha_n)
-        print("self.Wv shape = ", self.Wv.shape)
-        print("alpha_n_softmax shape = ", alpha_n_softmax.shape)
-        # Compute output
-        output = tf.matmul(alpha_n_softmax, self.Wv)
+    def call(self, inputs, mask=None):
+        # Reshape input to facilitate efficient matrix multiplication
+        batch_size, seq_len, feature_dim = inputs[0], 8, 256
+        inputs_reshaped = tf.squeeze(inputs, axis=1)  # (B, L, F)
+
+        # Project input features to query, key, and value vectors
+        Q = tf.matmul(inputs_reshaped, self.Wq)  # (B, L, d_k)
+        K = tf.matmul(inputs_reshaped, self.Wk)  # (B, L, d_k)
+        V = tf.matmul(inputs_reshaped, self.Wv)  # (B, L, d_v)
+
+        # Scaled dot-product attention
+        scores = tf.matmul(Q, K, transpose_b=True) / tf.math.sqrt(tf.cast(self.d_k, tf.float32))  # (B, L, L)
+
+        # Apply masking if provided
+        if mask is not None:
+            scores = scores * mask - tf.constant(1e10, dtype=tf.float32) * (1 - mask)
+
+        # Apply softmax for attention weights
+        attention_weights = tf.nn.softmax(scores, axis=-1)  # (B, L, L)
+
+        # Context vector (weighted sum of values)
+        output = tf.matmul(attention_weights, V)  # (B, L, d_v)
+
+        # Reshape output to match original input
+        output = tf.reshape(output, (tf.shape(inputs)[0], 1, 8, 256))
+
 
         return output
-
-    def compute_output_shape(self, input_shape):
-        return input_shape[:-1] + (input_shape[1], input_shape[2])
-
-    def get_config(self):
-        config = super(SelfAttention, self).get_config()
-        config.update({'units': self.units})
-        return config

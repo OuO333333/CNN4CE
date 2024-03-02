@@ -24,7 +24,7 @@ from sparse_attention import SelfAttention
 
 
 
-epochs_num = 1
+epochs_num = 200
 batch_size_num = 32
 encoder_block_num = 4
 decoder_block_num = 4
@@ -221,8 +221,10 @@ for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
     mask = tf.expand_dims(tf.expand_dims(mask, axis=0), axis=0)
 
     # Masked Multi-Head Attention (self-attention on decoder inputs)
-    # attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, x, attention_mask=mask)
-    attn_output = SelfAttention(units=8)(x)
+    #attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, x, attention_mask=mask)
+    # 创建 SelfAttention 层实例
+    self_attention_layer = SelfAttention(d_k=256, d_v=256, d_model=256)
+    attn_output = self_attention_layer(x)
     print("x shape = ", x.shape)
     print("attn_output shape = ", attn_output.shape)
 
