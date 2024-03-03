@@ -20,7 +20,7 @@ from tensorflow.keras.layers import Add
 from tensorflow.keras.layers import Conv2D
 from tf_encodings import TFPositionalEncoding1D
 from tcan_tensorflow.layers.layers import SparseAttention
-from sparse_attention import SelfAttention
+from sparse_attention import SelfAttention, Multi_Head_Attention
 
 
 
@@ -91,6 +91,13 @@ for filename in os.listdir(filedir):
         for j in range(fre):
             a=channel[:,:,j,i]
             H=np.transpose(a)
+            
+            # create matrix IRS
+            IRS = np.eye(H.shape[1])
+
+            # Multiply Y by the matrix IRS
+            H = np.dot(H, IRS)
+            
             H_re=np.real(H)
             H_im = np.imag(H)
             H_train[n*data_num_file+i,:,:,2*j]=H_re/scale
@@ -131,6 +138,13 @@ for filename in os.listdir(filedir):
         for j in range(fre):
             a=channel[:,:,j,i]
             H = np.transpose(a)
+
+            # create matrix IRS
+            IRS = np.eye(H.shape[1])
+
+            # Multiply Y by the matrix IRS
+            H = np.dot(H, IRS)
+            
             H_re = np.real(H)
             H_im = np.imag(H)
             H_test[n*data_num_file+i, :, :, 2 * j] = H_re / scale
@@ -201,7 +215,10 @@ enc_output = None
 # Transformer Encoder Layer
 for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     # Multi-Head Attention
-    attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, x)
+    # attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, x)
+    #self_attention_layer = SelfAttention(d_k=256, d_v=256, d_model=256)
+    self_attention_layer = Multi_Head_Attention(d_k=256, d_v=256, d_model=256, num_heads = 4)
+    attn_output = self_attention_layer(x)
     # Add & Norm
     x = Add()([x, attn_output])
     x = LayerNormalization(epsilon=1e-6)(x)
@@ -223,10 +240,11 @@ for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
     # Masked Multi-Head Attention (self-attention on decoder inputs)
     #attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, x, attention_mask=mask)
     # 创建 SelfAttention 层实例
-    self_attention_layer = SelfAttention(d_k=256, d_v=256, d_model=256)
-    attn_output = self_attention_layer(x)
-    print("x shape = ", x.shape)
-    print("attn_output shape = ", attn_output.shape)
+    # self_attention_layer = SelfAttention(d_k=256, d_v=256, d_model=256)
+    self_attention_layer = Multi_Head_Attention(d_k=256, d_v=256, d_model=256, num_heads = 4)
+    attn_output = self_attention_layer(x, mask = mask)
+    #print("x shape = ", x.shape)
+    #print("attn_output shape = ", attn_output.shape)
 
     # Add & Norm
     x = Add()([x, attn_output])
