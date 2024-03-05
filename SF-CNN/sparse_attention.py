@@ -1,4 +1,5 @@
 import tensorflow as tf
+import numpy as np
 
 class SelfAttention(tf.keras.layers.Layer):
     def __init__(self, d_k, d_v, d_model, **kwargs):
@@ -72,21 +73,24 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
             trainable=True
         )
 
-        # Final projection layer to combine heads
-        # self.dense = tf.keras.layers.Dense(d_model, activation='linear')
-
-    def call(self, inputs, mask=None):
+    def call(self, inputs, mask = None, enc_output = None):
         batch_size, seq_len, feature_dim = tf.shape(inputs)[0], 8, 256
         inputs_reshaped = tf.squeeze(inputs, axis=1)  # (B, L, F)
+        if enc_output is not None:
+            enc_output_reshaped = tf.squeeze(enc_output, axis=1)  # (B, L, F)
 
-        final_output = tf.zeros_like(inputs)  # 初始化 final_output
+        total_output = tf.zeros_like(inputs)  # Initialize the total_output
 
-        # 循环处理每个头
+        # Process each head iteratively
         for i in range(self.num_heads):
-            # 计算第 i 个头的查询、键和值
+            # Compute the query, key, and value for the i-th head
             Q = tf.matmul(inputs_reshaped, self.Wq[i])  # (B, L, d_k)
-            K = tf.matmul(inputs_reshaped, self.Wk[i])  # (B, L, d_k)
-            V = tf.matmul(inputs_reshaped, self.Wv[i])  # (B, L, d_v)
+            if enc_output is not None:
+                K = tf.matmul(enc_output_reshaped, self.Wk[i])  # (B, L, d_k)
+                V = tf.matmul(enc_output_reshaped, self.Wv[i])  # (B, L, d_v)
+            else:
+                K = tf.matmul(inputs_reshaped, self.Wk[i])  # (B, L, d_k)
+                V = tf.matmul(inputs_reshaped, self.Wv[i])  # (B, L, d_v)
             
             # Scaled dot-product attention
             scores = tf.matmul(Q, K, transpose_b=True) / tf.math.sqrt(tf.cast(self.d_k, tf.float32))  # (B, L, L)
@@ -95,6 +99,12 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
             if mask is not None:
                 scores = scores * mask - tf.constant(1e10, dtype=tf.float32) * (1 - mask)
             
+            # Apply sparse attention mask
+            # mask = atrous_self_attention_mask(8, 2)
+            # mask = local_self_attention_mask(8, 2)
+            # mask = stride_sparse_self_attention_mask(8, 2, 2)
+            # scores = scores * mask - tf.constant(1e10, dtype=tf.float32) * (1 - mask)
+
             # Apply softmax for attention weights
             attention_weights = tf.nn.softmax(scores, axis=-1)  # (B, L, L)
             
@@ -104,10 +114,46 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
             # Reshape output to match original input
             output = tf.reshape(output, (tf.shape(inputs)[0], 1, 8, 256))
 
-            # 将所有头的输出连接起来
-            final_output += output
+            # Sum up the outputs of all heads
+            total_output += output
         
-        # 算平均
-        final_output = final_output / self.num_heads
+        # Calculate the average
+        total_output = total_output / self.num_heads
 
-        return final_output
+        return total_output
+
+def atrous_self_attention_mask(N, dilation_rate):
+    # [[1. 0. 1. 0. 1. 0.]
+    #  [0. 1. 0. 1. 0. 1.]
+    #  [1. 0. 1. 0. 1. 0.]
+    #  [0. 1. 0. 1. 0. 1.]
+    #  [1. 0. 1. 0. 1. 0.]
+    #  [0. 1. 0. 1. 0. 1.]]
+    mask = np.zeros((N, N))
+    for i in range(N):
+        for j in range(N):
+            if abs(i - j) % dilation_rate == 0:
+                mask[i, j] = 1
+    return mask
+
+def local_self_attention_mask(N, window_size):
+    # [[1. 1. 1. 0. 0. 0.]
+    #  [1. 1. 1. 1. 0. 0.]
+    #  [1. 1. 1. 1. 1. 0.]
+    #  [0. 1. 1. 1. 1. 1.]
+    #  [0. 0. 1. 1. 1. 1.]
+    #  [0. 0. 0. 1. 1. 1.]]
+    mask = np.zeros((N, N))
+    for i in range(N):
+        for j in range(N):
+            if abs(i - j) <= window_size:
+                mask[i, j] = 1
+    return mask
+
+def stride_sparse_self_attention_mask(N, local_range, stride):
+    mask = np.zeros((N, N))
+    for i in range(N):
+        for j in range(N):
+            if abs(j - i) <= local_range or abs(j - i) % stride == 0:
+                mask[i, j] = 1
+    return mask

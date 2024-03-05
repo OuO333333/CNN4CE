@@ -26,8 +26,8 @@ from sparse_attention import SelfAttention, Multi_Head_Attention
 
 epochs_num = 200
 batch_size_num = 32
-encoder_block_num = 4
-decoder_block_num = 4
+encoder_block_num = 3
+decoder_block_num = 3
 learning_rate_num = 1e-4
 key_dim_num = 256
 print("TensorFlow 版本:", tf.__version__)
@@ -40,7 +40,7 @@ Nt=32
 Nt_beam=32
 Nr=16
 Nr_beam=16
-SNR_dB = 15
+SNR_dB = 20
 # get command line argv
 args = sys.argv
 if len(args) == 2:
@@ -227,6 +227,7 @@ for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     ff_output = Dense(units=key_dim_num, activation='relu')(x)
     x = Add()([x, ff_output])
     x = LayerNormalization(epsilon=1e-6)(x)
+
 enc_output = x
 
 # Transformer Decoder Layer
@@ -238,13 +239,10 @@ for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
     mask = tf.expand_dims(tf.expand_dims(mask, axis=0), axis=0)
 
     # Masked Multi-Head Attention (self-attention on decoder inputs)
-    #attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, x, attention_mask=mask)
+    # attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, x, attention_mask=mask)
     # 创建 SelfAttention 层实例
-    # self_attention_layer = SelfAttention(d_k=256, d_v=256, d_model=256)
-    self_attention_layer = Multi_Head_Attention(d_k=256, d_v=256, d_model=256, num_heads = 4)
-    attn_output = self_attention_layer(x, mask = mask)
-    #print("x shape = ", x.shape)
-    #print("attn_output shape = ", attn_output.shape)
+    masked_self_attention_layer = Multi_Head_Attention(d_k=256, d_v=256, d_model=256, num_heads = 4)
+    attn_output = masked_self_attention_layer(x, mask = mask)
 
     # Add & Norm
     x = Add()([x, attn_output])
@@ -252,7 +250,9 @@ for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
 
     # Multi-Head Attention (attention to encoder outputs)
     enc_output = enc_output  # Assuming encoder output is available
-    attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, enc_output)
+    # attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, enc_output)
+    cross_attention_layer = Multi_Head_Attention(d_k=256, d_v=256, d_model=256, num_heads = 4)
+    attn_output = cross_attention_layer(x, enc_output = enc_output)
     # Add & Norm
     x = Add()([x, attn_output])
     x = LayerNormalization(epsilon=1e-6)(x)
