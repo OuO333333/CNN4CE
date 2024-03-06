@@ -19,7 +19,6 @@ from tensorflow.keras.layers.experimental.preprocessing import Rescaling
 from tensorflow.keras.layers import Add
 from tensorflow.keras.layers import Conv2D
 from tf_encodings import TFPositionalEncoding1D
-from tcan_tensorflow.layers.layers import SparseAttention
 from sparse_attention import SelfAttention, Multi_Head_Attention
 
 
