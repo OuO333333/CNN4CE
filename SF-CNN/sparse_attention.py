@@ -74,7 +74,10 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
         )
 
     def call(self, inputs, mask = None, enc_output = None):
-        batch_size, seq_len, feature_dim = tf.shape(inputs)[0], 8, 256
+        batch_size =  tf.shape(inputs)[0]
+        shape = inputs.get_shape().as_list()
+        seq_len = int(shape[1] * shape[2] * shape[3] / self.d_model)
+        feature_dim = self.d_model
         inputs_reshaped = tf.squeeze(inputs, axis=1)  # (B, L, F)
         if enc_output is not None:
             enc_output_reshaped = tf.squeeze(enc_output, axis=1)  # (B, L, F)
@@ -100,9 +103,9 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
                 scores = scores * mask - tf.constant(1e10, dtype=tf.float32) * (1 - mask)
             
             # Apply sparse attention mask
-            mask = atrous_self_attention_mask(N = 8, dilation_rate = 2)
-            # mask = local_self_attention_mask(N = 8, window_size = 2)
-            # mask = stride_sparse_self_attention_mask(N = 8, local_range = 2, stride = 2)
+            mask = atrous_self_attention_mask(N = seq_len, dilation_rate = 2)
+            # mask = local_self_attention_mask(N = seq_len, window_size = 2)
+            # mask = stride_sparse_self_attention_mask(N = seq_len, local_range = 2, stride = 2)
             scores = scores * mask - tf.constant(1e10, dtype=tf.float32) * (1 - mask)
 
             # Apply softmax for attention weights
@@ -112,7 +115,7 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
             output = tf.matmul(attention_weights, V)  # (B, L, d_v)
 
             # Reshape output to match original input
-            output = tf.reshape(output, (tf.shape(inputs)[0], 1, 8, 256))
+            output = tf.reshape(output, (tf.shape(inputs)[0], 1, seq_len, feature_dim))
 
             # Sum up the outputs of all heads
             total_output += output
