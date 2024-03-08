@@ -122,6 +122,12 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
         
         # Calculate the average
         total_output = total_output / self.num_heads
+        #print("inputs shape = ", inputs) # (None, 1, 8, 256)
+        #print("inputs_reshaped shape = ", inputs_reshaped) # (None, 8, 256)
+        #print("Q shape = ", Q) # (None, 8, 256)
+        #print("scores shape = ", scores) # (None, 8, 8)
+        #print("attention_weights shape = ", attention_weights) # (None, 8, 8)
+        #print("total_output shape = ", total_output) # (None, 1, 8, 256)
 
         return total_output
 

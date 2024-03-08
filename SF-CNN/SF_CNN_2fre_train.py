@@ -23,7 +23,7 @@ from sparse_attention import SelfAttention, Multi_Head_Attention
 
 
 
-epochs_num = 200
+epochs_num = 1
 batch_size_num = 32
 encoder_block_num = 3
 decoder_block_num = 3
