@@ -1,17 +1,18 @@
-from keras.layers import Input, Dense, Dropout, Convolution2D, MaxPool2D, normalization
+from keras.layers import Input, Dense, Dropout, Convolution2D, MaxPool2D, BatchNormalization
 from keras.models import Model, Sequential
 from keras.optimizers import SGD, Adam, RMSprop
 from keras.callbacks import ModelCheckpoint
 from keras.models import load_model
+from tensorflow.keras.layers import MultiHeadAttention, LayerNormalization
 from numpy import *
 import numpy as np
 import numpy.linalg as LA
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+import sys
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import tensorflow as tf
-config = tf.ConfigProto()
+config = tf.compat.v1.ConfigProto()
 config.gpu_options.allow_growth=True   #allow growth
-session = tf.Session(config=config)
 import scipy.io as sio
 
 Nt=32
@@ -48,13 +49,13 @@ data_num_train=1000
 data_num_file=1000
 H_train=zeros((data_num_train,Nr,Nt,2*fre), dtype=float)
 H_train_noisy=zeros((data_num_train,Nr,Nt,2*fre*time_steps), dtype=float)
-filedir = os.listdir('D:\\2fre2time_data')
+current_directory = os.getcwd()
+filedir = os.path.join(current_directory, '2fre2time_data')  # type the path of training datan=0
 n=0
 SNRr=0
 SNR_factor=5.9  # compensate channel power gain to approximate to 1
-for filename in filedir:
-    newname = os.path.join('D:\\2fre2time_data', filename)
-    #print(newname)
+for filename in os.listdir(filedir):
+    newname = os.path.join(filedir, filename)
     data = sio.loadmat(newname)
     channel = data['ChannelData_fre']    
     for i in range(data_num_file):
@@ -92,12 +93,13 @@ data_num_test=1000
 data_num_file=1000
 H_test=zeros((data_num_test,Nr,Nt,2*fre), dtype=float)
 H_test_noisy=zeros((data_num_test,Nr,Nt,2*fre*time_steps), dtype=float)
-filedir = os.listdir('D:\\2fre2time_data') # type the path of testing data (Testing data should be different from training data. Here use the same data just for ease of demonstration.)
+current_directory = os.getcwd()
+filedir = os.path.join(current_directory, '2fre2time_data') # type the path of testing data (Testing data should be different from training data. Here use the same data just for ease of demonstration.)n=0
 n=0
 SNRr=0
 SNR_factor=5.9
-for filename in filedir:
-    newname = os.path.join('D:\\2fre2time_data', filename)
+for filename in os.listdir(filedir):
+    newname = os.path.join(filedir, filename)
     data = sio.loadmat(newname)
     channel = data['ChannelData_fre']
     for i in range(data_num_file):
@@ -135,23 +137,23 @@ K=3
 input_dim=(Nr,Nt,2*fre*time_steps)
 model = Sequential()
 model.add(Convolution2D(filters=64, kernel_size=(K,K), padding='Same', activation='relu', input_shape=input_dim))
-model.add(normalization.BatchNormalization())
+model.add(BatchNormalization())
 model.add(Convolution2D(filters=64, kernel_size=(K,K), padding='Same', activation='relu'))
-model.add(normalization.BatchNormalization())
+model.add(BatchNormalization())
 model.add(Convolution2D(filters=64, kernel_size=(K,K), padding='Same', activation='relu'))
-model.add(normalization.BatchNormalization())
+model.add(BatchNormalization())
 model.add(Convolution2D(filters=64, kernel_size=(K,K), padding='Same', activation='relu'))
-model.add(normalization.BatchNormalization())
+model.add(BatchNormalization())
 model.add(Convolution2D(filters=64, kernel_size=(K,K), padding='Same', activation='relu'))
-model.add(normalization.BatchNormalization())
+model.add(BatchNormalization())
 model.add(Convolution2D(filters=64, kernel_size=(K,K), padding='Same', activation='relu'))
-model.add(normalization.BatchNormalization())
+model.add(BatchNormalization())
 model.add(Convolution2D(filters=64, kernel_size=(K,K), padding='Same', activation='relu'))
-model.add(normalization.BatchNormalization())
+model.add(BatchNormalization())
 model.add(Convolution2D(filters=64, kernel_size=(K,K), padding='Same', activation='relu'))
-model.add(normalization.BatchNormalization())
+model.add(BatchNormalization())
 model.add(Convolution2D(filters=64, kernel_size=(K,K), padding='Same', activation='relu'))
-model.add(normalization.BatchNormalization())
+model.add(BatchNormalization())
 model.add(Convolution2D(filters=2*fre, kernel_size=(K,K), padding='Same', activation='tanh'))
 
 # checkpoint
@@ -162,7 +164,7 @@ callbacks_list = [checkpoint]
 
 adam=Adam(lr=1e-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
 model.compile(optimizer=adam, loss='mse')
-model.fit(H_train_noisy, H_train, epochs=200, batch_size=128, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
+model.fit(H_train_noisy, H_train, epochs=1, batch_size=128, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
 
 # load model
 CNN = load_model('CNN_UMi_3path_2fre2time_SNR10dB_200ep.hdf5')
