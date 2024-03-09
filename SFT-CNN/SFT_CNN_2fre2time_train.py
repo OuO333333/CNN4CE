@@ -19,8 +19,8 @@ Nt=32
 Nt_beam=32
 Nr=16
 Nr_beam=16
-SNR=10.0**(10/10.0) # transmit power
-# DFT matrix
+SNR_dB = -10
+SNR=10.0**(SNR_dB/10.0) # transmit power# DFT matrix
 def DFT_matrix(N):
     m, n = np.meshgrid(np.arange(N), np.arange(N))
     omega = np.exp( - 2 * np.pi * 1j / N )
@@ -164,7 +164,7 @@ callbacks_list = [checkpoint]
 
 adam=Adam(lr=1e-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
 model.compile(optimizer=adam, loss='mse')
-model.fit(H_train_noisy, H_train, epochs=1, batch_size=128, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
+model.fit(H_train_noisy, H_train, epochs=200, batch_size=128, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
 
 # load model
 CNN = load_model('CNN_UMi_3path_2fre2time_SNR10dB_200ep.hdf5')
@@ -175,4 +175,11 @@ for n in range(data_num_test-len(row_num)):
     MSE=((H_test[n,:,:,:]-decoded_channel[n,:,:,:])**2).sum()
     norm_real=((H_test[n,:,:,:])**2).sum()
     nmse2[n]=MSE/norm_real
-print(nmse2.sum()/(data_num_test-len(row_num)))  # calculate NMSE of current training stage
+print("NMSE = ", nmse2.sum()/(data_num_test-len(row_num)))  # calculate NMSE of current training stage
+
+def Sumrate(h_test,h_est,bandwidth):
+    numerator = np.sum((h_test-h_est)**2)
+    denominator = np.sum((h_test-np.mean(h_test))**2)
+    rate = bandwidth * np.log2(1+(2*denominator-numerator)/denominator)
+    return rate
+print("Sumrate(bandwidth = 10) = ", Sumrate(H_test, decoded_channel, 10))  # calculate NMSE of current training stage
