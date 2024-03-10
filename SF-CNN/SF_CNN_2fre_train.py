@@ -17,13 +17,13 @@ import scipy.io as sio
 
 from tensorflow.keras.layers.experimental.preprocessing import Rescaling
 from tensorflow.keras.layers import Add
-from tensorflow.keras.layers import Conv2D
+from tensorflow.keras.layers import Conv1D, Conv2D
 from tf_encodings import TFPositionalEncoding1D
 from sparse_attention import SelfAttention, Multi_Head_Attention
 
 
 
-epochs_num = 1
+epochs_num = 400
 batch_size_num = 32
 encoder_block_num = 3
 decoder_block_num = 3
@@ -39,7 +39,7 @@ Nt=32
 Nt_beam=32
 Nr=16
 Nr_beam=16
-SNR_dB = 20
+SNR_dB = 10
 # get command line argv
 args = sys.argv
 if len(args) == 2:
@@ -223,7 +223,9 @@ for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     x = LayerNormalization(epsilon=1e-6)(x)
 
     # Feed Forward Layer
-    ff_output = Dense(units=key_dim_num, activation='relu')(x)
+    # ff_output = Dense(units=key_dim_num, activation='relu')(x)
+    # ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
+    ff_output = Conv1D(filters=key_dim_num, kernel_size=3, dilation_rate=2, padding='same', activation='relu')(x)
     x = Add()([x, ff_output])
     x = LayerNormalization(epsilon=1e-6)(x)
 
@@ -257,7 +259,9 @@ for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
     x = LayerNormalization(epsilon=1e-6)(x)
 
     # Feed Forward Layer
-    ff_output = Dense(units=key_dim_num, activation='relu')(x)
+    # ff_output = Dense(units=key_dim_num, activation='relu')(x)
+    # ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
+    ff_output = Conv1D(filters=key_dim_num, kernel_size=3, dilation_rate=2, padding='same', activation='relu')(x)
     x = Add()([x, ff_output])
     x = LayerNormalization(epsilon=1e-6)(x)
 
