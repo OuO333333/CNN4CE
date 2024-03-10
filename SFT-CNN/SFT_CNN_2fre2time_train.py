@@ -20,8 +20,9 @@ from tf_encodings import TFPositionalEncoding1D
 from tensorflow.keras.layers import Add
 from sparse_attention import SelfAttention, Multi_Head_Attention
 from tensorflow.keras.layers import Conv2D
+from tensorflow.keras.layers import AveragePooling2D
 
-epochs_num = 1
+epochs_num = 200
 batch_size_num = 32
 encoder_block_num = 3
 decoder_block_num = 3
@@ -38,8 +39,16 @@ Nt=32
 Nt_beam=32
 Nr=16
 Nr_beam=16
-SNR=10.0**(10/10.0) # transmit power
-# DFT matrix
+SNR_dB = 20
+# get command line argv
+args = sys.argv
+if len(args) == 2:
+    try:
+        SNR_dB = int(args[1])
+    except ValueError:
+        print("intput not valid")
+SNR=10.0**(SNR_dB/10.0) # transmit power
+print("SNR = ", SNR)# DFT matrix
 def DFT_matrix(N):
     m, n = np.meshgrid(np.arange(N), np.arange(N))
     omega = np.exp( - 2 * np.pi * 1j / N )
@@ -165,8 +174,8 @@ dropout_rate = 0.1
 inputs = Input(shape=reshape_input_dim)
 reshape_type = (0, 1, 2, 3)
 
-H_train = np.tile(H_train, (1, 1, 2))
-H_test = np.tile(H_test, (1, 1, 2))
+# H_train = np.tile(H_train, (1, 1, 2))
+# H_test = np.tile(H_test, (1, 1, 2))
 #print("after H_train shape = ", H_train.shape)
 #print("after H_test shape = ", H_test.shape)
 
@@ -178,9 +187,9 @@ H_test = np.transpose(H_test, reshape_type)
 # change here
 # 将 H_train_noisy, H_train, H_test_noisy, H_test 调整为形状为 (None, 1, int(2048 / key_dim_num), key_dim_num) 的数组
 H_train_noisy = np.reshape(H_train_noisy, (-1, 1, int(4096 / key_dim_num), key_dim_num))
-H_train = np.reshape(H_train, (-1, 1, int(4096 / key_dim_num), key_dim_num))
+H_train = np.reshape(H_train, (-1, 1, int(2048 / key_dim_num), key_dim_num))
 H_test_noisy = np.reshape(H_test_noisy, (-1, 1, int(4096 / key_dim_num), key_dim_num))
-H_test = np.reshape(H_test, (-1, 1, int(4096 / key_dim_num), key_dim_num))
+H_test = np.reshape(H_test, (-1, 1, int(2048 / key_dim_num), key_dim_num))
 
 # Add a rescaling layer to normalize inputs
 x = Rescaling(scale=1.0 / scale)(inputs)
@@ -193,10 +202,14 @@ positional_encoding_model = TFPositionalEncoding1D(256)
 position_encoding = positional_encoding_model(tf.zeros((1,int(4096 / key_dim_num),key_dim_num)))
 position_encoding = tf.expand_dims(position_encoding, axis=0)
 position_encoding = tf.tile(position_encoding, multiples=[999, 1, 1, 1])
+
+position_encoding2 = positional_encoding_model(tf.zeros((1,int(2048 / key_dim_num),key_dim_num)))
+position_encoding2 = tf.expand_dims(position_encoding2, axis=0)
+position_encoding2 = tf.tile(position_encoding2, multiples=[999, 1, 1, 1])
 H_train_noisy = Add()([H_train_noisy, position_encoding])
-H_train = Add()([H_train, position_encoding])
+H_train = Add()([H_train, position_encoding2])
 H_test_noisy = Add()([H_test_noisy, position_encoding])
-H_test = Add()([H_test, position_encoding])
+H_test = Add()([H_test, position_encoding2])
 
 enc_output = None
 # Transformer Encoder Layer
@@ -252,6 +265,7 @@ for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
 
 # Output layer
 outputs = Conv2D(filters=key_dim_num, kernel_size=(K, K), padding='Same', activation='tanh')(x)
+outputs = AveragePooling2D(pool_size=(1, 2))(outputs)
 
 # Create the model
 model = Model(inputs=inputs, outputs=outputs)
@@ -282,3 +296,43 @@ for n in range(data_num_test-len(row_num)):
     norm_real = tf.reduce_sum(tf.square(H_test))
     nmse2[n]=MSE/norm_real
 print("NMSE = ", nmse2.sum()/(data_num_test-len(row_num)))  # calculate NMSE of current training stage
+
+def Sumrate(h_test,h_est,bandwidth):
+    numerator = np.sum((h_test-h_est)**2)
+    denominator = np.sum((h_test-np.mean(h_test))**2)
+    rate = bandwidth * np.log2(1+(2*denominator-numerator)/denominator)
+    return rate
+print("Sumrate(bandwidth = 10) = ", Sumrate(H_test, decoded_channel, 10))  # calculate NMSE of current training stage
+
+def print_shape(reshape_type):
+    shapes = {'Nr': 0, 'Nt': 1, 'channel': 2}
+    shape_order = [None] * 3
+    for shape, index in shapes.items():
+        shape_order[index] = shape
+
+    # 重新排列形状顺序
+    reshaped_order = [shape_order[i] for i in reshape_type]
+
+    # 打印结果
+    print(f"({', '.join(reshaped_order)})")
+
+# 打开文件以写入模式
+with open('output.txt', 'a') as f:
+    # 保存原始的标准输出
+    original_stdout = sys.stdout
+    
+    # 将标准输出重定向到文件
+    sys.stdout = f
+
+    # 执行print语句，输出将被重定向到文件中
+    print("Encoder * ", encoder_block_num, ", Decoder * ", decoder_block_num, ", reshape_type = ", end='')
+    if reshape_type == (0, 1, 2, 3):
+        print("(Nr, Nt, channel)")
+    elif reshape_type == (0, 2, 1, 3):
+        print("(Nt, Nr, channel)")
+    elif reshape_type == (0, 3, 1, 2):
+        print("(channel, Nr, Nt)")
+    print("   ", '{:>3}'.format(SNR_dB), "        ", '{:>20}'.format(nmse2.sum()/(data_num_test-len(row_num))), "        ", '{:>20}'.format(Sumrate(H_test, decoded_channel, 10)))
+
+    # 恢复原始的标准输出
+    sys.stdout = original_stdout
