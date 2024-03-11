@@ -181,3 +181,94 @@ plt.ylabel('Proportion')
 
 # 显示图形
 plt.show()
+####################################################################################################################
+# data
+x = [-10, -5, 0, 5, 10, 15, 20]
+
+# CNN, epochs = 200, lr = 0.0001, batch_size = 32
+y1 = [0.8902655945595724, 0.5751199399355023, 0.36848606844546833, 0.29410193315144156, 0.2553683132455284, 0.23459051626799857, 0.2303461244047422]
+
+# Transformers(Encoder * 3 + Decoder * 3), epochs = 200, lr = 0.0001, batch_size = 32
+# reshape type = (Nr, Nt, channel)
+# 自己寫的 multi-head attention
+# Full Self Attention
+y2 = [0.031660910695791245, 0.023208769038319588, 0.017391914501786232, 0.014003201387822628, 0.01258099265396595, 0.012034251354634762, 0.011669430881738663]
+
+# Transformers(Encoder * 3 + Decoder * 3), epochs = 200, lr = 0.0001, batch_size = 32
+# reshape type = (Nr, Nt, channel)
+# 自己寫的 multi-head attention
+# Stride Sparse Self Attention
+y3 = [0.03285108879208565, 0.0230310820043087, 0.01766713708639145, 0.014568011276423931, 0.013989264145493507, 0.01138947531580925, 0.011203959584236145]
+
+# Transformers(Encoder * 3 + Decoder * 3, (16 * 32 * 4)), epochs = 400, lr = 0.0001, batch_size = 32
+# 自己寫的 multi-head self attention, stride_sparse_self_attention, ff layer 用 Conv1D
+y4 = [0.03439707309007645, 0.026073306798934937, 0.017007041722536087, 0.014019380323588848, 0.012292718514800072, 0.011388428509235382, 0.01079531293362379]
+
+# draw
+plt.plot(x, y2, marker='o', label='Full Self Attention')
+plt.plot(x, y3, marker='o', label='Stride Sparse Self Attention')
+plt.plot(x, y4, marker='o', label='Stride Sparse Self Attention with Convolution layer')
+
+# set y-axis to log scale
+plt.yscale('log')
+
+# add title and axis labels
+plt.title('Comparison of NMSE of different Stride Sparse Self Attention with Convolution layer and Others')
+plt.xlabel('SNR (dB)')
+plt.ylabel('NMSE (log scale)')
+
+# add legend
+plt.legend()
+
+# save the plot
+plt.savefig('Comparison of NMSE of different Stride Sparse Self Attention with Convolution layer and Others')
+
+# display the plot
+plt.grid(True)
+plt.show()
+####################################################################################################################
+# data
+x = [-10, -5, 0, 5, 10, 15, 20]
+
+# CNN, epochs = 200, lr = 0.0001, batch_size = 32
+y1 = [12.940970626378812, 13.972075582297652, 14.508584726671309, 14.825802753405233, 14.9719951899972, 15.106508174427415, 15.093083672359931]
+
+# Transformers(Encoder * 3 + Decoder * 3), epochs = 200, lr = 0.0001, batch_size = 32
+# reshape type = (Nr, Nt, channel)
+# 自己寫的 multi-head attention
+# Full Self Attention
+y2 = [15.56542539475691, 15.641844298837185, 15.69420245522329, 15.72461722262373, 15.73736293004918, 15.742259803203385, 15.74552633958734]
+
+# Transformers(Encoder * 3 + Decoder * 3), epochs = 200, lr = 0.0001, batch_size = 32
+# reshape type = (Nr, Nt, channel)
+# 自己寫的 multi-head attention
+# Stride Sparse Self Attention
+y3 = [15.5546319101134, 15.643446541205929, 15.69172941135746, 15.719552365946374, 15.724742243510288, 15.74803261180948, 15.749693078885972]
+
+# Transformers(Encoder * 3 + Decoder * 3, (16 * 32 * 4)), epochs = 400, lr = 0.0001, batch_size = 32
+# 自己寫的 multi-head self attention, stride_sparse_self_attention, ff layer 用 Conv1D
+y4 = [15.540599845944227, 15.615990333026495, 15.697660026461994, 15.72447224009828, 15.739945099336358, 15.748042005613945, 15.753350134796849]
+
+# draw
+# plt.plot(x, y1, marker='o', label='CNN')
+plt.plot(x, y2, marker='o', label='Full Self Attention')
+plt.plot(x, y3, marker='o', label='Stride Sparse Self Attention')
+plt.plot(x, y4, marker='o', label='Stride Sparse Self Attention with Convolution layer')
+
+# set y-axis to log scale
+plt.yscale('log')
+
+# add title and axis labels
+plt.title('Comparison of sum rate of Stride Sparse Self Attention with Convolution layer and Others')
+plt.xlabel('SNR (dB)')
+plt.ylabel('sum rate(bandwith = 10) (log scale)')
+
+# add legend
+plt.legend()
+
+# save the plot
+plt.savefig('Comparison of sum rate of Stride Sparse Self Attention with Convolution layer and Others')
+
+# display the plot
+plt.grid(True)
+plt.show()

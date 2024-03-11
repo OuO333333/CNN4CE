@@ -181,3 +181,94 @@ plt.ylabel('Proportion')
 
 # 显示图形
 plt.show()
+####################################################################################################################
+# data
+x = [-10, -5, 0, 5, 10, 15, 20]
+
+# CNN, epochs = 200, lr = 0.0001, batch_size = 32
+y1 = [0.649711661089483, 0.3475041160976275, 0.22225152482196797, 0.14494572869140035, 0.12128514659706721, 0.10142940629835279, 0.08489599243689268]
+
+# Transformers(Encoder * 3 + Decoder * 3), epochs = 200, lr = 0.0001, batch_size = 32
+# reshape type = (Nr, Nt, channel)
+# 自己寫的 multi-head attention
+# Full Self Attention
+y2 = [0.03295202925801277, 0.024725012481212616, 0.016572220250964165, 0.01351124607026577, 0.011882485821843147, 0.011450755409896374, 0.010888315737247467]
+
+# Transformers(Encoder * 3 + Decoder * 3), epochs = 200, lr = 0.0001, batch_size = 32
+# reshape type = (Nr, Nt, channel)
+# 自己寫的 multi-head attention
+# Stride Sparse Self Attention
+y3 = [0.032578837126493454, 0.021571574732661247, 0.015432968735694885, 0.012876344844698906, 0.011555371806025505, 0.010694130323827267, 0.010519152507185936]
+
+# Transformers(Encoder * 3 + Decoder * 3, (16 * 32 * 4)), epochs = 400, lr = 0.0001, batch_size = 32
+# 自己寫的 multi-head self attention, stride_sparse_self_attention, ff layer 用 Conv1D
+y4 = [0.026461079716682434, 0.02001900039613247, 0.015465594828128815, 0.012200472876429558, 0.01161318738013506, 0.010544214397668839, 0.010024880059063435]
+
+# draw
+plt.plot(x, y2, marker='o', label='Full Self Attention')
+plt.plot(x, y3, marker='o', label='Stride Sparse Self Attention')
+plt.plot(x, y4, marker='o', label='Stride Sparse Self Attention with Convolution layer')
+
+# set y-axis to log scale
+plt.yscale('log')
+
+# add title and axis labels
+plt.title('Comparison of NMSE of different Stride Sparse Self Attention with Convolution layer and Others')
+plt.xlabel('SNR (dB)')
+plt.ylabel('NMSE (log scale)')
+
+# add legend
+plt.legend()
+
+# save the plot
+plt.savefig('Comparison of NMSE')
+
+# display the plot
+plt.grid(True)
+plt.show()
+####################################################################################################################
+# data
+x = [-10, -5, 0, 5, 10, 15, 20]
+
+# CNN, epochs = 200, lr = 0.0001, batch_size = 32
+y1 = [14.058652952281365, 14.863718856051712, 15.277555758699604, 15.44859638003606, 15.347140577498028, 15.615965469824227, 15.62448257698082]
+
+# Transformers(Encoder * 3 + Decoder * 3), epochs = 200, lr = 0.0001, batch_size = 32
+# reshape type = (Nr, Nt, channel)
+# 自己寫的 multi-head attention
+# Full Self Attention
+y2 = [15.553713778468975, 15.62816334863857, 15.701564150189729, 15.72902636704422, 15.743617962580778, 15.747483214712926, 15.752517105400617]
+
+# Transformers(Encoder * 3 + Decoder * 3), epochs = 200, lr = 0.0001, batch_size = 32
+# reshape type = (Nr, Nt, channel)
+# 自己寫的 multi-head attention
+# Stride Sparse Self Attention
+y3 = [15.557099334636352, 15.656598549726002, 15.711791330535348, 15.734716119263615, 15.746546646253226, 15.754254715761103, 15.755820227182856]
+
+# Transformers(Encoder * 3 + Decoder * 3, (16 * 32 * 4)), epochs = 400, lr = 0.0001, batch_size = 32
+# 自己寫的 multi-head self attention, stride_sparse_self_attention, ff layer 用 Conv1D
+y4 = [15.612484924773147, 15.670577807075269, 15.711498480955896, 15.740770340016148, 15.746029074173723, 15.755596040137812, 15.760241620702807]
+
+# draw
+# plt.plot(x, y1, marker='o', label='CNN')
+plt.plot(x, y2, marker='o', label='Full Self Attention')
+plt.plot(x, y3, marker='o', label='Stride Sparse Self Attention')
+plt.plot(x, y4, marker='o', label='Stride Sparse Self Attention with Convolution layer')
+
+# set y-axis to log scale
+plt.yscale('log')
+
+# add title and axis labels
+plt.title('Comparison of sum rate of Stride Sparse Self Attention with Convolution layer and Others')
+plt.xlabel('SNR (dB)')
+plt.ylabel('sum rate(bandwith = 10) (log scale)')
+
+# add legend
+plt.legend()
+
+# save the plot
+plt.savefig('Comparison of sum rate of different Sparse Attention')
+
+# display the plot
+plt.grid(True)
+plt.show()
