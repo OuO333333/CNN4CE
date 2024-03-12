@@ -23,7 +23,7 @@ from tensorflow.keras.layers import Conv1D, Conv2D
 from tensorflow.keras.layers import AveragePooling2D
 
 
-epochs_num = 1
+epochs_num = 400
 batch_size_num = 32
 encoder_block_num = 3
 decoder_block_num = 3
