@@ -164,8 +164,8 @@ callbacks_list = [checkpoint]
 
 adam=Adam(lr=1e-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
 model.compile(optimizer=adam, loss='mse')
-model.fit(H_train_noisy, H_train, epochs=200, batch_size=128, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
-
+model.fit(H_train_noisy, H_train, epochs=1, batch_size=128, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
+print("H_train_noisy shape = ", H_train_noisy.shape, ", H_train shape = ", H_train.shape)
 # load model
 CNN = load_model('CNN_UMi_3path_2fre2time_SNR10dB_200ep.hdf5')
 
