@@ -18,7 +18,15 @@ import scipy.io as sio
 Nt=32
 Nr=16
 SNR_dB = 20
+# get command line argv
+args = sys.argv
+if len(args) == 2:
+    try:
+        SNR_dB = int(args[1])
+    except ValueError:
+        print("intput not valid")
 SNR=10.0**(SNR_dB/10.0) # transmit power
+print("SNR = ", SNR)# DFT matrix
 # DFT matrix
 def DFT_matrix(N):
     m, n = np.meshgrid(np.arange(N), np.arange(N))
@@ -283,7 +291,7 @@ callbacks_list = [checkpoint]
 
 adam=Adam(lr=1e-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
 model.compile(optimizer=adam, loss='mse')
-model.fit(H_train_noisy, H_train, epochs=1, batch_size=128, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
+model.fit(H_train_noisy, H_train, epochs=200, batch_size=128, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
 print("H_train_noisy shape = ", H_train_noisy.shape, ", H_train shape = ", H_train.shape)
 
 # load model
@@ -292,7 +300,39 @@ CNN = load_model('2fre4time_SNR20_time4_16_4_200ep.hdf5')
 decoded_channel = CNN.predict(H_test_noisy)
 nmse2=zeros((data_num_test-len(row_num),1), dtype=float)
 for n in range(data_num_test-len(row_num)):
-    MSE=((H_test[n,:,:,:]-decoded_channel[n,:,:,:])**2).sum()
-    norm_real=((H_test[n,:,:,:])**2).sum()
+    MSE = tf.reduce_sum(tf.square(H_test - decoded_channel))
+    norm_real = tf.reduce_sum(tf.square(H_test))
     nmse2[n]=MSE/norm_real
-print(nmse2.sum()/(data_num_test-len(row_num))) # calculate NMSE of current training stage
+print("NMSE = ", nmse2.sum()/(data_num_test-len(row_num)))  # calculate NMSE of current training stage
+
+def Sumrate(h_test,h_est,bandwidth):
+    numerator = np.sum((h_test-h_est)**2)
+    denominator = np.sum((h_test-np.mean(h_test))**2)
+    rate = bandwidth * np.log2(1+(2*denominator-numerator)/denominator)
+    return rate
+print("Sumrate(bandwidth = 10) = ", Sumrate(H_test, decoded_channel, 10))  # calculate NMSE of current training stage
+
+def print_shape(reshape_type):
+    shapes = {'Nr': 0, 'Nt': 1, 'channel': 2}
+    shape_order = [None] * 3
+    for shape, index in shapes.items():
+        shape_order[index] = shape
+
+    # 重新排列形状顺序
+    reshaped_order = [shape_order[i] for i in reshape_type]
+
+    # 打印结果
+    print(f"({', '.join(reshaped_order)})")
+
+# 打开文件以写入模式
+with open('output.txt', 'a') as f:
+    # 保存原始的标准输出
+    original_stdout = sys.stdout
+    
+    # 将标准输出重定向到文件
+    sys.stdout = f
+
+    print("   ", '{:>3}'.format(SNR_dB), "        ", '{:>20}'.format(nmse2.sum()/(data_num_test-len(row_num))), "        ", '{:>20}'.format(Sumrate(H_test, decoded_channel, 10)))
+
+    # 恢复原始的标准输出
+    sys.stdout = original_stdout
