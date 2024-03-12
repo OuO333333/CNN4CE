@@ -105,8 +105,8 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
             # Apply sparse attention mask
             # mask = atrous_self_attention_mask(N = seq_len, dilation_rate = 2)
             # mask = local_self_attention_mask(N = seq_len, window_size = 2)
-            # mask = stride_sparse_self_attention_mask(N = seq_len, local_range = 2, stride = 2)
-            # scores = scores * mask - tf.constant(1e10, dtype=tf.float32) * (1 - mask)
+            mask = stride_sparse_self_attention_mask(N = seq_len, local_range = 4, stride = 2)
+            scores = scores * mask - tf.constant(1e10, dtype=tf.float32) * (1 - mask)
 
             # Apply softmax for attention weights
             attention_weights = tf.nn.softmax(scores, axis=-1)  # (B, L, L)

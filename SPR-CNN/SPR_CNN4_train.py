@@ -23,10 +23,10 @@ from tensorflow.keras.layers import Conv1D, Conv2D
 from tensorflow.keras.layers import AveragePooling2D
 
 
-epochs_num = 400
+epochs_num = 200
 batch_size_num = 32
-encoder_block_num = 3
-decoder_block_num = 3
+encoder_block_num = 2
+decoder_block_num = 2
 learning_rate_num = 1e-4
 key_dim_num = 256
 print("TensorFlow 版本:", tf.__version__)
