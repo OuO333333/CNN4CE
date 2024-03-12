@@ -1,0 +1,2 @@
+Encoder *  3 , Decoder *  3 , reshape_type = (Nr, Nt, channel)
+     20           0.06429014354944229             15.26655072275963
