@@ -33,7 +33,7 @@ SNR(dB)                          NMSE      Sum rate(bandwidth = 10)
 Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
 自己寫的 multi-head self attention, atrous_self_attention
 SNR(dB)                          NMSE      Sum rate(bandwidth = 10)
-    -10           0.03994922712445259            15.489880421079087
+    -10           0.03793514147400856            15.50823359352834
      -5           0.02725178748369217            15.605196758612788
       0          0.018875764682888985            15.680765231318805
       5          0.014742224477231503            15.717912628820924
@@ -42,19 +42,18 @@ SNR(dB)                          NMSE      Sum rate(bandwidth = 10)
      20          0.011849570088088512            15.743851673854186
 
 Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
-自己寫的 multi-head self attention, local_self_attention
-# not yet
+自己寫的 multi-head self attention, local_self_attention(2)
 SNR(dB)                          NMSE      Sum rate(bandwidth = 10)
-    -10           0.03189250826835632            15.563323394555795
-     -5           0.02233617939054966             15.64970900162957
-      0          0.016399750486016273            15.703112870690317
-      5          0.013261282816529274            15.731266684382328
-     10          0.011701206676661968            15.745241032091705
-     15          0.010796995833516121            15.753334309883158
-     20          0.010449905879795551            15.756439769949978
+    -10           0.03928970918059349            15.495892652680121
+     -5          0.028576577082276344            15.593208143779389
+      0           0.02001512609422207            15.670509142513932
+      5          0.015685435384511948            15.709444554223042
+     10          0.013992800377309322            15.724637358010378
+     15           0.013519784435629845            15.728880197789383
+     20          0.013477599248290062            15.729258483011803
 
 Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
-自己寫的 multi-head self attention, stride_sparse_self_attention(2, 2), no(6, 2) because is worse, try(4, 2)
+自己寫的 multi-head self attention, stride_sparse_self_attention(2, 2), no(6, 2), (4, 2)because is worse
 SNR(dB)                          NMSE      Sum rate(bandwidth = 10)
     -10          0.039743758738040924            15.491753832581484
      -5          0.027776280418038368            15.600451582711955
