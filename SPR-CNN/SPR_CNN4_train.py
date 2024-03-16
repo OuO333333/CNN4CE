@@ -24,7 +24,7 @@ from tensorflow.keras.layers import AveragePooling2D
 from tensorflow.keras.layers import BatchNormalization
 
 
-epochs_num = 200
+epochs_num = 1
 batch_size_num = 32
 encoder_block_num = 2
 decoder_block_num = 2
@@ -318,12 +318,11 @@ x = Rescaling(scale=1.0 / scale)(inputs)
 # learn positional encoding
 # position_encoding = Conv2D(filters=key_dim_num, kernel_size=(K, K), padding='Same', activation='relu')(x)
 # Returns the position encoding only
-positional_encoding_model = TFPositionalEncoding1D(256)
+positional_encoding_model = TFPositionalEncoding1D(key_dim_num)
 # change here
 position_encoding = positional_encoding_model(tf.zeros((1,int(8192 / key_dim_num),key_dim_num)))
 position_encoding = tf.expand_dims(position_encoding, axis=0)
 position_encoding = tf.tile(position_encoding, multiples=[499, 1, 1, 1])
-print("H_train shape = ", H_train.shape, "H_train_noisy shape =", H_train_noisy.shape)
 position_encoding2 = positional_encoding_model(tf.zeros((1,int(2048 / key_dim_num),key_dim_num)))
 position_encoding2 = tf.expand_dims(position_encoding2, axis=0)
 position_encoding2 = tf.tile(position_encoding2, multiples=[499, 1, 1, 1])
@@ -338,7 +337,7 @@ for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     # Multi-Head Attention
     # attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, x)
     #self_attention_layer = SelfAttention(d_k=256, d_v=256, d_model=256)
-    self_attention_layer = Multi_Head_Attention(d_k=256, d_v=256, d_model=256, num_heads = 4)
+    self_attention_layer = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = 4)
     attn_output = self_attention_layer(x)
     # Add & Norm
     x = Add()([x, attn_output])
@@ -356,14 +355,14 @@ enc_output = x
 for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
     # change here
     # sequence mask
-    mask = tf.sequence_mask([32], maxlen=32, dtype=tf.float32)
+    mask = tf.sequence_mask([8192/key_dim_num], maxlen=8192/key_dim_num, dtype=tf.float32)
     #mask = tf.sequence_mask([32], maxlen=32, dtype=tf.float32)
     mask = tf.expand_dims(tf.expand_dims(mask, axis=0), axis=0)
 
     # Masked Multi-Head Attention (self-attention on decoder inputs)
     # attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, x, attention_mask=mask)
     # 创建 SelfAttention 层实例
-    masked_self_attention_layer = Multi_Head_Attention(d_k=256, d_v=256, d_model=256, num_heads = 4)
+    masked_self_attention_layer = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = 4)
     attn_output = masked_self_attention_layer(x, mask = mask)
 
     # Add & Norm
@@ -373,7 +372,7 @@ for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
     # Multi-Head Attention (attention to encoder outputs)
     enc_output = enc_output  # Assuming encoder output is available
     # attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, enc_output)
-    cross_attention_layer = Multi_Head_Attention(d_k=256, d_v=256, d_model=256, num_heads = 4)
+    cross_attention_layer = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = 4)
     attn_output = cross_attention_layer(x, enc_output = enc_output)
     # Add & Norm
     x = Add()([x, attn_output])
