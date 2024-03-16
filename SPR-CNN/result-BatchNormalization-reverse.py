@@ -30,6 +30,10 @@ y5 = [0.05668972060084343, 0.028094256296753883, 0.020573817193508148, 0.0282543
 # 自己寫的 multi-head self attention, Atrous Self Attention, ff layer 用 Conv1D, reverse attention layer and ff layer
 y6 = [0.03578875958919525, 0.02395220287144184, 0.017472850158810616, 0.013907503336668015, 0.01374274492263794, 0.013484571129083633, 0.011466003023087978]
 
+# Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 400, lr = 0.0001, batch_size = 32
+# 自己寫的 multi-head self attention, Atrous Self Attention, ff layer 用 Conv1D, change norm position
+y7 = [0.039442263543605804, 0.02432405948638916, 0.021599117666482925, 0.016517218202352524, 0.015613597817718983, 0.014050054363906384, 0.012439227662980556]
+
 # draw
 # plt.plot(x, y1, marker='o', label='CNN')
 plt.plot(x, y2, marker='o', label='Full Self Attention')
@@ -37,6 +41,7 @@ plt.plot(x, y3, marker='o', label='Atrous Self Attention')
 plt.plot(x, y4, marker='o', label='Atrous Self Attention with Convolution layer')
 plt.plot(x, y5, marker='o', label='Atrous Self Attention with Convolution layer and BatchNormalization')
 plt.plot(x, y6, marker='o', label='Atrous Self Attention with Convolution layer with reverse')
+plt.plot(x, y7, marker='o', label='Atrous Self Attention with Convolution layer with changing norm position')
 
 
 # set y-axis to log scale
@@ -87,6 +92,10 @@ y5 = [15.336422811727001, 15.597574072960933, 15.665477346013974, 15.59612463915
 # 自己寫的 multi-head self attention, Atrous Self Attention, ff layer 用 Conv1D, reverse attention layer and ff layer
 y6 = [15.527766755550392, 15.635012816385569, 15.693383651016465, 15.725402559240159, 15.72688045009137, 15.729196030441454, 15.747287674243054]
 
+# Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 400, lr = 0.0001, batch_size = 32
+# 自己寫的 multi-head self attention, Atrous Self Attention, ff layer 用 Conv1D, change norm position
+y7 = [15.494502152019606, 15.631655688035869, 15.65623851411047, 15.701972776773513, 15.710089680065902, 15.724123697543275, 15.738567858253838]
+
 # draw
 # plt.plot(x, y1, marker='o', label='CNN')
 plt.plot(x, y2, marker='o', label='Full Self Attention')
@@ -94,6 +103,7 @@ plt.plot(x, y3, marker='o', label='Atrous Self Attention')
 plt.plot(x, y4, marker='o', label='Atrous Self Attention with Convolution layer')
 plt.plot(x, y5, marker='o', label='Atrous Self Attention with Convolution layer and BatchNormalization')
 plt.plot(x, y6, marker='o', label='Atrous Self Attention with Convolution layer with reverse')
+plt.plot(x, y7, marker='o', label='Atrous Self Attention with Convolution layer with changing norm position')
 
 # set y-axis to log scale
 plt.yscale('log')
