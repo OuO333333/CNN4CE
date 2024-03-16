@@ -20,7 +20,7 @@ y3 = [0.03793514147400856, 0.02725178748369217, 0.018875764682888985, 0.01474222
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 400, lr = 0.0001, batch_size = 32
 # 自己寫的 multi-head self attention, Atrous Self Attention, ff layer 用 Conv1D
-y4 = [0.03621919825673103, 0.0272029098123312, 0.017789877951145172, 0.014526165090501308, 0.012576806358993053, 0.011595480144023895, 0.011442258022725582]
+y4 = [0.03621919825673103, 0.0272029098123312, 0.017789877951145172, 0.014526165090501308, 0.012576806358993053, 0.011850962415337563, 0.011727375909686089]
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 400, lr = 0.0001, batch_size = 32
 # 自己寫的 multi-head self attention, Atrous Self Attention, ff layer 用 Conv1D, 使用 BatchNormalization
@@ -28,7 +28,7 @@ y5 = [0.05668972060084343, 0.028094256296753883, 0.020573817193508148, 0.0282543
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 400, lr = 0.0001, batch_size = 32
 # 自己寫的 multi-head self attention, Atrous Self Attention, ff layer 用 Conv1D, reverse attention layer and ff layer
-y6 = [0.03578875958919525, 0.02395220287144184, 0.017472850158810616, 0.013907503336668015, 0.01374274492263794, 0.013484571129083633, 0.011466003023087978]
+y6 = [0.03578875958919525, 0.02395220287144184, 0.017472850158810616, 0.013907503336668015, 0.012358094565570354, 0.011811657808721066, 0.011466003023087978]
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 400, lr = 0.0001, batch_size = 32
 # 自己寫的 multi-head self attention, Atrous Self Attention, ff layer 用 Conv1D, change norm position
@@ -82,7 +82,7 @@ y3 = [15.50823359352834, 15.605196758612788, 15.680765231318805, 15.717912628820
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 400, lr = 0.0001, batch_size = 32
 # 自己寫的 multi-head self attention, Atrous Self Attention, ff layer 用 Conv1D
-y4 = [15.523851843084003, 15.605638873813945, 15.690533174195762, 15.71985169518842, 15.73733479108248, 15.7461279053344, 15.747500409925326]
+y4 = [15.523851843084003, 15.605638873813945, 15.690533174195762, 15.71985169518842, 15.73733479108248, 15.74383919925955, 15.744946353832843]
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 400, lr = 0.0001, batch_size = 32
 # 自己寫的 multi-head self attention, Atrous Self Attention, ff layer 用 Conv1D, 使用 BatchNormalization
@@ -90,7 +90,7 @@ y5 = [15.336422811727001, 15.597574072960933, 15.665477346013974, 15.59612463915
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 400, lr = 0.0001, batch_size = 32
 # 自己寫的 multi-head self attention, Atrous Self Attention, ff layer 用 Conv1D, reverse attention layer and ff layer
-y6 = [15.527766755550392, 15.635012816385569, 15.693383651016465, 15.725402559240159, 15.72688045009137, 15.729196030441454, 15.747287674243054]
+y6 = [15.527766755550392, 15.635012816385569, 15.693383651016465, 15.725402559240159, 15.739294969447322, 15.744191286753392, 15.747287674243054]
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 400, lr = 0.0001, batch_size = 32
 # 自己寫的 multi-head self attention, Atrous Self Attention, ff layer 用 Conv1D, change norm position
