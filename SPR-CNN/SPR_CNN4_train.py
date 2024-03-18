@@ -24,7 +24,7 @@ from tensorflow.keras.layers import AveragePooling2D
 from tensorflow.keras.layers import BatchNormalization
 
 
-epochs_num = 1
+epochs_num = 200
 batch_size_num = 32
 encoder_block_num = 2
 decoder_block_num = 2
@@ -334,6 +334,12 @@ H_test = Add()([H_test, position_encoding2])
 enc_output = None
 # Transformer Encoder Layer
 for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
+    # Feed Forward Layer
+    # ff_output = Dense(units=key_dim_num, activation='relu')(x)
+    ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
+    x = Add()([x, ff_output])
+    x = LayerNormalization(epsilon=1e-6)(x)
+
     # Multi-Head Attention
     # attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, x)
     #self_attention_layer = SelfAttention(d_k=256, d_v=256, d_model=256)
@@ -343,16 +349,16 @@ for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     x = Add()([x, attn_output])
     x = LayerNormalization(epsilon=1e-6)(x)
 
+enc_output = x
+
+# Transformer Decoder Layer
+for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
     # Feed Forward Layer
     # ff_output = Dense(units=key_dim_num, activation='relu')(x)
     ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
     x = Add()([x, ff_output])
     x = LayerNormalization(epsilon=1e-6)(x)
 
-enc_output = x
-
-# Transformer Decoder Layer
-for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
     # change here
     # sequence mask
     mask = tf.sequence_mask([8192/key_dim_num], maxlen=8192/key_dim_num, dtype=tf.float32)
@@ -376,12 +382,6 @@ for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
     attn_output = cross_attention_layer(x, enc_output = enc_output)
     # Add & Norm
     x = Add()([x, attn_output])
-    x = LayerNormalization(epsilon=1e-6)(x)
-
-    # Feed Forward Layer
-    # ff_output = Dense(units=key_dim_num, activation='relu')(x)
-    ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
-    x = Add()([x, ff_output])
     x = LayerNormalization(epsilon=1e-6)(x)
 
 

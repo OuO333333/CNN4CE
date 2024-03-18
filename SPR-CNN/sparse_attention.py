@@ -84,6 +84,9 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
 
         total_output = tf.zeros_like(inputs)  # Initialize the total_output
 
+        # print("inputs_reshaped shape = ", inputs_reshaped.shape)
+        # inputs_reshaped = fft(inputs_reshaped)
+        # print("inputs_reshaped shape2 = ", inputs_reshaped.shape)
         # Process each head iteratively
         for i in range(self.num_heads):
             # Compute the query, key, and value for the i-th head
@@ -94,7 +97,10 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
             else:
                 K = tf.matmul(inputs_reshaped, self.Wk[i])  # (B, L, d_k)
                 V = tf.matmul(inputs_reshaped, self.Wv[i])  # (B, L, d_v)
-            
+            tf.experimental.numpy.experimental_enable_numpy_behavior()
+            #Q = fft(Q)
+            #K = fft(K)
+            #V = fft(V)
             # Scaled dot-product attention
             scores = tf.matmul(Q, K, transpose_b=True) / tf.math.sqrt(tf.cast(self.d_k, tf.float32))  # (B, L, L)
             
@@ -110,7 +116,12 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
 
             # Apply softmax for attention weights
             attention_weights = tf.nn.softmax(scores, axis=-1)  # (B, L, L)
-            
+
+            if attention_weights.dtype == tf.float64:
+                V = tf.cast(V, tf.float64)
+            else:
+                V = tf.cast(V, tf.float32)
+
             # Context vector (weighted sum of values)
             output = tf.matmul(attention_weights, V)  # (B, L, d_v)
 
@@ -128,7 +139,8 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
         #print("scores shape = ", scores) # (None, 8, 8)
         #print("attention_weights shape = ", attention_weights) # (None, 8, 8)
         #print("total_output shape = ", total_output) # (None, 1, 8, 256)
-
+        # total_output = ifft(total_output)
+        # total_output = tf.cast(total_output, dtype=tf.float64)
         return total_output
 
 def atrous_self_attention_mask(N, dilation_rate):
@@ -166,3 +178,85 @@ def stride_sparse_self_attention_mask(N, local_range, stride):
             if abs(j - i) <= local_range or abs(j - i) % stride == 0:
                 mask[i, j] = 1
     return mask
+
+@tf.function
+def fft(x):
+    # 假设 x 为(batchsize, 32, 256)的张量
+    batch_size = tf.shape(x)[0]
+    result = tf.TensorArray(dtype=tf.float32, size=batch_size, element_shape=(32, 256))
+
+    # 对每个张量执行FFT操作, q_fft 為 (32, 256)
+    for i in tf.range(batch_size):
+        q_batch = x[i]
+        q_fft = fft_single(q_batch)
+        result = result.write(i, q_fft)
+    result = result.stack()
+    return result
+
+@tf.function
+def ifft(x):
+    # 假设 x 为(batchsize, 32, 256)的张量
+    batch_size = tf.shape(x)[0]
+    result = tf.TensorArray(dtype=tf.float64, size=batch_size, element_shape=(32, 256))
+
+    # 对每个张量执行FFT操作, q_fft 為 (32, 256)
+    for i in tf.range(batch_size):
+        q_batch = x[i]
+        q_fft = ifft_single(q_batch)
+        result = result.write(i, q_fft)
+    result = result.stack()
+    return result
+
+def fft_single(x):
+    # print("x shape = ", x.shape)
+    x = tf.reshape(x, (16, 32, 4, 2, 2))
+    # 將實部和虛部拆分為兩個單獨的張量
+    real_x = x[..., 0]
+    imag_x = x[..., 1]
+
+    # reshape 為 [16, 32, 2, 4]
+    # real_x = tf.reshape(real_x, (16, 32, 2, 4))
+    # imag_x = tf.reshape(imag_x, (16, 32, 2, 4))
+
+    # 將實部和虛部合併為一個複數張量
+    x_complex = tf.complex(real_x, imag_x)
+
+    # 進行 2D FFT
+    x = tf.signal.fft2d(x_complex)
+
+    # 取出實部和虛部
+    real_x = tf.math.real(x)
+    imag_x = tf.math.imag(x)
+    
+    # 將實部和虛部合併為一個張量
+    x = tf.concat([real_x, imag_x], axis=-1)
+    x = tf.reshape(x, (32, 256))
+    # print("x shape 2 = ", x.shape)
+    return x
+
+def ifft_single(x):
+    # print("x shape = ", x.shape)
+    x = tf.reshape(x, (16, 32, 4, 2, 2))
+    # 將實部和虛部拆分為兩個單獨的張量
+    real_x = x[..., 0]
+    imag_x = x[..., 1]
+
+    # reshape 為 [16, 32, 2, 4]
+    # real_x = tf.reshape(real_x, (16, 32, 2, 4))
+    # imag_x = tf.reshape(imag_x, (16, 32, 2, 4))
+
+    # 將實部和虛部合併為一個複數張量
+    x_complex = tf.complex(real_x, imag_x)
+
+    # 進行 2D FFT
+    x = tf.signal.ifft2d(x_complex)
+
+    # 取出實部和虛部
+    real_x = tf.math.real(x)
+    imag_x = tf.math.imag(x)
+    
+    # 將實部和虛部合併為一個張量
+    x = tf.concat([real_x, imag_x], axis=-1)
+    x = tf.reshape(x, (32, 256))
+    # print("x shape 2 = ", x.shape)
+    return x
