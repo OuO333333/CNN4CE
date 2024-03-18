@@ -24,7 +24,7 @@ from tensorflow.keras.layers import AveragePooling2D
 from tensorflow.keras.layers import BatchNormalization
 
 
-epochs_num = 200
+epochs_num = 1
 batch_size_num = 32
 encoder_block_num = 2
 decoder_block_num = 2

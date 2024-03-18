@@ -98,9 +98,9 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
                 K = tf.matmul(inputs_reshaped, self.Wk[i])  # (B, L, d_k)
                 V = tf.matmul(inputs_reshaped, self.Wv[i])  # (B, L, d_v)
             tf.experimental.numpy.experimental_enable_numpy_behavior()
-            #Q = fft(Q)
-            #K = fft(K)
-            #V = fft(V)
+            Q = fft(Q)
+            K = fft(K)
+            V = fft(V)
             # Scaled dot-product attention
             scores = tf.matmul(Q, K, transpose_b=True) / tf.math.sqrt(tf.cast(self.d_k, tf.float32))  # (B, L, L)
             
@@ -139,7 +139,7 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
         #print("scores shape = ", scores) # (None, 8, 8)
         #print("attention_weights shape = ", attention_weights) # (None, 8, 8)
         #print("total_output shape = ", total_output) # (None, 1, 8, 256)
-        # total_output = ifft(total_output)
+        total_output = ifft(total_output)
         # total_output = tf.cast(total_output, dtype=tf.float64)
         return total_output
 
@@ -209,7 +209,8 @@ def ifft(x):
 
 def fft_single(x):
     # print("x shape = ", x.shape)
-    x = tf.reshape(x, (16, 32, 4, 2, 2))
+    # x = tf.reshape(x, (16, 32, 4, 2, 2))
+    x = tf.reshape(x, (16, 32, 8, 2))
     # 將實部和虛部拆分為兩個單獨的張量
     real_x = x[..., 0]
     imag_x = x[..., 1]
@@ -236,7 +237,8 @@ def fft_single(x):
 
 def ifft_single(x):
     # print("x shape = ", x.shape)
-    x = tf.reshape(x, (16, 32, 4, 2, 2))
+    # x = tf.reshape(x, (16, 32, 4, 2, 2))
+    x = tf.reshape(x, (16, 32, 8, 2))
     # 將實部和虛部拆分為兩個單獨的張量
     real_x = x[..., 0]
     imag_x = x[..., 1]
