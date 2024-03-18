@@ -72,7 +72,7 @@ SNR(dB)                          NMSE      Sum rate(bandwidth = 10)
       5          0.014526165090501308             15.71985169518842
      10          0.012576806358993053             15.73733479108248
      15          0.011850962415337563             15.74383919925955
-     20          0.011727375909686089            15.744946353832843 ?????
+     20          0.011727375909686089            15.744946353832843
 
 Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
 自己寫的 multi-head self attention, atrous_self_attention, ff layer 用 Conv1D, 使用 BatchNormalization(epsilon=1e-6)
@@ -97,17 +97,6 @@ SNR(dB)                          NMSE      Sum rate(bandwidth = 10)
      20          0.011466003023087978            15.747287674243054
 
 Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
-自己寫的 multi-head self attention, atrous_self_attention, ff layer 用 Conv1D, change norm position
-SNR(dB)                          NMSE      Sum rate(bandwidth = 10)
-    -10          0.035789500921964645             15.52775987467214
-     -5          0.025036098435521126            15.625225162070082
-      0           0.01863393560051918            15.682941074155057
-      5           0.01561006810516119            15.710121376542856
-     10           0.01381421834230423            15.726239361014688
-     15          0.013515197671949863            15.728921356150448
-     20          0.013705804944038391            15.727211793609634
-
-Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
 自己寫的 multi-head self attention, atrous_self_attention, ff layer 用 Conv1D, change norm position only on encoder
 SNR(dB)                          NMSE      Sum rate(bandwidth = 10)
     -10          0.039442263543605804            15.494502152019606
@@ -117,4 +106,16 @@ SNR(dB)                          NMSE      Sum rate(bandwidth = 10)
      10          0.015613597817718983            15.710089680065902
      15          0.014050054363906384            15.724123697543275
      20          0.012439227662980556            15.738567858253838
+
+Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+自己寫的 multi-head self attention, atrous_self_attention, ff layer 用 Conv1D, reverse attention layer and ff layer,
+使用 fft(16, 32, 4, 2, 2)
+SNR(dB)                          NMSE      Sum rate(bandwidth = 10)
+    -10          0.039442263543605804            15.494502152019606
+     -5           0.02432405948638916            15.631655688035869
+      0          0.021599117666482925             15.65623851411047
+      5          0.016517218202352524            15.701972776773513
+     10          0.015613597817718983            15.710089680065902
+     15          0.014050054363906384            15.724123697543275
+     20          0.012641966342926025            15.736750701793461(16, 32, 4, 2, 2)
 ---------------------------------------------------------------------------------------------

@@ -209,8 +209,8 @@ def ifft(x):
 
 def fft_single(x):
     # print("x shape = ", x.shape)
-    # x = tf.reshape(x, (16, 32, 4, 2, 2))
-    x = tf.reshape(x, (16, 32, 8, 2))
+    x = tf.reshape(x, (16, 32, 4, 2, 2))
+    # x = tf.reshape(x, (16, 32, 8, 2))
     # 將實部和虛部拆分為兩個單獨的張量
     real_x = x[..., 0]
     imag_x = x[..., 1]
@@ -237,8 +237,8 @@ def fft_single(x):
 
 def ifft_single(x):
     # print("x shape = ", x.shape)
-    # x = tf.reshape(x, (16, 32, 4, 2, 2))
-    x = tf.reshape(x, (16, 32, 8, 2))
+    x = tf.reshape(x, (16, 32, 4, 2, 2))
+    # x = tf.reshape(x, (16, 32, 8, 2))
     # 將實部和虛部拆分為兩個單獨的張量
     real_x = x[..., 0]
     imag_x = x[..., 1]
