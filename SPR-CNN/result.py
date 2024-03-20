@@ -103,10 +103,13 @@ plt.plot(x, y2, marker='o', label='Atrous Self Attention')
 plt.plot(x, y3, marker='o', label='Local Self Attention')
 plt.plot(x, y4, marker='o', label='Stride Sparse Self Attention')
 
+# set y-axis to log scale
+plt.yscale('log')
+
 # add title and axis labels
 plt.title('Comparison of NMSE of different Sparse Attention')
 plt.xlabel('SNR (dB)')
-plt.ylabel('NMSE')
+plt.ylabel('NMSE (log scale)')
 
 # add legend
 plt.legend()
@@ -151,10 +154,13 @@ plt.plot(x, y2, marker='o', label='Atrous Self Attention')
 plt.plot(x, y3, marker='o', label='Local Self Attention')
 plt.plot(x, y4, marker='o', label='Stride Sparse Self Attention')
 
+# set y-axis to log scale
+plt.yscale('log')
+
 # add title and axis labels
 plt.title('Comparison of sum rate of different Sparse Attention')
 plt.xlabel('SNR (dB)')
-plt.ylabel('sum rate(bandwith = 10)')
+plt.ylabel('sum rate(bandwith = 10) (log scale)')
 
 # add legend
 plt.legend()
@@ -214,7 +220,7 @@ plt.plot(x, y4, marker='o', label='Atrous Self Attention with Convolution layer'
 plt.yscale('log')
 
 # add title and axis labels
-plt.title('Comparison of NMSE of Atrous Self Attention with Convolution layer and Others')
+plt.title('Comparison of NMSE of Atrous Self Attention with Convolution layer')
 plt.xlabel('SNR (dB)')
 plt.ylabel('NMSE (log scale)')
 
@@ -222,7 +228,7 @@ plt.ylabel('NMSE (log scale)')
 plt.legend()
 
 # save the plot
-plt.savefig('Comparison of NMSE of Atrous Self Attention with Convolution layer and Others')
+plt.savefig('Comparison of NMSE of Atrous Self Attention with Convolution layer')
 
 # display the plot
 plt.grid(True)
@@ -260,7 +266,7 @@ plt.plot(x, y4, marker='o', label='Atrous Self Attention with Convolution layer'
 plt.yscale('log')
 
 # add title and axis labels
-plt.title('Comparison of sum rate of Atrous Self Attention with Convolution layer and Others')
+plt.title('Comparison of sum rate of Atrous Self Attention with Convolution layer')
 plt.xlabel('SNR (dB)')
 plt.ylabel('sum rate(bandwith = 10) (log scale)')
 
@@ -268,7 +274,7 @@ plt.ylabel('sum rate(bandwith = 10) (log scale)')
 plt.legend()
 
 # save the plot
-plt.savefig('Comparison of sum rate of Atrous Self Attention with Convolution layer and Others')
+plt.savefig('Comparison of sum rate of Atrous Self Attention with Convolution layer')
 
 # display the plot
 plt.grid(True)
