@@ -19,6 +19,7 @@ from tensorflow.keras.layers.experimental.preprocessing import Rescaling
 from tf_encodings import TFPositionalEncoding1D
 from tensorflow.keras.layers import Add
 from sparse_attention import SelfAttention, Multi_Head_Attention
+from one_gate_moe import OneGateMoE
 from tensorflow.keras.layers import Conv1D, Conv2D
 from tensorflow.keras.layers import AveragePooling2D
 from tensorflow.keras.layers import BatchNormalization
@@ -30,6 +31,8 @@ encoder_block_num = 2
 decoder_block_num = 2
 learning_rate_num = 1e-4
 key_dim_num = 256
+num_heads = 4  # Number of attention heads
+
 print("TensorFlow 版本:", tf.__version__)
 print("epochs_num = ", epochs_num)
 print("batch_size_num = ", batch_size_num)
@@ -285,7 +288,6 @@ print(((H_test)**2).mean())
 K=3
 input_dim=(Nr,Nt,2*fre*time_steps)
 reshape_input_dim = (1, int(8192 / key_dim_num), key_dim_num)
-num_heads = 4  # Number of attention heads
 dropout_rate = 0.1
 
 # Define the input layer
@@ -334,30 +336,29 @@ H_test = Add()([H_test, position_encoding2])
 enc_output = None
 # Transformer Encoder Layer
 for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
-    # Feed Forward Layer
-    # ff_output = Dense(units=key_dim_num, activation='relu')(x)
-    ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
-    x = Add()([x, ff_output])
-    x = LayerNormalization(epsilon=1e-6)(x)
 
     # Multi-Head Attention
     # attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, x)
     #self_attention_layer = SelfAttention(d_k=256, d_v=256, d_model=256)
-    self_attention_layer = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = 4)
+    self_attention_layer = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
     attn_output = self_attention_layer(x)
+
     # Add & Norm
     x = Add()([x, attn_output])
+    x = LayerNormalization(epsilon=1e-6)(x)
+
+    # Feed Forward Layer
+    # ff_output = Dense(units=key_dim_num, activation='relu')(x)
+    # ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
+    moe_layer = OneGateMoE(num_experts=5, kernel_size=3)
+    ff_output = moe_layer(x)
+    x = Add()([x, ff_output])
     x = LayerNormalization(epsilon=1e-6)(x)
 
 enc_output = x
 
 # Transformer Decoder Layer
 for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
-    # Feed Forward Layer
-    # ff_output = Dense(units=key_dim_num, activation='relu')(x)
-    ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
-    x = Add()([x, ff_output])
-    x = LayerNormalization(epsilon=1e-6)(x)
 
     # change here
     # sequence mask
@@ -368,7 +369,7 @@ for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
     # Masked Multi-Head Attention (self-attention on decoder inputs)
     # attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, x, attention_mask=mask)
     # 创建 SelfAttention 层实例
-    masked_self_attention_layer = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = 4)
+    masked_self_attention_layer = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
     attn_output = masked_self_attention_layer(x, mask = mask)
 
     # Add & Norm
@@ -378,10 +379,18 @@ for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
     # Multi-Head Attention (attention to encoder outputs)
     enc_output = enc_output  # Assuming encoder output is available
     # attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, enc_output)
-    cross_attention_layer = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = 4)
+    cross_attention_layer = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
     attn_output = cross_attention_layer(x, enc_output = enc_output)
     # Add & Norm
     x = Add()([x, attn_output])
+    x = LayerNormalization(epsilon=1e-6)(x)
+
+    # Feed Forward Layer
+    # ff_output = Dense(units=key_dim_num, activation='relu')(x)
+    # ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
+    moe_layer2 = OneGateMoE(num_experts=5, kernel_size=3)
+    ff_output = moe_layer2(x)
+    x = Add()([x, ff_output])
     x = LayerNormalization(epsilon=1e-6)(x)
 
 

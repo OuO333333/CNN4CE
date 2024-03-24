@@ -48,7 +48,7 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
         self.num_heads = num_heads
         self.d_model = d_model
 
-        assert d_model % num_heads == 0
+        # assert d_model % num_heads == 0
 
         self.d_k = d_k  # Dimension of key vector
         self.d_v = d_v  # Dimension of value vector
@@ -73,7 +73,7 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
             trainable=True
         )
 
-    def call(self, inputs, mask = None, enc_output = None):
+    def call(self, inputs, mask = None, enc_output = None, FFT = False):
         batch_size =  tf.shape(inputs)[0]
         shape = inputs.get_shape().as_list()
         seq_len = int(shape[1] * shape[2] * shape[3] / self.d_model)
@@ -85,10 +85,13 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
         total_output = tf.zeros_like(inputs)  # Initialize the total_output
 
         # print("inputs_reshaped shape = ", inputs_reshaped.shape)
-        # inputs_reshaped = fft(inputs_reshaped)
+        if FFT == True:
+            inputs_reshaped = fft(inputs_reshaped)
         # print("inputs_reshaped shape2 = ", inputs_reshaped.shape)
         # Process each head iteratively
         for i in range(self.num_heads):
+            #if i == 3:
+            #    inputs_reshaped = fft(inputs_reshaped)
             # Compute the query, key, and value for the i-th head
             Q = tf.matmul(inputs_reshaped, self.Wq[i])  # (B, L, d_k)
             if enc_output is not None:
@@ -98,9 +101,7 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
                 K = tf.matmul(inputs_reshaped, self.Wk[i])  # (B, L, d_k)
                 V = tf.matmul(inputs_reshaped, self.Wv[i])  # (B, L, d_v)
             tf.experimental.numpy.experimental_enable_numpy_behavior()
-            Q = fft(Q)
-            K = fft(K)
-            V = fft(V)
+
             # Scaled dot-product attention
             scores = tf.matmul(Q, K, transpose_b=True) / tf.math.sqrt(tf.cast(self.d_k, tf.float32))  # (B, L, L)
             
@@ -127,11 +128,17 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
 
             # Reshape output to match original input
             output = tf.reshape(output, (tf.shape(inputs)[0], 1, seq_len, feature_dim))
+            
+            #if i >= 3:
+            #    output = ifft(output)
+            #    output = tf.reshape(output, (tf.shape(inputs)[0], 1, seq_len, feature_dim))
 
             # Sum up the outputs of all heads
             total_output += output
         
         # Calculate the average
+        if FFT == True:
+            total_output = ifft(total_output)
         total_output = total_output / self.num_heads
         #print("inputs shape = ", inputs) # (None, 1, 8, 256)
         #print("inputs_reshaped shape = ", inputs_reshaped) # (None, 8, 256)
@@ -139,7 +146,7 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
         #print("scores shape = ", scores) # (None, 8, 8)
         #print("attention_weights shape = ", attention_weights) # (None, 8, 8)
         #print("total_output shape = ", total_output) # (None, 1, 8, 256)
-        total_output = ifft(total_output)
+        # total_output = ifft(total_output)
         # total_output = tf.cast(total_output, dtype=tf.float64)
         return total_output
 
@@ -262,3 +269,42 @@ def ifft_single(x):
     x = tf.reshape(x, (32, 256))
     # print("x shape 2 = ", x.shape)
     return x
+
+def one_gate_moe(x, key_dim_num):
+  """
+  使用 Keras 實現 One Gate MoE
+
+  Args:
+    x: 輸入資料
+    key_dim_num: 鍵向量維度
+
+  Returns:
+    輸出資料
+  """
+
+  # 建立專家網路
+
+  expert_network = keras.Sequential([
+    keras.layers.Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu'),
+    keras.layers.Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu'),
+  ])
+
+  # 建立門控網路
+
+  gating_network = keras.Sequential([
+    keras.layers.Dense(units=1, activation='sigmoid'),
+  ])
+
+  # 計算專家網路輸出
+
+  expert_outputs = expert_network(x)
+
+  # 計算門控網路輸出
+
+  gating_outputs = gating_network(x)
+
+  # 計算 MoE 輸出
+
+  moe_outputs = gating_outputs * expert_outputs
+
+  return moe_outputs

@@ -27,10 +27,6 @@ y4 = [0.03621919825673103, 0.0272029098123312, 0.017789877951145172, 0.014526165
 y5 = [0.05668972060084343, 0.028094256296753883, 0.020573817193508148, 0.028254395350813866, 0.02500385418534279, 0.020342955365777016, 0.0244763046503067]
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 400, lr = 0.0001, batch_size = 32
-# 自己寫的 multi-head self attention, Atrous Self Attention, ff layer 用 Conv1D, reverse attention layer and ff layer
-y6 = [0.03578875958919525, 0.02395220287144184, 0.017472850158810616, 0.013907503336668015, 0.012358094565570354, 0.011811657808721066, 0.011466003023087978]
-
-# Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 400, lr = 0.0001, batch_size = 32
 # 自己寫的 multi-head self attention, Atrous Self Attention, ff layer 用 Conv1D, change norm position
 y7 = [0.039442263543605804, 0.02432405948638916, 0.021599117666482925, 0.016517218202352524, 0.015613597817718983, 0.014050054363906384, 0.012439227662980556]
 
@@ -44,7 +40,6 @@ plt.plot(x, y2, marker='o', label='Full Self Attention')
 plt.plot(x, y3, marker='o', label='Atrous Self Attention')
 plt.plot(x, y4, marker='o', label='Atrous Self Attention with Convolution layer')
 plt.plot(x, y5, marker='o', label='Atrous Self Attention with Convolution layer and BatchNormalization')
-plt.plot(x, y6, marker='o', label='Atrous Self Attention with Convolution layer with reverse')
 plt.plot(x, y7, marker='o', label='Atrous Self Attention with Convolution layer with changing norm position')
 plt.plot(x, y8, marker='o', label='Atrous Self Attention with Convolution layer with fft')
 
@@ -94,10 +89,6 @@ y4 = [15.523851843084003, 15.605638873813945, 15.690533174195762, 15.71985169518
 y5 = [15.336422811727001, 15.597574072960933, 15.665477346013974, 15.596124639155295, 15.625516490153341, 15.667556703768637, 15.630281030850368]
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 400, lr = 0.0001, batch_size = 32
-# 自己寫的 multi-head self attention, Atrous Self Attention, ff layer 用 Conv1D, reverse attention layer and ff layer
-y6 = [15.527766755550392, 15.635012816385569, 15.693383651016465, 15.725402559240159, 15.739294969447322, 15.744191286753392, 15.747287674243054]
-
-# Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 400, lr = 0.0001, batch_size = 32
 # 自己寫的 multi-head self attention, Atrous Self Attention, ff layer 用 Conv1D, change norm position
 y7 = [15.494502152019606, 15.631655688035869, 15.65623851411047, 15.701972776773513, 15.710089680065902, 15.724123697543275, 15.738567858253838]
 
@@ -111,7 +102,6 @@ plt.plot(x, y2, marker='o', label='Full Self Attention')
 plt.plot(x, y3, marker='o', label='Atrous Self Attention')
 plt.plot(x, y4, marker='o', label='Atrous Self Attention with Convolution layer')
 plt.plot(x, y5, marker='o', label='Atrous Self Attention with Convolution layer and BatchNormalization')
-plt.plot(x, y6, marker='o', label='Atrous Self Attention with Convolution layer with reverse')
 plt.plot(x, y7, marker='o', label='Atrous Self Attention with Convolution layer with changing norm position')
 plt.plot(x, y8, marker='o', label='Atrous Self Attention with Convolution layer with fft')
 
