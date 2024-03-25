@@ -17,7 +17,7 @@ with open('output.txt', 'a') as f:
 base_command = "python3 SPR_CNN4_train.py"
 
 # 要执行的 SNR_dB 参数的范围
-SNR_dB_range = range(0, 21, 5)
+SNR_dB_range = range(-10, 21, 5)
 
 # 遍历 SNR_dB 参数的范围
 for SNR_dB in SNR_dB_range:
