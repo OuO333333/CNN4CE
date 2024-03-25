@@ -19,7 +19,7 @@ from tensorflow.keras.layers.experimental.preprocessing import Rescaling
 from tf_encodings import TFPositionalEncoding1D
 from tensorflow.keras.layers import Add
 from sparse_attention import SelfAttention, Multi_Head_Attention
-from one_gate_moe import OneGateMoE
+# from one_gate_moe import OneGateMoE
 from tensorflow.keras.layers import Conv1D, Conv2D
 from tensorflow.keras.layers import AveragePooling2D
 from tensorflow.keras.layers import BatchNormalization
@@ -31,7 +31,7 @@ encoder_block_num = 2
 decoder_block_num = 2
 learning_rate_num = 1e-4
 key_dim_num = 256
-num_heads = 4  # Number of attention heads
+num_heads = 6  # Number of attention heads
 
 print("TensorFlow 版本:", tf.__version__)
 print("epochs_num = ", epochs_num)
@@ -349,9 +349,9 @@ for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
 
     # Feed Forward Layer
     # ff_output = Dense(units=key_dim_num, activation='relu')(x)
-    # ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
-    moe_layer = OneGateMoE(num_experts=5, kernel_size=3)
-    ff_output = moe_layer(x)
+    ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
+    # moe_layer = OneGateMoE(num_experts=5, kernel_size=3)
+    # ff_output = moe_layer(x)
     x = Add()([x, ff_output])
     x = LayerNormalization(epsilon=1e-6)(x)
 
@@ -387,9 +387,9 @@ for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
 
     # Feed Forward Layer
     # ff_output = Dense(units=key_dim_num, activation='relu')(x)
-    # ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
-    moe_layer2 = OneGateMoE(num_experts=5, kernel_size=3)
-    ff_output = moe_layer2(x)
+    ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
+    # moe_layer2 = OneGateMoE(num_experts=5, kernel_size=3)
+    # ff_output = moe_layer2(x)
     x = Add()([x, ff_output])
     x = LayerNormalization(epsilon=1e-6)(x)
 

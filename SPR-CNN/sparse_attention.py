@@ -90,8 +90,10 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
         # print("inputs_reshaped shape2 = ", inputs_reshaped.shape)
         # Process each head iteratively
         for i in range(self.num_heads):
-            #if i == 3:
-            #    inputs_reshaped = fft(inputs_reshaped)
+            if i == 3:
+                inputs_reshaped = fft(inputs_reshaped)
+            if enc_output is not None and i == 3:
+                enc_output_reshaped = fft(enc_output_reshaped)
             # Compute the query, key, and value for the i-th head
             Q = tf.matmul(inputs_reshaped, self.Wq[i])  # (B, L, d_k)
             if enc_output is not None:
@@ -129,9 +131,9 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
             # Reshape output to match original input
             output = tf.reshape(output, (tf.shape(inputs)[0], 1, seq_len, feature_dim))
             
-            #if i >= 3:
-            #    output = ifft(output)
-            #    output = tf.reshape(output, (tf.shape(inputs)[0], 1, seq_len, feature_dim))
+            if i >= 3:
+                output = ifft(output)
+                output = tf.reshape(output, (tf.shape(inputs)[0], 1, seq_len, feature_dim))
 
             # Sum up the outputs of all heads
             total_output += output
