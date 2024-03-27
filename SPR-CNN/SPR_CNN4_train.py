@@ -18,13 +18,13 @@ import scipy.io as sio
 from tensorflow.keras.layers.experimental.preprocessing import Rescaling
 from tf_encodings import TFPositionalEncoding1D
 from tensorflow.keras.layers import Add
-from sparse_attention import SelfAttention, Multi_Head_Attention, reshape_input_output, FFT, IFFT
+from sparse_attention import SelfAttention, Multi_Head_Attention, reshape_input_output, FFT, IFFT, Inter_Modal_Multi_Head_Attention
 from tensorflow.keras.layers import Conv1D
 from tensorflow.keras.layers import AveragePooling1D
 from tensorflow.keras.layers import BatchNormalization
 
 
-epochs_num = 200
+epochs_num = 100
 batch_size_num = 32
 encoder_block_num = 2
 decoder_block_num = 2
@@ -329,34 +329,61 @@ H_test_noisy = Add()([H_test_noisy, position_encoding])
 H_test = Add()([H_test, position_encoding2])
 
 enc_output = None
+
+# FFT
+FFT_layer = FFT()
+x_time = x
+x_fre = FFT_layer(x)
+
 # Transformer Encoder Layer
 for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
 
-    # FFT
-    FFT_layer = FFT()
-    x = FFT_layer(x)
-
-    # Multi-Head Attention
-    self_attention_layer = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
-    attn_output = self_attention_layer(x)
-
-    # IFFT
-    IFFT_layer = IFFT()
-    attn_output = IFFT_layer(attn_output)
-
-    # attn_output = ifft(attn_output)
+    # Intra_Modal_Multi_Head_Attention_Time
+    Intra_Modal_Multi_Head_Attention_Time = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
+    attn_output = Intra_Modal_Multi_Head_Attention_Time(x_time)
     
     # Add & Norm
-    x = Add()([x, attn_output])
-    x = LayerNormalization(epsilon=1e-6)(x)
+    x_time = Add()([x_time, attn_output])
+    x_time = LayerNormalization(epsilon=1e-6)(x_time)
 
-    # Feed Forward Layer
+    # Intra_Modal_Multi_Head_Attention_Fre
+    Intra_Modal_Multi_Head_Attention_Fre = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
+    attn_output = Intra_Modal_Multi_Head_Attention_Fre(x_fre)
+    
+    # Add & Norm
+    x_fre = Add()([x_fre, attn_output])
+    x_fre = LayerNormalization(epsilon=1e-6)(x_fre)
+
+    # Inter_Modal_Multi_Head_Attention_Time
+    Inter_Modal_Multi_Head_Attention_Time = Inter_Modal_Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
+    attn_output = Inter_Modal_Multi_Head_Attention_Time(x_time, enc_output = x_fre)
+
+    # Add & Norm
+    x_time = Add()([x_time, attn_output])
+    x_time = LayerNormalization(epsilon=1e-6)(x_time)
+
+    # Inter_Modal_Multi_Head_Attention_Fre
+    Inter_Modal_Multi_Head_Attention_Fre = Inter_Modal_Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
+    attn_output = Inter_Modal_Multi_Head_Attention_Fre(x_fre, enc_output = x_time)
+
+    # Add & Norm
+    x_fre = Add()([x_fre, attn_output])
+    x_fre = LayerNormalization(epsilon=1e-6)(x_fre)
+
+    # Feed Forward Layer Time
     # ff_output = Dense(units=key_dim_num, activation='relu')(x)
-    ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
-    x = Add()([x, ff_output])
-    x = LayerNormalization(epsilon=1e-6)(x)
+    ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_time)
+    x_time = Add()([x_time, ff_output])
+    x_time = LayerNormalization(epsilon=1e-6)(x_time)
 
-enc_output = x
+    # Feed Forward Layer Time
+    # ff_output = Dense(units=key_dim_num, activation='relu')(x)
+    ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_fre)
+    x_fre = Add()([x_fre, ff_output])
+    x_fre = LayerNormalization(epsilon=1e-6)(x_fre)
+
+enc_output = x_time
+x = x_time
 
 # Transformer Decoder Layer
 for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
@@ -371,15 +398,28 @@ for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
     # Add & Norm
     x = Add()([x, attn_output])
     x = LayerNormalization(epsilon=1e-6)(x)
+    x_after_masked_attention_time = x
+    x_after_masked_attention_fre = x
 
-    # Multi-Head Attention (attention to encoder outputs)
-    enc_output = enc_output  # Assuming encoder output is available
-    cross_attention_layer = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
-    attn_output = cross_attention_layer(x, enc_output = enc_output)
+    # Multi-Head Attention Time(attention to encoder outputs)
+    enc_output = x_time  # Assuming encoder output is available
+    cross_attention_layer_time = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
+    attn_output = cross_attention_layer_time(x_after_masked_attention_time, enc_output = enc_output)
     
     # Add & Norm
-    x = Add()([x, attn_output])
-    x = LayerNormalization(epsilon=1e-6)(x)
+    x_after_masked_attention_time = Add()([x_after_masked_attention_time, attn_output])
+    x_after_masked_attention_time = LayerNormalization(epsilon=1e-6)(x_after_masked_attention_time)
+
+    # Multi-Head Attention Fre(attention to encoder outputs)
+    enc_output = x_fre  # Assuming encoder output is available
+    cross_attention_layer_fre = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
+    attn_output = cross_attention_layer_fre(x_after_masked_attention_fre, enc_output = enc_output)
+    
+    # Add & Norm
+    x_after_masked_attention_fre = Add()([x_after_masked_attention_fre, attn_output])
+    x_after_masked_attention_fre = LayerNormalization(epsilon=1e-6)(x_after_masked_attention_fre)
+
+    x =  (x_after_masked_attention_time + x_after_masked_attention_fre) / 2
 
     # Feed Forward Layer
     # ff_output = Dense(units=key_dim_num, activation='relu')(x)

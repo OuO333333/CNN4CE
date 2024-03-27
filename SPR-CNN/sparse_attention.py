@@ -118,7 +118,7 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
 
 class Inter_Modal_Multi_Head_Attention(tf.keras.layers.Layer):
     def __init__(self, d_k, d_v, d_model, num_heads, **kwargs):
-        super(Multi_Head_Attention, self).__init__(**kwargs)
+        super(Inter_Modal_Multi_Head_Attention, self).__init__(**kwargs)
         self.num_heads = num_heads
         self.d_model = d_model
         self.d_k = d_k  # Dimension of key vector
