@@ -24,7 +24,7 @@ from tensorflow.keras.layers import AveragePooling1D
 from tensorflow.keras.layers import BatchNormalization
 
 
-epochs_num = 100
+epochs_num = 200
 batch_size_num = 32
 encoder_block_num = 2
 decoder_block_num = 2
@@ -41,7 +41,7 @@ print("learning_rate_num = ", learning_rate_num)
 
 Nt=32
 Nr=16
-SNR_dB = 20
+SNR_dB = 10
 # get command line argv
 args = sys.argv
 if len(args) == 2:
