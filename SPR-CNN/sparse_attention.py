@@ -47,9 +47,6 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
         super(Multi_Head_Attention, self).__init__(**kwargs)
         self.num_heads = num_heads
         self.d_model = d_model
-
-        # assert d_model % num_heads == 0
-
         self.d_k = d_k  # Dimension of key vector
         self.d_v = d_v  # Dimension of value vector
 
@@ -78,7 +75,6 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
         shape = inputs.get_shape().as_list()
         seq_len = int(shape[1] * shape[2] / self.d_model)
 
-        # inputs = fft(inputs)
         # Initialize the total_output
         total_output = tf.zeros_like(inputs)
 
@@ -110,10 +106,78 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
             # Apply softmax for attention weights
             attention_weights = tf.nn.softmax(scores, axis=-1)  # (B, L, L)
 
-            #if attention_weights.dtype == tf.float64:
-            #    V = tf.cast(V, tf.float64)
-            #else:
-            #    V = tf.cast(V, tf.float32)
+            # Context vector (weighted sum of values)
+            output = tf.matmul(attention_weights, V)  # (B, L, d_v)
+            
+            # Sum up the outputs of all heads
+            total_output += output
+        
+        total_output = total_output / self.num_heads
+        
+        return total_output
+
+class Inter_Modal_Multi_Head_Attention(tf.keras.layers.Layer):
+    def __init__(self, d_k, d_v, d_model, num_heads, **kwargs):
+        super(Multi_Head_Attention, self).__init__(**kwargs)
+        self.num_heads = num_heads
+        self.d_model = d_model
+        self.d_k = d_k  # Dimension of key vector
+        self.d_v = d_v  # Dimension of value vector
+
+        # Create query, key, and value projections for each head
+        self.Wq = self.add_weight(
+            name='Wq',
+            shape=(num_heads, d_model, d_k),
+            initializer='glorot_uniform',
+            trainable=True
+        )
+        self.Wk = self.add_weight(
+            name='Wk',
+            shape=(num_heads, d_model, d_k),
+            initializer='glorot_uniform',
+            trainable=True
+        )
+        self.Wv = self.add_weight(
+            name='Wv',
+            shape=(num_heads, d_model, d_k),
+            initializer='glorot_uniform',
+            trainable=True
+        )
+
+    def call(self, inputs, mask = None, enc_output = None, FFT = False):
+        
+        shape = inputs.get_shape().as_list()
+        seq_len = int(shape[1] * shape[2] / self.d_model)
+
+        # Initialize the total_output
+        total_output = tf.zeros_like(inputs)
+
+        # Process each head iteratively
+        for i in range(self.num_heads):
+
+            K = tf.matmul(inputs, self.Wk[i])  # (B, L, d_k)
+            V = tf.matmul(inputs, self.Wv[i])
+
+            if enc_output is not None:
+                Q = tf.matmul(enc_output, self.Wq[i])  # (B, L, d_k)
+            else:
+                Q = tf.matmul(inputs, self.Wq[i])  # (B, L, d_k)
+
+            # Scaled dot-product attention
+            scores = tf.matmul(Q, K, transpose_b=True) / tf.math.sqrt(tf.cast(self.d_k, tf.float32))  # (B, L, L)
+            
+            # Apply masking if provided
+            if mask is not None:
+                scores = scores * mask - tf.constant(1e10, dtype=tf.float32) * (1 - mask)
+            
+            # Apply sparse attention mask
+            mask = atrous_self_attention_mask(N = seq_len, dilation_rate = 2)
+            # mask = local_self_attention_mask(N = seq_len, window_size = 2)
+            # mask = stride_sparse_self_attention_mask(N = seq_len, local_range = 2, stride = 2)
+            scores = scores * mask - tf.constant(1e10, dtype=tf.float32) * (1 - mask)
+
+            # Apply softmax for attention weights
+            attention_weights = tf.nn.softmax(scores, axis=-1)  # (B, L, L)
 
             # Context vector (weighted sum of values)
             output = tf.matmul(attention_weights, V)  # (B, L, d_v)
@@ -123,7 +187,6 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
         
         total_output = total_output / self.num_heads
         
-        # total_output = ifft(total_output)
         return total_output
 
 def atrous_self_attention_mask(N, dilation_rate):

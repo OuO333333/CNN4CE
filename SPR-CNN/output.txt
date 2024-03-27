@@ -41,3 +41,5 @@ Encoder *  2 , Decoder *  2 , reshape_type = (Nr, Nt, channel)
      20           0.10264460742473602            14.906572817222708
 Encoder *  2 , Decoder *  2 , reshape_type = (Nr, Nt, channel)
      20          0.012106870301067829            15.741546294312057
+Encoder *  2 , Decoder *  2 , reshape_type = (Nr, Nt, channel)
+     20           0.10003626346588135            14.931316254548221

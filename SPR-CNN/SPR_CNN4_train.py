@@ -24,7 +24,7 @@ from tensorflow.keras.layers import AveragePooling1D
 from tensorflow.keras.layers import BatchNormalization
 
 
-epochs_num = 200
+epochs_num = 1
 batch_size_num = 32
 encoder_block_num = 2
 decoder_block_num = 2
@@ -290,16 +290,9 @@ reshape_input_dim = (int(8192 / key_dim_num), key_dim_num)
 dropout_rate = 0.1
 
 # Define the input layer
-# change here
-#inputs = Input(shape=input_dim)
-#key_dim_num = 4
 inputs = Input(shape=reshape_input_dim)
 reshape_type = (0, 1, 2, 3)
 
-# H_train = np.tile(H_train, (1, 1, 2))
-# H_test = np.tile(H_test, (1, 1, 2))
-#print("after H_train shape = ", H_train.shape)
-#print("after H_test shape = ", H_test.shape)
 
 # transpose
 H_train_noisy = np.transpose(H_train_noisy, reshape_type)
@@ -312,7 +305,6 @@ H_train_noisy = np.reshape(H_train_noisy, (-1, 1, int(8192 / key_dim_num), key_d
 H_train = np.reshape(H_train, (-1, 1, int(2048 / key_dim_num), key_dim_num))
 H_test_noisy = np.reshape(H_test_noisy, (-1, 1, int(8192 / key_dim_num), key_dim_num))
 H_test = np.reshape(H_test, (-1, 1, int(2048 / key_dim_num), key_dim_num))
-print("H_train_noisy shape after change = ", H_train_noisy.shape)
 
 # Add a rescaling layer to normalize inputs
 x = Rescaling(scale=1.0 / scale)(inputs)
@@ -419,12 +411,11 @@ callbacks_list = [checkpoint]
 
 print("H_train shape = ", H_train.shape, "H_train_noisy shape =", H_train_noisy.shape)
 model.fit(H_train_noisy, H_train, epochs=epochs_num, batch_size=batch_size_num, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
+
 # load model
 CNN = tf.keras.models.load_model('CNN_UMi_3path_2fre_SNRminus10dB_200ep.tf')
 
 decoded_channel = CNN.predict(H_test_noisy)
-print("H_test_noisy shape = ", H_test_noisy.shape)
-print("decoded_channel shape = ", decoded_channel.shape)
 
 nmse2=zeros((data_num_test-len(row_num),1), dtype=float)
 for n in range(data_num_test-len(row_num)):
