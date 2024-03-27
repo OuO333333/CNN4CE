@@ -74,35 +74,25 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
         )
 
     def call(self, inputs, mask = None, enc_output = None, FFT = False):
-        batch_size =  tf.shape(inputs)[0]
+        
         shape = inputs.get_shape().as_list()
-        seq_len = int(shape[1] * shape[2] * shape[3] / self.d_model)
-        feature_dim = self.d_model
-        inputs_reshaped = tf.squeeze(inputs, axis=1)  # (B, L, F)
-        if enc_output is not None:
-            enc_output_reshaped = tf.squeeze(enc_output, axis=1)  # (B, L, F)
+        seq_len = int(shape[1] * shape[2] / self.d_model)
 
-        total_output = tf.zeros_like(inputs)  # Initialize the total_output
+        # inputs = fft(inputs)
+        # Initialize the total_output
+        total_output = tf.zeros_like(inputs)
 
-        # print("inputs_reshaped shape = ", inputs_reshaped.shape)
-        if FFT == True:
-            inputs_reshaped = fft(inputs_reshaped)
-        # print("inputs_reshaped shape2 = ", inputs_reshaped.shape)
         # Process each head iteratively
         for i in range(self.num_heads):
-            if i == 3:
-                inputs_reshaped = fft(inputs_reshaped)
-            if enc_output is not None and i == 3:
-                enc_output_reshaped = fft(enc_output_reshaped)
-            # Compute the query, key, and value for the i-th head
-            Q = tf.matmul(inputs_reshaped, self.Wq[i])  # (B, L, d_k)
+
+            Q = tf.matmul(inputs, self.Wq[i])  # (B, L, d_k)
+
             if enc_output is not None:
-                K = tf.matmul(enc_output_reshaped, self.Wk[i])  # (B, L, d_k)
-                V = tf.matmul(enc_output_reshaped, self.Wv[i])  # (B, L, d_v)
+                K = tf.matmul(enc_output, self.Wk[i])  # (B, L, d_k)
+                V = tf.matmul(enc_output, self.Wv[i])  # (B, L, d_v)
             else:
-                K = tf.matmul(inputs_reshaped, self.Wk[i])  # (B, L, d_k)
-                V = tf.matmul(inputs_reshaped, self.Wv[i])  # (B, L, d_v)
-            tf.experimental.numpy.experimental_enable_numpy_behavior()
+                K = tf.matmul(inputs, self.Wk[i])  # (B, L, d_k)
+                V = tf.matmul(inputs, self.Wv[i])  # (B, L, d_v)
 
             # Scaled dot-product attention
             scores = tf.matmul(Q, K, transpose_b=True) / tf.math.sqrt(tf.cast(self.d_k, tf.float32))  # (B, L, L)
@@ -120,36 +110,20 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
             # Apply softmax for attention weights
             attention_weights = tf.nn.softmax(scores, axis=-1)  # (B, L, L)
 
-            if attention_weights.dtype == tf.float64:
-                V = tf.cast(V, tf.float64)
-            else:
-                V = tf.cast(V, tf.float32)
+            #if attention_weights.dtype == tf.float64:
+            #    V = tf.cast(V, tf.float64)
+            #else:
+            #    V = tf.cast(V, tf.float32)
 
             # Context vector (weighted sum of values)
             output = tf.matmul(attention_weights, V)  # (B, L, d_v)
-
-            # Reshape output to match original input
-            output = tf.reshape(output, (tf.shape(inputs)[0], 1, seq_len, feature_dim))
             
-            if i >= 3:
-                output = ifft(output)
-                output = tf.reshape(output, (tf.shape(inputs)[0], 1, seq_len, feature_dim))
-
             # Sum up the outputs of all heads
             total_output += output
         
-        # Calculate the average
-        if FFT == True:
-            total_output = ifft(total_output)
         total_output = total_output / self.num_heads
-        #print("inputs shape = ", inputs) # (None, 1, 8, 256)
-        #print("inputs_reshaped shape = ", inputs_reshaped) # (None, 8, 256)
-        #print("Q shape = ", Q) # (None, 8, 256)
-        #print("scores shape = ", scores) # (None, 8, 8)
-        #print("attention_weights shape = ", attention_weights) # (None, 8, 8)
-        #print("total_output shape = ", total_output) # (None, 1, 8, 256)
+        
         # total_output = ifft(total_output)
-        # total_output = tf.cast(total_output, dtype=tf.float64)
         return total_output
 
 def atrous_self_attention_mask(N, dilation_rate):
@@ -188,6 +162,42 @@ def stride_sparse_self_attention_mask(N, local_range, stride):
                 mask[i, j] = 1
     return mask
 
+class FFT(tf.keras.layers.Layer):
+    def __init__(self, **kwargs):
+        super(FFT, self).__init__(**kwargs)
+
+    @tf.function
+    def call(self, x):
+        # 假设 x 为(batchsize, 32, 256)的张量
+        batch_size = tf.shape(x)[0]
+        result = tf.TensorArray(dtype=tf.float32, size=batch_size, element_shape=(32, 256))
+
+        # 对每个张量执行FFT操作, q_fft 為 (32, 256)
+        for i in tf.range(batch_size):
+            q_batch = x[i]
+            q_fft = fft_single(q_batch)  # 假设已定义了 ifft_single 函数
+            result = result.write(i, q_fft)
+        result = result.stack()
+        return result
+
+class IFFT(tf.keras.layers.Layer):
+    def __init__(self, **kwargs):
+        super(IFFT, self).__init__(**kwargs)
+
+    @tf.function
+    def call(self, x):
+        # 假设 x 为(batchsize, 32, 256)的张量
+        batch_size = tf.shape(x)[0]
+        result = tf.TensorArray(dtype=tf.float32, size=batch_size, element_shape=(32, 256))
+
+        # 对每个张量执行FFT操作, q_fft 為 (32, 256)
+        for i in tf.range(batch_size):
+            q_batch = x[i]
+            q_fft = ifft_single(q_batch)  # 假设已定义了 ifft_single 函数
+            result = result.write(i, q_fft)
+        result = result.stack()
+        return result
+
 @tf.function
 def fft(x):
     # 假设 x 为(batchsize, 32, 256)的张量
@@ -206,7 +216,7 @@ def fft(x):
 def ifft(x):
     # 假设 x 为(batchsize, 32, 256)的张量
     batch_size = tf.shape(x)[0]
-    result = tf.TensorArray(dtype=tf.float64, size=batch_size, element_shape=(32, 256))
+    result = tf.TensorArray(dtype=tf.float32, size=batch_size, element_shape=(32, 256))
 
     # 对每个张量执行FFT操作, q_fft 為 (32, 256)
     for i in tf.range(batch_size):
@@ -270,6 +280,10 @@ def ifft_single(x):
     x = tf.concat([real_x, imag_x], axis=-1)
     x = tf.reshape(x, (32, 256))
     # print("x shape 2 = ", x.shape)
+    return x
+
+def reshape_input_output(x):
+    x = tf.squeeze(x, axis=1)  # (B, L, F)
     return x
 
 def one_gate_moe(x, key_dim_num):

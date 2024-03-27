@@ -18,10 +18,9 @@ import scipy.io as sio
 from tensorflow.keras.layers.experimental.preprocessing import Rescaling
 from tf_encodings import TFPositionalEncoding1D
 from tensorflow.keras.layers import Add
-from sparse_attention import SelfAttention, Multi_Head_Attention
-# from one_gate_moe import OneGateMoE
-from tensorflow.keras.layers import Conv1D, Conv2D
-from tensorflow.keras.layers import AveragePooling2D
+from sparse_attention import SelfAttention, Multi_Head_Attention, reshape_input_output, FFT, IFFT
+from tensorflow.keras.layers import Conv1D
+from tensorflow.keras.layers import AveragePooling1D
 from tensorflow.keras.layers import BatchNormalization
 
 
@@ -31,7 +30,7 @@ encoder_block_num = 2
 decoder_block_num = 2
 learning_rate_num = 1e-4
 key_dim_num = 256
-num_heads = 6  # Number of attention heads
+num_heads = 4  # Number of attention heads
 
 print("TensorFlow 版本:", tf.__version__)
 print("epochs_num = ", epochs_num)
@@ -287,7 +286,7 @@ print(((H_test)**2).mean())
 
 K=3
 input_dim=(Nr,Nt,2*fre*time_steps)
-reshape_input_dim = (1, int(8192 / key_dim_num), key_dim_num)
+reshape_input_dim = (int(8192 / key_dim_num), key_dim_num)
 dropout_rate = 0.1
 
 # Define the input layer
@@ -307,27 +306,31 @@ H_train_noisy = np.transpose(H_train_noisy, reshape_type)
 H_train = np.transpose(H_train, reshape_type)
 H_test_noisy = np.transpose(H_test_noisy, reshape_type)
 H_test = np.transpose(H_test, reshape_type)
-# change here
+
 # 将 H_train_noisy, H_train, H_test_noisy, H_test 调整为形状为 (None, 1, int(2048 / key_dim_num), key_dim_num) 的数组
 H_train_noisy = np.reshape(H_train_noisy, (-1, 1, int(8192 / key_dim_num), key_dim_num))
 H_train = np.reshape(H_train, (-1, 1, int(2048 / key_dim_num), key_dim_num))
 H_test_noisy = np.reshape(H_test_noisy, (-1, 1, int(8192 / key_dim_num), key_dim_num))
 H_test = np.reshape(H_test, (-1, 1, int(2048 / key_dim_num), key_dim_num))
+print("H_train_noisy shape after change = ", H_train_noisy.shape)
 
 # Add a rescaling layer to normalize inputs
 x = Rescaling(scale=1.0 / scale)(inputs)
 
-# learn positional encoding
-# position_encoding = Conv2D(filters=key_dim_num, kernel_size=(K, K), padding='Same', activation='relu')(x)
-# Returns the position encoding only
+# position_encoding
 positional_encoding_model = TFPositionalEncoding1D(key_dim_num)
-# change here
 position_encoding = positional_encoding_model(tf.zeros((1,int(8192 / key_dim_num),key_dim_num)))
-position_encoding = tf.expand_dims(position_encoding, axis=0)
-position_encoding = tf.tile(position_encoding, multiples=[499, 1, 1, 1])
+position_encoding = tf.tile(position_encoding, multiples=[499, 1, 1])
 position_encoding2 = positional_encoding_model(tf.zeros((1,int(2048 / key_dim_num),key_dim_num)))
-position_encoding2 = tf.expand_dims(position_encoding2, axis=0)
-position_encoding2 = tf.tile(position_encoding2, multiples=[499, 1, 1, 1])
+position_encoding2 = tf.tile(position_encoding2, multiples=[499, 1, 1])
+
+# 減少不必要維度
+H_train_noisy = reshape_input_output(H_train_noisy)
+H_train = reshape_input_output(H_train)
+H_test_noisy = reshape_input_output(H_test_noisy)
+H_test = reshape_input_output(H_test)
+
+# 加上 position_encoding
 H_train_noisy = Add()([H_train_noisy, position_encoding])
 H_train = Add()([H_train, position_encoding2])
 H_test_noisy = Add()([H_test_noisy, position_encoding])
@@ -337,12 +340,20 @@ enc_output = None
 # Transformer Encoder Layer
 for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
 
+    # FFT
+    FFT_layer = FFT()
+    x = FFT_layer(x)
+
     # Multi-Head Attention
-    # attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, x)
-    #self_attention_layer = SelfAttention(d_k=256, d_v=256, d_model=256)
     self_attention_layer = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
     attn_output = self_attention_layer(x)
 
+    # IFFT
+    IFFT_layer = IFFT()
+    attn_output = IFFT_layer(attn_output)
+
+    # attn_output = ifft(attn_output)
+    
     # Add & Norm
     x = Add()([x, attn_output])
     x = LayerNormalization(epsilon=1e-6)(x)
@@ -350,8 +361,6 @@ for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     # Feed Forward Layer
     # ff_output = Dense(units=key_dim_num, activation='relu')(x)
     ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
-    # moe_layer = OneGateMoE(num_experts=5, kernel_size=3)
-    # ff_output = moe_layer(x)
     x = Add()([x, ff_output])
     x = LayerNormalization(epsilon=1e-6)(x)
 
@@ -360,15 +369,10 @@ enc_output = x
 # Transformer Decoder Layer
 for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
 
-    # change here
     # sequence mask
     mask = tf.sequence_mask([8192/key_dim_num], maxlen=8192/key_dim_num, dtype=tf.float32)
-    #mask = tf.sequence_mask([32], maxlen=32, dtype=tf.float32)
-    mask = tf.expand_dims(tf.expand_dims(mask, axis=0), axis=0)
 
     # Masked Multi-Head Attention (self-attention on decoder inputs)
-    # attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, x, attention_mask=mask)
-    # 创建 SelfAttention 层实例
     masked_self_attention_layer = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
     attn_output = masked_self_attention_layer(x, mask = mask)
 
@@ -378,9 +382,9 @@ for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
 
     # Multi-Head Attention (attention to encoder outputs)
     enc_output = enc_output  # Assuming encoder output is available
-    # attn_output = MultiHeadAttention(num_heads=num_heads, key_dim=32, dropout=dropout_rate)(x, enc_output)
     cross_attention_layer = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
     attn_output = cross_attention_layer(x, enc_output = enc_output)
+    
     # Add & Norm
     x = Add()([x, attn_output])
     x = LayerNormalization(epsilon=1e-6)(x)
@@ -388,15 +392,13 @@ for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
     # Feed Forward Layer
     # ff_output = Dense(units=key_dim_num, activation='relu')(x)
     ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
-    # moe_layer2 = OneGateMoE(num_experts=5, kernel_size=3)
-    # ff_output = moe_layer2(x)
     x = Add()([x, ff_output])
     x = LayerNormalization(epsilon=1e-6)(x)
 
 
 # Output layer
-outputs = Conv2D(filters=key_dim_num, kernel_size=(K, K), padding='Same', activation='tanh')(x)
-outputs = AveragePooling2D(pool_size=(1, 4), padding='Same')(outputs)
+outputs = Conv1D(filters=key_dim_num, kernel_size=K, padding='Same', activation='tanh')(x)
+outputs = AveragePooling1D(pool_size=4, padding='Same')(outputs)
 
 # Create the model
 model = Model(inputs=inputs, outputs=outputs)
@@ -420,8 +422,10 @@ model.fit(H_train_noisy, H_train, epochs=epochs_num, batch_size=batch_size_num, 
 # load model
 CNN = tf.keras.models.load_model('CNN_UMi_3path_2fre_SNRminus10dB_200ep.tf')
 
-
 decoded_channel = CNN.predict(H_test_noisy)
+print("H_test_noisy shape = ", H_test_noisy.shape)
+print("decoded_channel shape = ", decoded_channel.shape)
+
 nmse2=zeros((data_num_test-len(row_num),1), dtype=float)
 for n in range(data_num_test-len(row_num)):
     MSE = tf.reduce_sum(tf.square(H_test - decoded_channel))
