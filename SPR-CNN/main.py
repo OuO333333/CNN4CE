@@ -30,7 +30,7 @@ encoder_block_num = 2
 decoder_block_num = 2
 learning_rate_num = 1e-4
 key_dim_num = 256
-num_heads = 4  # Number of attention heads
+num_heads = 6  # Number of attention heads
 
 print("TensorFlow 版本:", tf.__version__)
 print("epochs_num = ", epochs_num)
