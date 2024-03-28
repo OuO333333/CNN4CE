@@ -330,11 +330,6 @@ H_test = Add()([H_test, position_encoding2])
 
 enc_output = None
 
-# FFT
-FFT_layer = FFT()
-x_time = x
-x_fre = FFT_layer(x)
-
 for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     
     # Transformer Encoder Layer
@@ -388,11 +383,10 @@ for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     x_fre = Add()([x_fre, ff_output])
     x_fre = LayerNormalization(epsilon=1e-6)(x_fre)
 
-enc_output = x_time
-x = x_time
+    enc_output = x_time
+    x = x_time
 
-# Transformer Decoder Layer
-for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
+    # Transformer Decoder Layer
 
     # sequence mask
     mask = tf.sequence_mask([8192/key_dim_num], maxlen=8192/key_dim_num, dtype=tf.float32)
