@@ -330,9 +330,11 @@ H_test = Add()([H_test, position_encoding2])
 
 enc_output = None
 
-# Transformer Encoder Layer
-for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
 
+for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
+    
+    # Transformer Encoder Layer
+    
     # Multi_Head_Attention
     Multi_Head_Attentionn = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
     attn_output = Multi_Head_Attentionn(x)
@@ -347,10 +349,9 @@ for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     x = Add()([x, ff_output])
     x = LayerNormalization(epsilon=1e-6)(x)
 
-enc_output = x
+    enc_output = x
 
-# Transformer Decoder Layer
-for _ in range(decoder_block_num):  # Repeat the decoder decoder_block_num times
+    # Transformer Decoder Layer
 
     # sequence mask
     mask = tf.sequence_mask([8192/key_dim_num], maxlen=8192/key_dim_num, dtype=tf.float32)
