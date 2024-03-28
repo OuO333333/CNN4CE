@@ -335,8 +335,14 @@ FFT_layer = FFT()
 x_time = x
 x_fre = FFT_layer(x)
 
-# Transformer Encoder Layer
 for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
+    
+    # Transformer Encoder Layer
+
+    # FFT
+    FFT_layer = FFT()
+    x_time = x
+    x_fre = FFT_layer(x)
 
     # Intra_Modal_Multi_Head_Attention_Time
     Intra_Modal_Multi_Head_Attention_Time = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
