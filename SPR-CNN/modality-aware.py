@@ -403,18 +403,23 @@ for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     x_fre = Add()([x_fre, attn_output])
     x_fre = LayerNormalization(epsilon=1e-6)(x_fre)
 
+    # Feed Forward Layer Time
+    # ff_output = Dense(units=key_dim_num, activation='relu')(x)
+    ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_time)
+    x_time = Add()([x_time, ff_output])
+    x_time = LayerNormalization(epsilon=1e-6)(x_time)
+
+    # Feed Forward Layer Time
+    # ff_output = Dense(units=key_dim_num, activation='relu')(x)
+    ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_fre)
+    x_fre = Add()([x_fre, ff_output])
+    x_fre = LayerNormalization(epsilon=1e-6)(x_fre)
+
 
 # Concat x_time & x_fre
 IFFT_layer = IFFT()
 x_fre = IFFT_layer(x_fre)
 x =  (x_time + x_fre) / 2
-
-# Feed Forward Layer
-# ff_output = Dense(units=key_dim_num, activation='relu')(x)
-ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
-x = Add()([x, ff_output])
-x = LayerNormalization(epsilon=1e-6)(x)
-
 
 # Output layer
 outputs = Conv1D(filters=key_dim_num, kernel_size=K, padding='Same', activation='tanh')(x)
