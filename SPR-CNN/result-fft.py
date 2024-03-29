@@ -12,20 +12,14 @@ y2 = [0.03733016178011894, 0.026352835819125175, 0.01988144963979721, 0.01568548
 
 # Not yet!
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
-# 自己寫的 multi-head self attention, Atrous Self Attention, ff layer 用 Conv1D, 使用 fft in multi-head-attention
-y3 = [0.04002300277352333, 0.025759074836969376, 0.028633849695324898, 0.01591109298169613, 0.01619063876569271, 0.014287014491856098, 0.013909406960010529]
-
-# Not yet!
-# Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
 # 自己寫的 multi-head self attention, Atrous Self Attention, ff layer 用 Conv1D
 # Modality-aware Transformer
-y4 = [0.04002300277352333, 0.025759074836969376, 0.028633849695324898, 0.01591109298169613, 0.01619063876569271, 0.014287014491856098, 0.013909406960010529]
+y3 = [0.04002300277352333, 0.025759074836969376, 0.028633849695324898, 0.01591109298169613, 0.01619063876569271, 0.014287014491856098, 0.013909406960010529]
 
 # draw
 # plt.plot(x, y1, marker='o', label='CNN')
 plt.plot(x, y2, marker='o', label='Atrous Self Attention with Convolution layer')
-plt.plot(x, y3, marker='o', label='Atrous Self Attention with Convolution layer with fft in multi-head-attention')
-plt.plot(x, y4, marker='o', label='Modality-aware Transformer')
+plt.plot(x, y3, marker='o', label='Modality-aware Transformer')
 
 
 # set y-axis to log scale
@@ -58,20 +52,14 @@ y2 = [15.513741995396554, 15.613326189757453, 15.67171283671444, 15.709444124244
 
 # Not yet!
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
-# 自己寫的 multi-head self attention, Atrous Self Attention, ff layer 用 Conv1D, 使用 fft in multi-head-attention
-y3 = [15.489207487952974, 15.618692996837884, 15.592689694203141, 15.707417936913393, 15.704906880100955, 15.721997719195706, 15.725385431670285]
-
-# Not yet!
-# Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
 # 自己寫的 multi-head self attention, Atrous Self Attention, ff layer 用 Conv1D
 # Modality-aware Transformer
-y4 = [15.489207487952974, 15.618692996837884, 15.592689694203141, 15.707417936913393, 15.704906880100955, 15.721997719195706, 15.725385431670285]
+y3 = [15.489207487952974, 15.618692996837884, 15.592689694203141, 15.707417936913393, 15.704906880100955, 15.721997719195706, 15.725385431670285]
 
 # draw
 # plt.plot(x, y1, marker='o', label='CNN')
 plt.plot(x, y2, marker='o', label='Atrous Self Attention with Convolution layer')
-plt.plot(x, y3, marker='o', label='Atrous Self Attention with Convolution layer with fft in multi-head-attention')
-plt.plot(x, y4, marker='o', label='Modality-aware Transformer')
+plt.plot(x, y3, marker='o', label='Modality-aware Transformer')
 
 # set y-axis to log scale
 plt.yscale('log')

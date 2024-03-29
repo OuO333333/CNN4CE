@@ -383,49 +383,37 @@ for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     x_fre = Add()([x_fre, ff_output])
     x_fre = LayerNormalization(epsilon=1e-6)(x_fre)
 
-    enc_output = x_time
-    x = x_time
-
     # Transformer Decoder Layer
-
-    # sequence mask
-    mask = tf.sequence_mask([8192/key_dim_num], maxlen=8192/key_dim_num, dtype=tf.float32)
-
-    # Masked Multi-Head Attention (self-attention on decoder inputs)
-    masked_self_attention_layer = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
-    attn_output = masked_self_attention_layer(x, mask = mask)
-
-    # Add & Norm
-    x = Add()([x, attn_output])
-    x = LayerNormalization(epsilon=1e-6)(x)
-    x_after_masked_attention_time = x
-    x_after_masked_attention_fre = x
 
     # Multi-Head Attention Time(attention to encoder outputs)
     enc_output = x_time  # Assuming encoder output is available
     cross_attention_layer_time = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
-    attn_output = cross_attention_layer_time(x_after_masked_attention_time, enc_output = enc_output)
+    attn_output = cross_attention_layer_time(x_time, enc_output = enc_output)
     
     # Add & Norm
-    x_after_masked_attention_time = Add()([x_after_masked_attention_time, attn_output])
-    x_after_masked_attention_time = LayerNormalization(epsilon=1e-6)(x_after_masked_attention_time)
+    x_time = Add()([x_time, attn_output])
+    x_time = LayerNormalization(epsilon=1e-6)(x_time)
 
     # Multi-Head Attention Fre(attention to encoder outputs)
     enc_output = x_fre  # Assuming encoder output is available
     cross_attention_layer_fre = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
-    attn_output = cross_attention_layer_fre(x_after_masked_attention_fre, enc_output = enc_output)
+    attn_output = cross_attention_layer_fre(x_fre, enc_output = enc_output)
     
     # Add & Norm
-    x_after_masked_attention_fre = Add()([x_after_masked_attention_fre, attn_output])
-    x_after_masked_attention_fre = LayerNormalization(epsilon=1e-6)(x_after_masked_attention_fre)
+    x_fre = Add()([x_fre, attn_output])
+    x_fre = LayerNormalization(epsilon=1e-6)(x_fre)
 
-    x =  (x_after_masked_attention_time + x_after_masked_attention_fre) / 2
 
-    # Feed Forward Layer
-    # ff_output = Dense(units=key_dim_num, activation='relu')(x)
-    ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
-    x = Add()([x, ff_output])
-    x = LayerNormalization(epsilon=1e-6)(x)
+# Concat x_time & x_fre
+IFFT_layer = IFFT()
+x_fre = IFFT_layer(x_fre)
+x =  (x_time + x_fre) / 2
+
+# Feed Forward Layer
+# ff_output = Dense(units=key_dim_num, activation='relu')(x)
+ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
+x = Add()([x, ff_output])
+x = LayerNormalization(epsilon=1e-6)(x)
 
 
 # Output layer

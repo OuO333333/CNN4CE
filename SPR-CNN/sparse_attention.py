@@ -81,11 +81,6 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
         # Process each head iteratively
         for i in range(self.num_heads):
 
-            if i == 3:
-                inputs = fft(inputs)
-            if i == 3 and enc_output is not None:
-                enc_output = fft(enc_output)
-
             Q = tf.matmul(inputs, self.Wq[i])  # (B, L, d_k)
 
             if enc_output is not None:
@@ -117,7 +112,6 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
             # Sum up the outputs of all heads
             total_output += output
         
-        total_output = ifft(total_output)
         total_output = total_output / self.num_heads
         
         return total_output
