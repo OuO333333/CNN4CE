@@ -329,100 +329,109 @@ H_test_noisy = Add()([H_test_noisy, position_encoding])
 H_test = Add()([H_test, position_encoding2])
 
 enc_output = None
+# FFT
+FFT_layer = FFT()
+x_time = x
+x_fre = FFT_layer(x)
 
 for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     
     # Transformer Encoder Layer
-
-    # FFT
-    FFT_layer = FFT()
-    x_time = x
-    x_fre = FFT_layer(x)
+    
+    # conv_output_encoder_time = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_time)
+    # conv_output_encoder_fre = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_fre)
 
     # Intra_Modal_Multi_Head_Attention_Time
     Intra_Modal_Multi_Head_Attention_Time = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
-    attn_output = Intra_Modal_Multi_Head_Attention_Time(x_time)
+    Intra_Modal_Multi_Head_Attention_Time_Output = Intra_Modal_Multi_Head_Attention_Time(x_time)
     
     # Add & Norm
-    x_time = Add()([x_time, attn_output])
+    x_time = Add()([x_time, Intra_Modal_Multi_Head_Attention_Time_Output])
     x_time = LayerNormalization(epsilon=1e-6)(x_time)
 
     # Intra_Modal_Multi_Head_Attention_Fre
     Intra_Modal_Multi_Head_Attention_Fre = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
-    attn_output = Intra_Modal_Multi_Head_Attention_Fre(x_fre)
+    Intra_Modal_Multi_Head_Attention_Fre_Output = Intra_Modal_Multi_Head_Attention_Fre(x_fre)
     
     # Add & Norm
-    x_fre = Add()([x_fre, attn_output])
+    x_fre = Add()([x_fre, Intra_Modal_Multi_Head_Attention_Fre_Output])
     x_fre = LayerNormalization(epsilon=1e-6)(x_fre)
 
     # Inter_Modal_Multi_Head_Attention_Time
     Inter_Modal_Multi_Head_Attention_Time = Inter_Modal_Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
-    attn_output = Inter_Modal_Multi_Head_Attention_Time(x_time, enc_output = x_fre)
+    Inter_Modal_Multi_Head_Attention_Time_Output = Inter_Modal_Multi_Head_Attention_Time(x_time, enc_output = x_fre)
 
     # Add & Norm
-    x_time = Add()([x_time, attn_output])
+    x_time = Add()([x_time, Inter_Modal_Multi_Head_Attention_Time_Output])
     x_time = LayerNormalization(epsilon=1e-6)(x_time)
 
     # Inter_Modal_Multi_Head_Attention_Fre
     Inter_Modal_Multi_Head_Attention_Fre = Inter_Modal_Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
-    attn_output = Inter_Modal_Multi_Head_Attention_Fre(x_fre, enc_output = x_time)
+    Inter_Modal_Multi_Head_Attention_Fre_Output = Inter_Modal_Multi_Head_Attention_Fre(x_fre, enc_output = x_time)
 
     # Add & Norm
-    x_fre = Add()([x_fre, attn_output])
+    x_fre = Add()([x_fre, Inter_Modal_Multi_Head_Attention_Fre_Output])
     x_fre = LayerNormalization(epsilon=1e-6)(x_fre)
 
     # Feed Forward Layer Time
-    # ff_output = Dense(units=key_dim_num, activation='relu')(x)
-    ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_time)
-    x_time = Add()([x_time, ff_output])
+    # ff_output_encoder_1 = Dense(units=key_dim_num, activation='relu')(x_time)
+    ff_output_encoder_1 = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_time)
+    x_time = Add()([x_time, ff_output_encoder_1])
     x_time = LayerNormalization(epsilon=1e-6)(x_time)
 
     # Feed Forward Layer Time
-    # ff_output = Dense(units=key_dim_num, activation='relu')(x)
-    ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_fre)
-    x_fre = Add()([x_fre, ff_output])
+    # ff_output_encoder_2 = Dense(units=key_dim_num, activation='relu')(x_fre)
+    ff_output_encoder_2 = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_fre)
+    x_fre = Add()([x_fre, ff_output_encoder_2])
     x_fre = LayerNormalization(epsilon=1e-6)(x_fre)
+
+    # x_time = Add()([x_time, conv_output_encoder_time])
+    # x_time = LayerNormalization(epsilon=1e-6)(x_time)
+
+    # x_fre = Add()([x_fre, conv_output_encoder_fre])
+    # x_fre = LayerNormalization(epsilon=1e-6)(x_fre)
 
     # Transformer Decoder Layer
 
     # Multi-Head Attention Time(attention to encoder outputs)
     enc_output = x_time  # Assuming encoder output is available
     cross_attention_layer_time = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
-    attn_output = cross_attention_layer_time(x_time, enc_output = enc_output)
+    cross_attention_layer_time_output = cross_attention_layer_time(x_time, enc_output = enc_output)
     
     # Add & Norm
-    x_time = Add()([x_time, attn_output])
+    x_time = Add()([x_time, cross_attention_layer_time_output])
     x_time = LayerNormalization(epsilon=1e-6)(x_time)
 
     # Multi-Head Attention Fre(attention to encoder outputs)
     enc_output = x_fre  # Assuming encoder output is available
     cross_attention_layer_fre = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
-    attn_output = cross_attention_layer_fre(x_fre, enc_output = enc_output)
+    cross_attention_layer_fre_output = cross_attention_layer_fre(x_fre, enc_output = enc_output)
     
     # Add & Norm
-    x_fre = Add()([x_fre, attn_output])
+    x_fre = Add()([x_fre, cross_attention_layer_fre_output])
     x_fre = LayerNormalization(epsilon=1e-6)(x_fre)
 
     # Feed Forward Layer Time
-    # ff_output = Dense(units=key_dim_num, activation='relu')(x)
-    ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_time)
-    x_time = Add()([x_time, ff_output])
+    ff_output_decoder_1 = Dense(units=key_dim_num, activation='relu')(x_time)
+    # ff_output_decoder_1 = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_time)
+    x_time = Add()([x_time, ff_output_decoder_1])
     x_time = LayerNormalization(epsilon=1e-6)(x_time)
 
     # Feed Forward Layer Time
-    # ff_output = Dense(units=key_dim_num, activation='relu')(x)
-    ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_fre)
-    x_fre = Add()([x_fre, ff_output])
+    ff_output_decoder_2 = Dense(units=key_dim_num, activation='relu')(x_fre)
+    # ff_output_decoder_2 = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_fre)
+    x_fre = Add()([x_fre, ff_output_decoder_2])
     x_fre = LayerNormalization(epsilon=1e-6)(x_fre)
 
 
 # Concat x_time & x_fre
 IFFT_layer = IFFT()
 x_fre = IFFT_layer(x_fre)
-x =  (x_time + x_fre) / 2
+x = (x_time + x_fre) / 2
+# x =  LayerNormalization(epsilon=1e-6)(x)
 
 # Output layer
-outputs = Conv1D(filters=key_dim_num, kernel_size=K, padding='Same', activation='tanh')(x)
+outputs = Conv1D(filters=key_dim_num, kernel_size=K, padding='Same', activation='tanh')(x_time)
 outputs = AveragePooling1D(pool_size=4, padding='Same')(outputs)
 
 # Create the model

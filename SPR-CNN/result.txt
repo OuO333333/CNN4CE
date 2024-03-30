@@ -73,17 +73,56 @@ SNR(dB)                          NMSE      Sum rate(bandwidth = 10)
      10          0.014073392376303673            15.723914389956803 up to 014446022920310497
      15          0.013301283121109009            15.730839697733403 up to 0135115347802639
      20           0.01246847864240408            15.738305735345495 up to 01348433643579483
-
-# Not yet!
+---------------------------------------------------------------------------------------------
 Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
-自己寫的 multi-head self attention, atrous_self_attention, ff layer 用 Conv1D
+自己寫的 multi-head self attention, full attention
+encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
 modality-aware transformers
 SNR(dB)                          NMSE      Sum rate(bandwidth = 10)
-    -10          0.039798736572265625            15.491252307075063
-     -5           0.02785659208893776            15.599724859887745
-      0           0.01906939037144184            15.679022747201321
-      5           0.01520221121609211            15.713783557618887
-     10           0.01320735178887844            15.731681926378599
-     15          0.012557437643408775            15.737508376413132
-     20           0.01243357453495264            15.738618518659312
+    -10          0.039829012006521225             15.49097643884792 better than no sparse
+     -5           0.02747759222984314            15.603153955212745 better than no sparse
+      0          0.019949764013290405            15.671097689190924 better than no sparse
+      5          0.017768146470189095            15.690728563181299 better than no sparse
+     10          0.014825291931629181            15.717167092546497 better than no sparse
+     15          0.013869925402104855            15.725739653022522 better than no sparse
+     20           0.01333386730402708            15.730547503306035 better than no sparse
+
+Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+自己寫的 multi-head self attention, atrous_self_attention,
+encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
+modality-aware transformers
+SNR(dB)                          NMSE      Sum rate(bandwidth = 10)
+    -10           0.03944879397749901            15.494442592010083 better than no sparse
+     -5          0.026776893064379692            15.609491910438882 better than no sparse
+      0           0.01985848695039749            15.671919573771865 better than atrous
+      5          0.015884367749094963            15.707657914006779 better than no sparse
+     10          0.013839473016560078            15.726012765282944 better than atrous
+     15          0.013212382793426514            15.731636832092104 better than atrous
+     20          0.012837452813982964            15.734998353604407 better than atrous
+
+Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+自己寫的 multi-head self attention, Local Self Attention
+encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
+modality-aware transformers
+SNR(dB)                          NMSE      Sum rate(bandwidth = 10)
+    -10           0.03952145203948021            15.493780284204943 0.039571523666381836, better than local
+     -5          0.028553225100040436            15.593419636118835 0.02931174635887146, better than local
+      0           0.02063240297138691            15.664949597637182 0.020710840821266174, better than local
+      5           0.01693073660135269            15.698256769090925 0.01748591847717762, better than local
+     10          0.014729450456798077            15.718027282607842 0.015006369911134243, better than local
+     15          0.014260709285736084            15.722233706836965 0.014497745782136917, better than local
+     20          0.013719967566430569            15.727084762060883 0.013845689594745636, better than local
+
+Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+自己寫的 multi-head self attention, Stride Sparse Self Attention
+encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
+modality-aware transformers
+SNR(dB)                          NMSE      Sum rate(bandwidth = 10)
+    -10           0.03975171595811844            15.491681067760004 0.03988085314631462, better than stride
+     -5           0.02894938737154007            15.589832575098683 0.03053235076367855, better than stride
+      0          0.020740732550621033            15.663973687062441 0.021756574511528015, better than stride
+      5          0.016013476997613907            15.706498242577116 0.016308283433318138, better than stride
+     10          0.014851024374365807            15.716936093266758 0.01488190982490778, better than stride
+     15          0.013610122725367546            15.728069976733451 0.014069385826587677, better than stride
+     20          0.013560788705945015            15.728512427221728 0.013697362504899502, better than stride
 ---------------------------------------------------------------------------------------------
