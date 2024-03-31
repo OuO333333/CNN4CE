@@ -72,6 +72,78 @@ plt.savefig('Comparison of sum rate of CNN and Transformers and Proposed Transfo
 plt.grid(True)
 plt.show()
 ####################################################################################################################
+
+# data
+
+# Transformers(Encoder * 2 + Decoder * 2), epochs = 200, lr = 0.0001, batch_size = 32
+# reshape type = (Nr, Nt, channel)
+# 自己寫的 multi-head attention
+y1 = [0.03987005725502968, 0.029254980385303497, 0.02019014209508896, 0.018056659027934074, 0.015157107263803482, 0.014463509432971478, 0.013804900459945202]
+
+# Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+# 自己寫的 multi-head self attention, full attention
+# encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
+# modality-aware transformers
+y2 = [0.039829012006521225, 0.02747759222984314, 0.019949764013290405, 0.017768146470189095, 0.014825291931629181, 0.013869925402104855, 0.01333386730402708]
+
+# draw
+plt.plot(x, y1, marker='o', label='Transformers')
+plt.plot(x, y2, marker='o', label='Proposed Transformer')
+
+# set y-axis to log scale
+plt.yscale('log', base=2)
+
+# add title and axis labels
+plt.title('Comparison of NMSE of Transformers and Proposed Transformer')
+plt.xlabel('SNR (dB)')
+plt.ylabel('NMSE (log scale)')
+
+# add legend
+plt.legend()
+
+# save the plot
+plt.savefig('Comparison of NMSE of Transformers and Proposed Transformer')
+
+# display the plot
+plt.grid(True)
+plt.show()
+####################################################################################################################
+# data
+x = [-10, -5, 0, 5, 10, 15, 20]
+
+# Transformers(Encoder * 2 + Decoder * 2), epochs = 200, lr = 0.0001, batch_size = 32
+# reshape type = (Nr, Nt, channel)
+# 自己寫的 multi-head attention
+y1 = [15.490602115597438, 15.58706522935487, 15.66893307641061, 15.688134016492416, 15.714188500585596, 15.720413966130947, 15.726322933376025]
+
+# Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+# 自己寫的 multi-head self attention, full attention
+# encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
+# modality-aware transformers
+y2 = [15.49097643884792, 15.603153955212745, 15.671097689190924, 15.690728563181299, 15.717167092546497, 15.725739653022522, 15.730547503306035]
+
+# draw
+plt.plot(x, y1, marker='o', label='Transformers')
+plt.plot(x, y2, marker='o', label='Proposed Transformer')
+
+# set y-axis to log scale
+plt.yscale('log', base=2)
+
+# add title and axis labels
+plt.title('Comparison of sum rate of Transformers and Proposed Transformer')
+plt.xlabel('SNR (dB)')
+plt.ylabel('sum rate(bandwith = 10) (log scale)')
+
+# add legend
+plt.legend()
+
+# save the plot
+plt.savefig('Comparison of sum rate of Transformers and Proposed Transformer')
+
+# display the plot
+plt.grid(True)
+plt.show()
+####################################################################################################################
 # 比例值
 values = [1.0, 0.5, 125/1024, 574/1024]
 labels = ['Full Self Attention', 'Atrous Self Attention', 'Local Self Attention', 'Stride Sparse Self Attention']
