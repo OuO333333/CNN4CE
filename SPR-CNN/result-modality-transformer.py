@@ -19,10 +19,10 @@ y3 = [0.039829012006521225, 0.02747759222984314, 0.019949764013290405, 0.0177681
 # draw
 plt.plot(x, y1, marker='o', label='CNN')
 plt.plot(x, y2, marker='o', label='Transformers')
-plt.plot(x, y3, marker='o', label='Modality-aware Transformer')
+plt.plot(x, y3, marker='o', label='Proposed Transformer')
 
 # add title and axis labels
-plt.title('Comparison of NMSE of CNN and Transformers and Modality-aware Transformer')
+plt.title('Comparison of NMSE of CNN and Transformers and Proposed Transformer')
 plt.xlabel('SNR (dB)')
 plt.ylabel('NMSE')
 
@@ -30,7 +30,7 @@ plt.ylabel('NMSE')
 plt.legend()
 
 # save the plot
-plt.savefig('Comparison of NMSE of CNN and Transformers and Modality-aware Transformer')
+plt.savefig('Comparison of NMSE of CNN and Transformers and Proposed Transformer')
 
 # display the plot
 plt.grid(True)
@@ -55,10 +55,10 @@ y3 = [15.49097643884792, 15.603153955212745, 15.671097689190924, 15.690728563181
 # draw
 plt.plot(x, y1, marker='o', label='CNN')
 plt.plot(x, y2, marker='o', label='Transformers')
-plt.plot(x, y3, marker='o', label='Modality-aware Transformer')
+plt.plot(x, y3, marker='o', label='Proposed Transformer')
 
 # add title and axis labels
-plt.title('Comparison of sum rate of CNN and Transformers and Modality-aware Transformer')
+plt.title('Comparison of sum rate of CNN and Transformers and Proposed Transformer')
 plt.xlabel('SNR (dB)')
 plt.ylabel('sum rate(bandwith = 10)')
 
@@ -66,7 +66,7 @@ plt.ylabel('sum rate(bandwith = 10)')
 plt.legend()
 
 # save the plot
-plt.savefig('Comparison of sum rate of CNN and Transformers')
+plt.savefig('Comparison of sum rate of CNN and Transformers and Proposed Transformer')
 
 # display the plot
 plt.grid(True)
@@ -128,7 +128,7 @@ plt.plot(x, y4, marker='o', label='Stride Sparse Self Attention')
 plt.yscale('log')
 
 # add title and axis labels
-plt.title('Comparison of NMSE of Modality-aware Transformer of different Sparse Attention')
+plt.title('Comparison of NMSE of Proposed Transformer of different Sparse Attention')
 plt.xlabel('SNR (dB)')
 plt.ylabel('sum rate(bandwith = 10) (log scale)')
 
@@ -136,7 +136,7 @@ plt.ylabel('sum rate(bandwith = 10) (log scale)')
 plt.legend()
 
 # save the plot
-plt.savefig('Comparison of NMSE of Modality-aware Transformer of different Sparse Attention')
+plt.savefig('Comparison of NMSE of Proposed Transformer of different Sparse Attention')
 
 # display the plot
 plt.grid(True)
@@ -180,7 +180,7 @@ plt.plot(x, y4, marker='o', label='Stride Sparse Self Attention')
 plt.yscale('log')
 
 # add title and axis labels
-plt.title('Comparison of sum rate of Modality-aware Transformer of different Sparse Attention')
+plt.title('Comparison of sum rate of Proposed Transformer of different Sparse Attention')
 plt.xlabel('SNR (dB)')
 plt.ylabel('sum rate(bandwith = 10) (log scale)')
 
@@ -188,7 +188,7 @@ plt.ylabel('sum rate(bandwith = 10) (log scale)')
 plt.legend()
 
 # save the plot
-plt.savefig('Comparison of sum rate of Modality-aware Transformer of different Sparse Attention')
+plt.savefig('Comparison of sum rate of Proposed Transformer of different Sparse Attention')
 
 # display the plot
 plt.grid(True)
