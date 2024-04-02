@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import math
 
 # data
 x = [-10, -5, 0, 5, 10, 15, 20]
@@ -16,6 +17,9 @@ y2 = [0.03987005725502968, 0.029254980385303497, 0.02019014209508896, 0.01805665
 # modality-aware transformers
 y3 = [0.039829012006521225, 0.02747759222984314, 0.019949764013290405, 0.017768146470189095, 0.014825291931629181, 0.013869925402104855, 0.01333386730402708]
 
+# set y-axis to log scale
+plt.yscale('log', base=2)
+
 # draw
 plt.plot(x, y1, marker='o', label='CNN')
 plt.plot(x, y2, marker='o', label='Transformers')
@@ -24,7 +28,7 @@ plt.plot(x, y3, marker='o', label='Proposed Transformer')
 # add title and axis labels
 plt.title('Comparison of NMSE of CNN and Transformers and Proposed Transformer')
 plt.xlabel('SNR (dB)')
-plt.ylabel('NMSE')
+plt.ylabel('NMSE (log scale)')
 
 # add legend
 plt.legend()
@@ -52,6 +56,9 @@ y2 = [15.490602115597438, 15.58706522935487, 15.66893307641061, 15.6881340164924
 # modality-aware transformers
 y3 = [15.49097643884792, 15.603153955212745, 15.671097689190924, 15.690728563181299, 15.717167092546497, 15.725739653022522, 15.730547503306035]
 
+# set y-axis to log scale
+plt.yscale('log', base=10)
+
 # draw
 plt.plot(x, y1, marker='o', label='CNN')
 plt.plot(x, y2, marker='o', label='Transformers')
@@ -60,7 +67,7 @@ plt.plot(x, y3, marker='o', label='Proposed Transformer')
 # add title and axis labels
 plt.title('Comparison of sum rate of CNN and Transformers and Proposed Transformer')
 plt.xlabel('SNR (dB)')
-plt.ylabel('sum rate(bandwith = 10)')
+plt.ylabel('sum rate(bandwith = 10) (log scale)')
 
 # add legend
 plt.legend()
