@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import math
 
+fontsize = 25
+
 # data
 x = [-10, -5, 0, 5, 10, 15, 20]
 # CNN, epochs = 200, lr = 0.0001, batch_size = 32
@@ -26,12 +28,12 @@ plt.plot(x, y2, marker='o', label='Transformers')
 plt.plot(x, y3, marker='o', label='Proposed Transformer')
 
 # add title and axis labels
-plt.title('Comparison of NMSE of CNN and Transformers and Proposed Transformer')
-plt.xlabel('SNR (dB)')
-plt.ylabel('NMSE (log scale)')
+plt.title('Comparison of NMSE of CNN and Transformers and Proposed Transformer', fontsize=fontsize)
+plt.xlabel('SNR (dB)', fontsize=fontsize)
+plt.ylabel('NMSE (log scale)', fontsize=fontsize)
 
 # add legend
-plt.legend()
+plt.legend(fontsize=fontsize)
 
 # save the plot
 plt.savefig('Comparison of NMSE of CNN and Transformers and Proposed Transformer')
@@ -65,12 +67,12 @@ plt.plot(x, y2, marker='o', label='Transformers')
 plt.plot(x, y3, marker='o', label='Proposed Transformer')
 
 # add title and axis labels
-plt.title('Comparison of sum rate of CNN and Transformers and Proposed Transformer')
-plt.xlabel('SNR (dB)')
-plt.ylabel('sum rate(bandwith = 10) (log scale)')
+plt.title('Comparison of sum rate of CNN and Transformers and Proposed Transformer', fontsize=fontsize)
+plt.xlabel('SNR (dB)', fontsize=fontsize)
+plt.ylabel('sum rate(bandwith = 10) (log scale)', fontsize=fontsize)
 
 # add legend
-plt.legend()
+plt.legend(fontsize=fontsize)
 
 # save the plot
 plt.savefig('Comparison of sum rate of CNN and Transformers and Proposed Transformer')
@@ -101,12 +103,12 @@ plt.plot(x, y2, marker='o', label='Proposed Transformer')
 plt.yscale('log', base=2)
 
 # add title and axis labels
-plt.title('Comparison of NMSE of Transformers and Proposed Transformer')
-plt.xlabel('SNR (dB)')
-plt.ylabel('NMSE (log scale)')
+plt.title('Comparison of NMSE of Transformers and Proposed Transformer', fontsize=fontsize)
+plt.xlabel('SNR (dB)', fontsize=fontsize)
+plt.ylabel('NMSE (log scale)', fontsize=fontsize)
 
 # add legend
-plt.legend()
+plt.legend(fontsize=fontsize)
 
 # save the plot
 plt.savefig('Comparison of NMSE of Transformers and Proposed Transformer')
@@ -137,12 +139,12 @@ plt.plot(x, y2, marker='o', label='Proposed Transformer')
 plt.yscale('log', base=2)
 
 # add title and axis labels
-plt.title('Comparison of sum rate of Transformers and Proposed Transformer')
-plt.xlabel('SNR (dB)')
-plt.ylabel('sum rate(bandwith = 10) (log scale)')
+plt.title('Comparison of sum rate of Transformers and Proposed Transformer', fontsize=fontsize)
+plt.xlabel('SNR (dB)', fontsize=fontsize)
+plt.ylabel('sum rate(bandwith = 10) (log scale)', fontsize=fontsize)
 
 # add legend
-plt.legend()
+plt.legend(fontsize=fontsize)
 
 # save the plot
 plt.savefig('Comparison of sum rate of Transformers and Proposed Transformer')
@@ -158,10 +160,12 @@ labels = ['Full Self Attention', 'Atrous Self Attention', 'Local Self Attention'
 # 创建条形图
 plt.bar(labels, values)
 
+plt.xticks(fontsize=20)  # 调整x轴标签字体大小
+
 # 添加标题和标签
-plt.title('Comparison of calculation loading ratio of different Sparse Attention and Full Self Attention')
-plt.xlabel('Categories')
-plt.ylabel('Proportion')
+plt.title('Comparison of calculation loading ratio of different Sparse Attention and Full Self Attention', fontsize=fontsize)
+plt.xlabel('Categories', fontsize=fontsize)
+plt.ylabel('Proportion', fontsize=fontsize)
 
 # save the plot
 plt.savefig('Comparison of calculation loading ratio of different Sparse Attention and Full Self Attention')
@@ -207,12 +211,12 @@ plt.plot(x, y4, marker='o', label='Stride Sparse Self Attention')
 plt.yscale('log')
 
 # add title and axis labels
-plt.title('Comparison of NMSE of Proposed Transformer of different Sparse Attention')
-plt.xlabel('SNR (dB)')
-plt.ylabel('sum rate(bandwith = 10) (log scale)')
+plt.title('Comparison of NMSE of Proposed Transformer of different Sparse Attention', fontsize=fontsize)
+plt.xlabel('SNR (dB)', fontsize=fontsize)
+plt.ylabel('NMSE (log scale)', fontsize=fontsize)
 
 # add legend
-plt.legend()
+plt.legend(fontsize=fontsize)
 
 # save the plot
 plt.savefig('Comparison of NMSE of Proposed Transformer of different Sparse Attention')
@@ -259,12 +263,12 @@ plt.plot(x, y4, marker='o', label='Stride Sparse Self Attention')
 plt.yscale('log')
 
 # add title and axis labels
-plt.title('Comparison of sum rate of Proposed Transformer of different Sparse Attention')
-plt.xlabel('SNR (dB)')
-plt.ylabel('sum rate(bandwith = 10) (log scale)')
+plt.title('Comparison of sum rate of Proposed Transformer of different Sparse Attention', fontsize=fontsize)
+plt.xlabel('SNR (dB)', fontsize=fontsize)
+plt.ylabel('sum rate(bandwith = 10) (log scale)', fontsize=fontsize)
 
 # add legend
-plt.legend()
+plt.legend(fontsize=fontsize)
 
 # save the plot
 plt.savefig('Comparison of sum rate of Proposed Transformer of different Sparse Attention')
