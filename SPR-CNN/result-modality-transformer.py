@@ -19,6 +19,12 @@ y2 = [0.03987005725502968, 0.029254980385303497, 0.02159520797431469, 0.01805665
 # modality-aware transformers
 y3 = [0.039645493030548096, 0.02747759222984314, 0.019949764013290405, 0.016916004940867424, 0.014825291931629181, 0.013869925402104855, 0.01333386730402708]
 
+# DAECNNATT
+y4 = [0.5412381862428629, 0.33254079647163465, 0.2115293457419186, 0.16293720779142504, 0.12438449687660279, 0.10890364229279535, 0.10238436697803815]
+
+# SPARSEMATTDAE
+y5 = [0.5238966308505519, 0.32426746977979914, 0.20119746725457452, 0.13996944454347623, 0.11280704789072017, 0.09475028820637019, 0.08761300950468075]
+
 # set y-axis to log scale
 plt.yscale('log', base=2)
 
@@ -26,6 +32,8 @@ plt.yscale('log', base=2)
 plt.plot(x, y1, marker='o', label='CNN')
 plt.plot(x, y2, marker='o', label='Transformers')
 plt.plot(x, y3, marker='o', label='Proposed Transformer')
+plt.plot(x, y4, marker='o', label='DAECNNATT')
+plt.plot(x, y5, marker='o', label='SPARSEMATTDAE')
 
 # add title and axis labels
 plt.title('Comparison of NMSE of CNN and Transformers and Proposed Transformer', fontsize=fontsize)
@@ -58,6 +66,12 @@ y2 = [15.490602115597438, 15.58706522935487, 15.656273772156585, 15.688134016492
 # modality-aware transformers
 y3 = [15.49264954985823, 15.603153955212745, 15.671097689190924, 15.698389138207103, 15.717167092546497, 15.725739653022522, 15.730547503306035]
 
+# DAECNNATT
+y4 = [12.97931951377382, 14.154661877931208, 14.794740768464427, 15.043980732842527, 15.238707802839244, 15.316166877397217, 15.348662296652947]
+
+# SPARSEMATTDAE
+y5 = [13.080715119036215, 14.199338913358442, 14.848096915580719, 15.160305529554883, 15.296675207596744, 15.386621664883695, 15.422020653796265]
+
 # set y-axis to log scale
 plt.yscale('log', base=10)
 
@@ -65,6 +79,8 @@ plt.yscale('log', base=10)
 plt.plot(x, y1, marker='o', label='CNN')
 plt.plot(x, y2, marker='o', label='Transformers')
 plt.plot(x, y3, marker='o', label='Proposed Transformer')
+plt.plot(x, y4, marker='o', label='DAECNNATT')
+plt.plot(x, y5, marker='o', label='SPARSEMATTDAE')
 
 # add title and axis labels
 plt.title('Comparison of sum rate of CNN and Transformers and Proposed Transformer', fontsize=fontsize)

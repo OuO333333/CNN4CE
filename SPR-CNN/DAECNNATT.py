@@ -14,26 +14,10 @@ import tensorflow as tf
 config = tf.compat.v1.ConfigProto()
 config.gpu_options.allow_growth=True   #allow growth
 import scipy.io as sio
-
-from tensorflow.keras.layers.experimental.preprocessing import Rescaling
-from tf_encodings import TFPositionalEncoding1D
-from tensorflow.keras.layers import Add
-from sparse_attention import SelfAttention, Multi_Head_Attention, reshape_input_output, FFT, IFFT, Inter_Modal_Multi_Head_Attention
-from tensorflow.keras.layers import Conv1D
+from AttentionModule import SelfAttention
 from tensorflow.keras.layers import AveragePooling1D
-from tensorflow.keras.layers import BatchNormalization
 
 
-epochs_num = 1000
-batch_size_num = 32
-learning_rate_num = 1e-4
-key_dim_num = 256
-num_heads = 1  # Number of attention heads
-
-print("TensorFlow 版本:", tf.__version__)
-print("epochs_num = ", epochs_num)
-print("batch_size_num = ", batch_size_num)
-print("learning_rate_num = ", learning_rate_num)
 
 Nt=32
 Nr=16
@@ -280,95 +264,41 @@ print(len(row_num))
 print(H_test.shape, H_test_noisy.shape)
 print(((H_test)**2).mean())
 
+print("H_train_noisy shape = ", H_train_noisy.shape)
+print("H_train shape = ", H_train.shape)
+print("H_test_noisy shape = ", H_test_noisy.shape)
+print("H_test shape = ", H_test.shape)
+
+
 K=3
-input_dim=(Nr,Nt,2*fre*time_steps)
-reshape_input_dim = (int(8192 / key_dim_num), key_dim_num)
-dropout_rate = 0.1
-
-# Define the input layer
-inputs = Input(shape=reshape_input_dim)
-reshape_type = (0, 1, 2, 3)
-
-
-# transpose
-H_train_noisy = np.transpose(H_train_noisy, reshape_type)
-H_train = np.transpose(H_train, reshape_type)
-H_test_noisy = np.transpose(H_test_noisy, reshape_type)
-H_test = np.transpose(H_test, reshape_type)
-
-# 将 H_train_noisy, H_train, H_test_noisy, H_test 调整为形状为 (None, 1, int(2048 / key_dim_num), key_dim_num) 的数组
-H_train_noisy = np.reshape(H_train_noisy, (-1, 1, int(8192 / key_dim_num), key_dim_num))
-H_train = np.reshape(H_train, (-1, 1, int(2048 / key_dim_num), key_dim_num))
-H_test_noisy = np.reshape(H_test_noisy, (-1, 1, int(8192 / key_dim_num), key_dim_num))
-H_test = np.reshape(H_test, (-1, 1, int(2048 / key_dim_num), key_dim_num))
-
-# Add a rescaling layer to normalize inputs
-x = Rescaling(scale=1.0 / scale)(inputs)
-
-# position_encoding
-positional_encoding_model = TFPositionalEncoding1D(key_dim_num)
-position_encoding = positional_encoding_model(tf.zeros((1,int(8192 / key_dim_num),key_dim_num)))
-position_encoding = tf.tile(position_encoding, multiples=[499, 1, 1])
-position_encoding2 = positional_encoding_model(tf.zeros((1,int(2048 / key_dim_num),key_dim_num)))
-position_encoding2 = tf.tile(position_encoding2, multiples=[499, 1, 1])
-
-# 減少不必要維度
-H_train_noisy = reshape_input_output(H_train_noisy)
-H_train = reshape_input_output(H_train)
-H_test_noisy = reshape_input_output(H_test_noisy)
-H_test = reshape_input_output(H_test)
-
-# 加上 position_encoding
-H_train_noisy = Add()([H_train_noisy, position_encoding])
-H_train = Add()([H_train, position_encoding2])
-H_test_noisy = Add()([H_test_noisy, position_encoding])
-H_test = Add()([H_test, position_encoding2])
-
-tmp_x = x    
-# Multi_Head_Attention
-Multi_Head_Attentionn = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
-x = Multi_Head_Attentionn(x)
-
-# Feed Forward Layer
-x = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
-x = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
-x = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
-x = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
-x = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
-
-# Multi_Head_Attention
-Multi_Head_Attentionn2 = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
-attn_output = Multi_Head_Attentionn2(x+tmp_x)
-
-# Output layer
-outputs = Conv1D(filters=key_dim_num, kernel_size=K, padding='Same', activation='tanh')(x)
-outputs = AveragePooling1D(pool_size=4, padding='Same')(outputs)
+input_dim = tf.keras.Input(shape=(Nr,Nt,2*fre*time_steps))
+x = SelfAttention(64,32)(input_dim)
+x = tf.keras.layers.Conv2D(2*fre*time_steps,(3,3),padding='same', activation='relu')(input_dim)
+x = tf.keras.layers.Conv2D(32,(3,3),padding='same', activation='relu')(x)
+x = tf.keras.layers.Conv2D(16,(3,3),padding='same', activation='relu')(x)
+x = tf.keras.layers.Conv2D(32,(3,3),padding='same', activation='relu')(x)
+x = tf.keras.layers.Conv2D(2*fre*time_steps,(3,3),padding='same', activation='relu')(x)
+x = SelfAttention(64,32)(input_dim+x)
+outputs = tf.keras.layers.Conv2D(time_steps,(3,3),padding='same', activation='tanh')(x)
 
 # Create the model
-model = Model(inputs=inputs, outputs=outputs)
-
-# Compile the model
-adam=Adam(learning_rate=learning_rate_num, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
-model.compile(optimizer='adam', loss='mse')
-
-# Print model summary
-model.summary()
-
+model = Model(inputs=input_dim, outputs=outputs)
 
 # checkpoint
-filepath='CNN_UMi_3path_2fre_SNRminus10dB_200ep.tf'
+filepath='2fre4time_SNR20_time4_16_4_200ep.tf'
 
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='min')
 callbacks_list = [checkpoint]
 
-print("H_train shape = ", H_train.shape, "H_train_noisy shape =", H_train_noisy.shape)
-model.fit(H_train_noisy, H_train, epochs=epochs_num, batch_size=batch_size_num, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
+adam=Adam(learning_rate=1e-3, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+model.compile(optimizer=adam, loss='mse')
+model.fit(H_train_noisy, H_train, epochs=200, batch_size=32, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
+print("H_train_noisy shape = ", H_train_noisy.shape, ", H_train shape = ", H_train.shape)
 
 # load model
-CNN = tf.keras.models.load_model('CNN_UMi_3path_2fre_SNRminus10dB_200ep.tf')
+CNN = load_model('2fre4time_SNR20_time4_16_4_200ep.tf')
 
 decoded_channel = CNN.predict(H_test_noisy)
-
 nmse2=zeros((data_num_test-len(row_num),1), dtype=float)
 for n in range(data_num_test-len(row_num)):
     MSE = tf.reduce_sum(tf.square(H_test - decoded_channel))
@@ -402,14 +332,7 @@ with open('output.txt', 'a') as f:
     
     # 将标准输出重定向到文件
     sys.stdout = f
-
-    # 执行print语句，输出将被重定向到文件中
-    if reshape_type == (0, 1, 2, 3):
-        print("(Nr, Nt, channel)")
-    elif reshape_type == (0, 2, 1, 3):
-        print("(Nt, Nr, channel)")
-    elif reshape_type == (0, 3, 1, 2):
-        print("(channel, Nr, Nt)")
+    print("DAECNNATT")
     print("   ", '{:>3}'.format(SNR_dB), "        ", '{:>20}'.format(nmse2.sum()/(data_num_test-len(row_num))), "        ", '{:>20}'.format(Sumrate(H_test, decoded_channel, 10)))
 
     # 恢复原始的标准输出
