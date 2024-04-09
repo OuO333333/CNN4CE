@@ -14,7 +14,7 @@ with open('output.txt', 'a') as f:
     # 恢复原始的标准输出
     sys.stdout = original_stdout
 # 要执行的命令的基础部分
-base_command = "python3 main.py"
+base_command = "python3 SPARSEMATTDAE.py"
 
 # 要执行的 SNR_dB 参数的范围
 SNR_dB_range = range(-10, 21, 5)

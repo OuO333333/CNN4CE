@@ -11,13 +11,13 @@ y1 = [0.6419357114932095, 0.3948697806398535, 0.2653386565881674, 0.166216722690
 # Transformers(Encoder * 2 + Decoder * 2), epochs = 200, lr = 0.0001, batch_size = 32
 # reshape type = (Nr, Nt, channel)
 # 自己寫的 multi-head attention
-y2 = [0.03987005725502968, 0.029254980385303497, 0.02019014209508896, 0.018056659027934074, 0.015157107263803482, 0.014463509432971478, 0.013804900459945202]
+y2 = [0.03987005725502968, 0.029254980385303497, 0.02159520797431469, 0.018056659027934074, 0.016204895451664925, 0.01474946178495884, 0.014378390274941921]
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
 # 自己寫的 multi-head self attention, full attention
 # encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
 # modality-aware transformers
-y3 = [0.039829012006521225, 0.02747759222984314, 0.019949764013290405, 0.017768146470189095, 0.014825291931629181, 0.013869925402104855, 0.01333386730402708]
+y3 = [0.039645493030548096, 0.02747759222984314, 0.019949764013290405, 0.016916004940867424, 0.014825291931629181, 0.013869925402104855, 0.01333386730402708]
 
 # set y-axis to log scale
 plt.yscale('log', base=2)
@@ -50,13 +50,13 @@ y1 = [12.376030106733767, 13.813554657995969, 14.51362168247246, 15.027294189530
 # Transformers(Encoder * 2 + Decoder * 2), epochs = 200, lr = 0.0001, batch_size = 32
 # reshape type = (Nr, Nt, channel)
 # 自己寫的 multi-head attention
-y2 = [15.490602115597438, 15.58706522935487, 15.66893307641061, 15.688134016492416, 15.714188500585596, 15.720413966130947, 15.726322933376025]
+y2 = [15.490602115597438, 15.58706522935487, 15.656273772156585, 15.688134016492416, 15.70477877832414, 15.71784768980056, 15.721177762372365]
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
 # 自己寫的 multi-head self attention, full attention
 # encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
 # modality-aware transformers
-y3 = [15.49097643884792, 15.603153955212745, 15.671097689190924, 15.690728563181299, 15.717167092546497, 15.725739653022522, 15.730547503306035]
+y3 = [15.49264954985823, 15.603153955212745, 15.671097689190924, 15.698389138207103, 15.717167092546497, 15.725739653022522, 15.730547503306035]
 
 # set y-axis to log scale
 plt.yscale('log', base=10)
@@ -87,23 +87,30 @@ plt.show()
 # Transformers(Encoder * 2 + Decoder * 2), epochs = 200, lr = 0.0001, batch_size = 32
 # reshape type = (Nr, Nt, channel)
 # 自己寫的 multi-head attention
-y1 = [0.03987005725502968, 0.029254980385303497, 0.02019014209508896, 0.018056659027934074, 0.015157107263803482, 0.014463509432971478, 0.013804900459945202]
+y1 = [0.03987005725502968, 0.029254980385303497, 0.02159520797431469, 0.018056659027934074, 0.016204895451664925, 0.01474946178495884, 0.014378390274941921]
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
 # 自己寫的 multi-head self attention, full attention
 # encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
 # modality-aware transformers
-y2 = [0.039829012006521225, 0.02747759222984314, 0.019949764013290405, 0.017768146470189095, 0.014825291931629181, 0.013869925402104855, 0.01333386730402708]
+y2 = [0.039645493030548096, 0.02747759222984314, 0.019949764013290405, 0.016916004940867424, 0.014825291931629181, 0.013869925402104855, 0.01333386730402708]
+
+# Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+# 自己寫的 multi-head self attention, full attention
+# encoder ff layer 用 ffn, decoder ff layer 用 ffn
+# modality-aware transformers
+y3 = [0.039773717522621155, 0.028461197391152382, 0.020952610298991203, 0.017375558614730835, 0.01585640199482441, 0.014552067965269089, 0.014185205101966858]
 
 # draw
-plt.plot(x, y1, marker='o', label='Transformers')
+plt.plot(x, y1, marker='o', label='Transformers(time domain only)')
 plt.plot(x, y2, marker='o', label='Proposed Transformer')
+plt.plot(x, y3, marker='o', label='Proposed Transformer(time domain + frequency domain)')
 
 # set y-axis to log scale
 plt.yscale('log', base=2)
 
 # add title and axis labels
-plt.title('Comparison of NMSE of Transformers and Proposed Transformer', fontsize=fontsize)
+plt.title('Comparison of NMSE of Proposed Transformer and Others', fontsize=fontsize)
 plt.xlabel('SNR (dB)', fontsize=fontsize)
 plt.ylabel('NMSE (log scale)', fontsize=fontsize)
 
@@ -111,7 +118,7 @@ plt.ylabel('NMSE (log scale)', fontsize=fontsize)
 plt.legend(fontsize=fontsize)
 
 # save the plot
-plt.savefig('Comparison of NMSE of Transformers and Proposed Transformer')
+plt.savefig('Comparison of NMSE of Proposed Transformer and Others')
 
 # display the plot
 plt.grid(True)
@@ -123,23 +130,31 @@ x = [-10, -5, 0, 5, 10, 15, 20]
 # Transformers(Encoder * 2 + Decoder * 2), epochs = 200, lr = 0.0001, batch_size = 32
 # reshape type = (Nr, Nt, channel)
 # 自己寫的 multi-head attention
-y1 = [15.490602115597438, 15.58706522935487, 15.66893307641061, 15.688134016492416, 15.714188500585596, 15.720413966130947, 15.726322933376025]
+y1 = [15.490602115597438, 15.58706522935487, 15.656273772156585, 15.688134016492416, 15.70477877832414, 15.71784768980056, 15.721177762372365]
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
 # 自己寫的 multi-head self attention, full attention
 # encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
 # modality-aware transformers
-y2 = [15.49097643884792, 15.603153955212745, 15.671097689190924, 15.690728563181299, 15.717167092546497, 15.725739653022522, 15.730547503306035]
+y2 = [15.49264954985823, 15.603153955212745, 15.671097689190924, 15.698389138207103, 15.717167092546497, 15.725739653022522, 15.730547503306035]
+
+# Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+# 自己寫的 multi-head self attention, full attention
+# encoder ff layer 用 ffn, decoder ff layer 用 ffn
+# modality-aware transformers
+y3 = [15.49148045194048, 15.594252673970859, 15.662064721667459, 15.694258319307453, 15.707909134999468, 15.719619257954932, 15.722911156969142]
 
 # draw
-plt.plot(x, y1, marker='o', label='Transformers')
+plt.plot(x, y1, marker='o', label='Transformers(time domain only)')
 plt.plot(x, y2, marker='o', label='Proposed Transformer')
+plt.plot(x, y3, marker='o', label='Proposed Transformer(time domain + frequency domain)')
+
 
 # set y-axis to log scale
 plt.yscale('log', base=2)
 
 # add title and axis labels
-plt.title('Comparison of sum rate of Transformers and Proposed Transformer', fontsize=fontsize)
+plt.title('Comparison of sum rate of Proposed Transformer and Others', fontsize=fontsize)
 plt.xlabel('SNR (dB)', fontsize=fontsize)
 plt.ylabel('sum rate(bandwith = 10) (log scale)', fontsize=fontsize)
 
@@ -147,7 +162,7 @@ plt.ylabel('sum rate(bandwith = 10) (log scale)', fontsize=fontsize)
 plt.legend(fontsize=fontsize)
 
 # save the plot
-plt.savefig('Comparison of sum rate of Transformers and Proposed Transformer')
+plt.savefig('Comparison of sum rate of Proposed Transformer and Others')
 
 # display the plot
 plt.grid(True)
@@ -181,7 +196,7 @@ x = [-10, -5, 0, 5, 10, 15, 20]
 # 自己寫的 multi-head self attention, full attention
 # encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
 # modality-aware transformers
-y1 = [0.039829012006521225, 0.02747759222984314, 0.019949764013290405, 0.017768146470189095, 0.014825291931629181, 0.013869925402104855, 0.01333386730402708]
+y1 = [0.039645493030548096, 0.02747759222984314, 0.019949764013290405, 0.016916004940867424, 0.014825291931629181, 0.013869925402104855, 0.01333386730402708]
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
 # 自己寫的 multi-head self attention, atrous_self_attention,
@@ -233,7 +248,7 @@ x = [-10, -5, 0, 5, 10, 15, 20]
 # 自己寫的 multi-head self attention, full attention
 # encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
 # modality-aware transformers
-y1 = [15.49097643884792, 15.603153955212745, 15.671097689190924, 15.690728563181299, 15.717167092546497, 15.725739653022522, 15.730547503306035]
+y1 = [15.49264954985823, 15.603153955212745, 15.671097689190924, 15.698389138207103, 15.717167092546497, 15.725739653022522, 15.730547503306035]
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
 # 自己寫的 multi-head self attention, atrous_self_attention,

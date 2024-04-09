@@ -24,7 +24,7 @@ from tensorflow.keras.layers import AveragePooling1D
 from tensorflow.keras.layers import BatchNormalization
 
 
-epochs_num = 200
+epochs_num = 1000
 batch_size_num = 32
 learning_rate_num = 1e-4
 key_dim_num = 256
@@ -328,7 +328,7 @@ tmp_x = x
 # Multi_Head_Attention
 Multi_Head_Attentionn = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
 x = Multi_Head_Attentionn(x)
-    
+
 # Feed Forward Layer
 x = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
 x = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
