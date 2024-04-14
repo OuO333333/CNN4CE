@@ -33,11 +33,11 @@ plt.yscale('log', base=2)
 
 # draw
 plt.plot(x, y1, marker='o', label='CNN')
-plt.plot(x, y2, marker='o', label='Transformers')
-plt.plot(x, y3, marker='o', label='Proposed Transformer')
 plt.plot(x, y4, marker='o', label='Attention-aided Autoencoder')
 plt.plot(x, y5, marker='o', label='Sparse Autoencoder')
+plt.plot(x, y2, marker='o', label='Transformers')
 plt.plot(x, y6, marker='o', label='FEDformer')
+plt.plot(x, y3, marker='o', label='Proposed Transformer')
 
 
 # add title and axis labels
@@ -85,11 +85,11 @@ plt.yscale('log', base=10)
 
 # draw
 plt.plot(x, y1, marker='o', label='CNN')
-plt.plot(x, y2, marker='o', label='Transformers')
-plt.plot(x, y3, marker='o', label='Proposed Transformer')
 plt.plot(x, y4, marker='o', label='Attention-aided Autoencoder')
 plt.plot(x, y5, marker='o', label='Sparse Autoencoder')
+plt.plot(x, y2, marker='o', label='Transformers')
 plt.plot(x, y6, marker='o', label='FEDformer')
+plt.plot(x, y3, marker='o', label='Proposed Transformer')
 
 y1 = [value / 10 for value in y1]
 y2 = [value / 10 for value in y2]
