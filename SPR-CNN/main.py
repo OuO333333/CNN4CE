@@ -330,14 +330,20 @@ H_test = Add()([H_test, position_encoding2])
 
 enc_output = None
 
-
+# FFT
+FFT_layer = FFT()
+# IFFT
+IFFT_layer = IFFT()
 for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     
     # Transformer Encoder Layer
-    
+    # FFT
+    x = FFT_layer(x)
     # Multi_Head_Attention
     Multi_Head_Attentionn = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
     attn_output = Multi_Head_Attentionn(x)
+    # IFFT
+    attn_output = IFFT_layer(attn_output)
     
     # Add & Norm
     x = Add()([x, attn_output])
@@ -357,8 +363,12 @@ for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     mask = tf.sequence_mask([8192/key_dim_num], maxlen=8192/key_dim_num, dtype=tf.float32)
 
     # Masked Multi-Head Attention (self-attention on decoder inputs)
+    # FFT
+    x = FFT_layer(x)
     masked_self_attention_layer = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
     attn_output = masked_self_attention_layer(x, mask = mask)
+    # IFFT
+    attn_output = IFFT_layer(attn_output)
 
     # Add & Norm
     x = Add()([x, attn_output])
@@ -366,8 +376,13 @@ for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
 
     # Multi-Head Attention(attention to encoder outputs)
     enc_output = enc_output  # Assuming encoder output is available
+    # FFT
+    x = FFT_layer(x)
+    enc_output = FFT_layer(enc_output)
     cross_attention_layer = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
     attn_output = cross_attention_layer(x, enc_output = enc_output)
+    # IFFT
+    attn_output = IFFT_layer(attn_output)
     
     # Add & Norm
     x = Add()([x, attn_output])
@@ -378,7 +393,6 @@ for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     # ff_output = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x)
     x = Add()([x, ff_output])
     x = LayerNormalization(epsilon=1e-6)(x)
-
 
 # Output layer
 outputs = Conv1D(filters=key_dim_num, kernel_size=K, padding='Same', activation='tanh')(x)

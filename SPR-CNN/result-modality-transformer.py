@@ -25,6 +25,9 @@ y4 = [0.5412381862428629, 0.33254079647163465, 0.2115293457419186, 0.15641427783
 # SPARSEMATTDAE
 y5 = [0.5238966308505519, 0.32426746977979914, 0.20119746725457452, 0.13996944454347623, 0.11280704789072017, 0.09475028820637019, 0.08761300950468075]
 
+# FEDformer
+y6 = [0.04003031924366951, 0.032262492924928665, 0.023152129724621773, 0.017859801650047302, 0.015596599318087101, 0.014731141738593578, 0.014243846759200096]
+
 # set y-axis to log scale
 plt.yscale('log', base=2)
 
@@ -32,8 +35,10 @@ plt.yscale('log', base=2)
 plt.plot(x, y1, marker='o', label='CNN')
 plt.plot(x, y2, marker='o', label='Transformers')
 plt.plot(x, y3, marker='o', label='Proposed Transformer')
-plt.plot(x, y4, marker='o', label='DAECNNATT')
-plt.plot(x, y5, marker='o', label='SPARSEMATTDAE')
+plt.plot(x, y4, marker='o', label='Attention-aided Autoencoder')
+plt.plot(x, y5, marker='o', label='Sparse Autoencoder')
+plt.plot(x, y6, marker='o', label='FEDformer')
+
 
 # add title and axis labels
 plt.title('Comparison of NMSE of CNN and Transformers and Proposed Transformer', fontsize=fontsize)
@@ -41,7 +46,7 @@ plt.xlabel('SNR (dB)', fontsize=fontsize)
 plt.ylabel('NMSE (log scale)', fontsize=fontsize)
 
 # add legend
-plt.legend(fontsize=fontsize)
+plt.legend(fontsize=20)
 
 # save the plot
 plt.savefig('Comparison of NMSE of CNN and Transformers and Proposed Transformer')
@@ -72,6 +77,9 @@ y4 = [12.97931951377382, 14.154661877931208, 14.794740768464427, 15.077112879082
 # SPARSEMATTDAE
 y5 = [13.080715119036215, 14.199338913358442, 14.848096915580719, 15.160305529554883, 15.296675207596744, 15.386621664883695, 15.422020653796265]
 
+# FEDformer
+y6 = [15.489140933602904, 15.55980019276288, 15.642233280343834, 15.689904380496367, 15.710242356836591, 15.718012085872813, 15.722385011103668]
+
 # set y-axis to log scale
 plt.yscale('log', base=10)
 
@@ -79,13 +87,21 @@ plt.yscale('log', base=10)
 plt.plot(x, y1, marker='o', label='CNN')
 plt.plot(x, y2, marker='o', label='Transformers')
 plt.plot(x, y3, marker='o', label='Proposed Transformer')
-plt.plot(x, y4, marker='o', label='DAECNNATT')
-plt.plot(x, y5, marker='o', label='SPARSEMATTDAE')
+plt.plot(x, y4, marker='o', label='Attention-aided Autoencoder')
+plt.plot(x, y5, marker='o', label='Sparse Autoencoder')
+plt.plot(x, y6, marker='o', label='FEDformer')
+
+y1 = [value / 10 for value in y1]
+y2 = [value / 10 for value in y2]
+y3 = [value / 10 for value in y3]
+y4 = [value / 10 for value in y4]
+y5 = [value / 10 for value in y5]
+y6 = [value / 10 for value in y6]
 
 # add title and axis labels
 plt.title('Comparison of sum rate of CNN and Transformers and Proposed Transformer', fontsize=fontsize)
 plt.xlabel('SNR (dB)', fontsize=fontsize)
-plt.ylabel('sum rate(bandwith = 10) (log scale)', fontsize=fontsize)
+plt.ylabel('sum rate(bandwith = 1) (log scale)', fontsize=fontsize)
 
 # add legend
 plt.legend(fontsize=fontsize)
@@ -119,8 +135,8 @@ y3 = [0.039773717522621155, 0.028461197391152382, 0.020952610298991203, 0.017375
 
 # draw
 plt.plot(x, y1, marker='o', label='Transformers(time domain only)')
-plt.plot(x, y2, marker='o', label='Proposed Transformer')
 plt.plot(x, y3, marker='o', label='Proposed Transformer(time domain + frequency domain)')
+plt.plot(x, y2, marker='o', label='Proposed Transformer')
 
 # set y-axis to log scale
 plt.yscale('log', base=2)
@@ -160,11 +176,14 @@ y2 = [15.49264954985823, 15.603153955212745, 15.671097689190924, 15.698389138207
 # modality-aware transformers
 y3 = [15.49148045194048, 15.594252673970859, 15.662064721667459, 15.694258319307453, 15.707909134999468, 15.719619257954932, 15.722911156969142]
 
+y1 = [value / 10 for value in y1]
+y2 = [value / 10 for value in y2]
+y3 = [value / 10 for value in y3]
+
 # draw
 plt.plot(x, y1, marker='o', label='Transformers(time domain only)')
-plt.plot(x, y2, marker='o', label='Proposed Transformer')
 plt.plot(x, y3, marker='o', label='Proposed Transformer(time domain + frequency domain)')
-
+plt.plot(x, y2, marker='o', label='Proposed Transformer')
 
 # set y-axis to log scale
 plt.yscale('log', base=2)
@@ -172,7 +191,7 @@ plt.yscale('log', base=2)
 # add title and axis labels
 plt.title('Comparison of sum rate of Proposed Transformer and Others', fontsize=fontsize)
 plt.xlabel('SNR (dB)', fontsize=fontsize)
-plt.ylabel('sum rate(bandwith = 10) (log scale)', fontsize=fontsize)
+plt.ylabel('sum rate(bandwith = 1) (log scale)', fontsize=fontsize)
 
 # add legend
 plt.legend(fontsize=fontsize)
@@ -284,6 +303,11 @@ y3 = [15.493780284204943, 15.593419636118835, 15.664949597637182, 15.69825676909
 # modality-aware transformers
 y4 = [15.491681067760004, 15.589832575098683, 15.663973687062441, 15.706498242577116, 15.716936093266758, 15.728069976733451, 15.728512427221728]
 
+y1 = [value / 10 for value in y1]
+y2 = [value / 10 for value in y2]
+y3 = [value / 10 for value in y3]
+y4 = [value / 10 for value in y4]
+
 # draw
 plt.plot(x, y1, marker='o', label='Full Self Attention')
 plt.plot(x, y2, marker='o', label='Atrous Self Attention')
@@ -296,7 +320,7 @@ plt.yscale('log')
 # add title and axis labels
 plt.title('Comparison of sum rate of Proposed Transformer of different Sparse Attention', fontsize=fontsize)
 plt.xlabel('SNR (dB)', fontsize=fontsize)
-plt.ylabel('sum rate(bandwith = 10) (log scale)', fontsize=fontsize)
+plt.ylabel('sum rate(bandwith = 1) (log scale)', fontsize=fontsize)
 
 # add legend
 plt.legend(fontsize=fontsize)
