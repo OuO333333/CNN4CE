@@ -186,7 +186,7 @@ plt.plot(x, y3, marker='o', label='Proposed Transformer(time domain + frequency 
 plt.plot(x, y2, marker='o', label='Proposed Transformer')
 
 # set y-axis to log scale
-plt.yscale('log', base=2)
+plt.yscale('log')
 
 # add title and axis labels
 plt.title('Comparison of sum rate of Proposed Transformer and Others', fontsize=fontsize)
@@ -251,11 +251,26 @@ y3 = [0.03952145203948021, 0.028553225100040436, 0.02063240297138691, 0.01693073
 # modality-aware transformers
 y4 = [0.03975171595811844, 0.02894938737154007, 0.020740732550621033, 0.016013476997613907, 0.014851024374365807, 0.013610122725367546, 0.013560788705945015]
 
+# Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+# 自己寫的 multi-head self attention, atrous_self_attention, d = 3
+# encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
+# modality-aware transformers
+y5 = [0.03968484327197075, 0.028611933812499046, 0.022718237712979317, 0.021889904513955116, 0.019011519849300385, 0.016211938112974167, 0.01379705686122179]
+
+# Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+# 自己寫的 multi-head self attention, random_self_attention
+# encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
+# modality-aware transformers
+y6 = [0.03952145203948021, 0.028553225100040436, 0.02063240297138691, 0.01693073660135269, 0.014729450456798077, 0.014260709285736084, 0.013719967566430569]
+
 # draw
 plt.plot(x, y1, marker='o', label='Full Self Attention')
-plt.plot(x, y2, marker='o', label='Atrous Self Attention')
+plt.plot(x, y2, marker='o', label='Atrous Self Attention(d=2)')
 plt.plot(x, y3, marker='o', label='Local Self Attention')
 plt.plot(x, y4, marker='o', label='Stride Sparse Self Attention')
+# plt.plot(x, y5, marker='o', label='Atrous Self Attention(d=3)')
+# plt.plot(x, y6, marker='o', label='Random Self Attention')
+
 
 # set y-axis to log scale
 plt.yscale('log')
@@ -303,16 +318,32 @@ y3 = [15.493780284204943, 15.593419636118835, 15.664949597637182, 15.69825676909
 # modality-aware transformers
 y4 = [15.491681067760004, 15.589832575098683, 15.663973687062441, 15.706498242577116, 15.716936093266758, 15.728069976733451, 15.728512427221728]
 
+# Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+# 自己寫的 multi-head self attention, atrous_self_attention, d = 3
+# encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
+# modality-aware transformers
+y5 = [15.49229083432177, 15.592888048108476, 15.646147580348586, 15.653617242610963, 15.679543601852913, 15.704715510298538, 15.726393267161576]
+
+# Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+# 自己寫的 multi-head self attention, random_self_attention
+# encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
+# modality-aware transformers
+y6 = [15.494442592010083, 15.609491910438882, 15.671919573771865, 15.707657914006779, 15.726012765282944, 15.731636832092104, 15.734998353604407]
+
 y1 = [value / 10 for value in y1]
 y2 = [value / 10 for value in y2]
 y3 = [value / 10 for value in y3]
 y4 = [value / 10 for value in y4]
+y5 = [value / 10 for value in y5]
+y6 = [value / 10 for value in y6]
 
 # draw
 plt.plot(x, y1, marker='o', label='Full Self Attention')
 plt.plot(x, y2, marker='o', label='Atrous Self Attention')
 plt.plot(x, y3, marker='o', label='Local Self Attention')
 plt.plot(x, y4, marker='o', label='Stride Sparse Self Attention')
+# plt.plot(x, y5, marker='o', label='Atrous Self Attention(d=3)')
+# plt.plot(x, y6, marker='o', label='Random Self Attention')
 
 # set y-axis to log scale
 plt.yscale('log')

@@ -77,38 +77,34 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
 
         # Initialize the total_output
         total_output = tf.zeros_like(inputs)
-
         # Process each head iteratively
         for i in range(self.num_heads):
 
             Q = tf.matmul(inputs, self.Wq[i])  # (B, L, d_k)
-
             if enc_output is not None:
                 K = tf.matmul(enc_output, self.Wk[i])  # (B, L, d_k)
                 V = tf.matmul(enc_output, self.Wv[i])  # (B, L, d_v)
             else:
                 K = tf.matmul(inputs, self.Wk[i])  # (B, L, d_k)
                 V = tf.matmul(inputs, self.Wv[i])  # (B, L, d_v)
-
             # Scaled dot-product attention
             scores = tf.matmul(Q, K, transpose_b=True) / tf.math.sqrt(tf.cast(self.d_k, tf.float32))  # (B, L, L)
-            
             # Apply masking if provided
             if mask is not None:
                 scores = scores * mask - tf.constant(1e10, dtype=tf.float32) * (1 - mask)
             
             # Apply sparse attention mask
-            # mask = atrous_self_attention_mask(N = seq_len, dilation_rate = 2)
+            # mask = atrous_self_attention_mask(N = seq_len, dilation_rate = 3)
+            mask = random_self_attention_mask(N = seq_len, Probability = 0.5)
             # mask = local_self_attention_mask(N = seq_len, window_size = 2)
             # mask = stride_sparse_self_attention_mask(N = seq_len, local_range = 2, stride = 2)
-            # scores = scores * mask - tf.constant(1e10, dtype=tf.float32) * (1 - mask)
+            scores = scores * mask - tf.constant(1e10, dtype=tf.float32) * (1 - mask)
 
             # Apply softmax for attention weights
             attention_weights = tf.nn.softmax(scores, axis=-1)  # (B, L, L)
 
             # Context vector (weighted sum of values)
             output = tf.matmul(attention_weights, V)  # (B, L, d_v)
-            
             # Sum up the outputs of all heads
             total_output += output
         
@@ -171,10 +167,11 @@ class Inter_Modal_Multi_Head_Attention(tf.keras.layers.Layer):
                 scores = scores * mask - tf.constant(1e10, dtype=tf.float32) * (1 - mask)
             
             # Apply sparse attention mask
-            # mask = atrous_self_attention_mask(N = seq_len, dilation_rate = 2)
+            # mask = atrous_self_attention_mask(N = seq_len, dilation_rate = 3)
+            mask = random_self_attention_mask(N = seq_len, Probability = 0.5)
             # mask = local_self_attention_mask(N = seq_len, window_size = 2)
             # mask = stride_sparse_self_attention_mask(N = seq_len, local_range = 2, stride = 2)
-            # scores = scores * mask - tf.constant(1e10, dtype=tf.float32) * (1 - mask)
+            scores = scores * mask - tf.constant(1e10, dtype=tf.float32) * (1 - mask)
 
             # Apply softmax for attention weights
             attention_weights = tf.nn.softmax(scores, axis=-1)  # (B, L, L)
@@ -223,6 +220,17 @@ def stride_sparse_self_attention_mask(N, local_range, stride):
         for j in range(N):
             if abs(j - i) <= local_range or abs(j - i) % stride == 0:
                 mask[i, j] = 1
+    return mask
+
+def random_self_attention_mask(N, Probability):
+    # [[1. 0. 1. 0. 1. 0.]
+    #  [0. 1. 0. 1. 0. 1.]
+    #  [1. 0. 1. 0. 1. 0.]
+    #  [0. 1. 0. 1. 0. 1.]
+    #  [1. 0. 1. 0. 1. 0.]
+    #  [0. 1. 0. 1. 0. 1.]]
+    mask = np.random.rand(N, N)
+    mask = (mask >= Probability).astype(int)
     return mask
 
 class FFT(tf.keras.layers.Layer):

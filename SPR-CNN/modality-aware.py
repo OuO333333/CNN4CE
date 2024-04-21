@@ -374,14 +374,14 @@ for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     x_fre = LayerNormalization(epsilon=1e-6)(x_fre)
 
     # Feed Forward Layer Time
-    ff_output_encoder_1 = Dense(units=key_dim_num, activation='relu')(x_time)
-    # ff_output_encoder_1 = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_time)
+    # ff_output_encoder_1 = Dense(units=key_dim_num, activation='relu')(x_time)
+    ff_output_encoder_1 = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_time)
     x_time = Add()([x_time, ff_output_encoder_1])
     x_time = LayerNormalization(epsilon=1e-6)(x_time)
 
     # Feed Forward Layer Time
-    ff_output_encoder_2 = Dense(units=key_dim_num, activation='relu')(x_fre)
-    # ff_output_encoder_2 = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_fre)
+    # ff_output_encoder_2 = Dense(units=key_dim_num, activation='relu')(x_fre)
+    ff_output_encoder_2 = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_fre)
     x_fre = Add()([x_fre, ff_output_encoder_2])
     x_fre = LayerNormalization(epsilon=1e-6)(x_fre)
 
