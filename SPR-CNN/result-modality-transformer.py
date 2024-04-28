@@ -26,7 +26,7 @@ y4 = [0.5412381862428629, 0.33254079647163465, 0.2115293457419186, 0.15641427783
 y5 = [0.5238966308505519, 0.32426746977979914, 0.20119746725457452, 0.13996944454347623, 0.11280704789072017, 0.09475028820637019, 0.08761300950468075]
 
 # FEDformer
-y6 = [0.04003031924366951, 0.032262492924928665, 0.023152129724621773, 0.017859801650047302, 0.015596599318087101, 0.014731141738593578, 0.014243846759200096]
+y6 = [0.04003031924366951, 0.032262492924928665, 0.023152129724621773, 0.017859801650047302, 0.01619112305343151, 0.014731141738593578, 0.014243846759200096]
 
 # set y-axis to log scale
 plt.yscale('log', base=2)
@@ -78,7 +78,7 @@ y4 = [12.97931951377382, 14.154661877931208, 14.794740768464427, 15.077112879082
 y5 = [13.080715119036215, 14.199338913358442, 14.848096915580719, 15.160305529554883, 15.296675207596744, 15.386621664883695, 15.422020653796265]
 
 # FEDformer
-y6 = [15.489140933602904, 15.55980019276288, 15.642233280343834, 15.689904380496367, 15.710242356836591, 15.718012085872813, 15.722385011103668]
+y6 = [15.489140933602904, 15.55980019276288, 15.642233280343834, 15.689904380496367, 15.70490247599874, 15.718012085872813, 15.722385011103668]
 
 # set y-axis to log scale
 plt.yscale('log', base=10)
@@ -133,10 +133,21 @@ y2 = [0.039645493030548096, 0.02747759222984314, 0.019949764013290405, 0.0169160
 # modality-aware transformers
 y3 = [0.039773717522621155, 0.028461197391152382, 0.020952610298991203, 0.017375558614730835, 0.01585640199482441, 0.014552067965269089, 0.014185205101966858]
 
+# FEDformer
+y6 = [0.04003031924366951, 0.032262492924928665, 0.023152129724621773, 0.017859801650047302, 0.01619112305343151, 0.014731141738593578, 0.014243846759200096]
+
+# Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+# 自己寫的 multi-head self attention, full attention, no cross attention
+# encoder ff layer 用 ffn, decoder ff layer 用 ffn
+# modality-aware transformers
+y7 = [0.0398753322660923, 0.030808862298727036, 0.022814031690359116, 0.018377229571342468, 0.01656636968255043, 0.014835546724498272, 0.01476007979363203]
+
 # draw
-plt.plot(x, y1, marker='o', label='Transformers(time domain only)')
-plt.plot(x, y3, marker='o', label='Proposed Transformer(time domain + frequency domain)')
+plt.plot(x, y1, marker='o', label='Transformers(Time domain only)')
+plt.plot(x, y7, marker='o', label='Proposed Transformer(No cross attention, no spatial)')
+plt.plot(x, y3, marker='o', label='Proposed Transformer(No spatial)')
 plt.plot(x, y2, marker='o', label='Proposed Transformer')
+# plt.plot(x, y6, marker='o', label='FEDformer')
 
 # set y-axis to log scale
 plt.yscale('log', base=2)
@@ -176,14 +187,28 @@ y2 = [15.49264954985823, 15.603153955212745, 15.671097689190924, 15.698389138207
 # modality-aware transformers
 y3 = [15.49148045194048, 15.594252673970859, 15.662064721667459, 15.694258319307453, 15.707909134999468, 15.719619257954932, 15.722911156969142]
 
+# FEDformer
+y6 = [15.489140933602904, 15.55980019276288, 15.642233280343834, 15.689904380496367, 15.70490247599874, 15.718012085872813, 15.722385011103668]
+
+# Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
+# 自己寫的 multi-head self attention, full attention, no cross attention
+# encoder ff layer 用 ffn, decoder ff layer 用 ffn
+# modality-aware transformers
+y7 = [15.490554053541645, 15.572984746486938, 15.645283507862723, 15.685250583857632, 15.701531128715258, 15.717075024595555, 15.717752387349684]
+
 y1 = [value / 10 for value in y1]
 y2 = [value / 10 for value in y2]
 y3 = [value / 10 for value in y3]
+y6 = [value / 10 for value in y6]
+y7 = [value / 10 for value in y7]
+
 
 # draw
-plt.plot(x, y1, marker='o', label='Transformers(time domain only)')
-plt.plot(x, y3, marker='o', label='Proposed Transformer(time domain + frequency domain)')
+plt.plot(x, y1, marker='o', label='Transformers(Time domain only)')
+plt.plot(x, y7, marker='o', label='Proposed Transformer(No cross attention, no spatial)')
+plt.plot(x, y3, marker='o', label='Proposed Transformer(No spatial)')
 plt.plot(x, y2, marker='o', label='Proposed Transformer')
+# plt.plot(x, y6, marker='o', label='FEDformer')
 
 # set y-axis to log scale
 plt.yscale('log')
@@ -257,19 +282,12 @@ y4 = [0.03975171595811844, 0.02894938737154007, 0.020740732550621033, 0.01601347
 # modality-aware transformers
 y5 = [0.03968484327197075, 0.028611933812499046, 0.022718237712979317, 0.021889904513955116, 0.019011519849300385, 0.016211938112974167, 0.01379705686122179]
 
-# Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
-# 自己寫的 multi-head self attention, random_self_attention
-# encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
-# modality-aware transformers
-y6 = [0.03952145203948021, 0.028553225100040436, 0.02063240297138691, 0.01693073660135269, 0.014729450456798077, 0.014260709285736084, 0.013719967566430569]
-
 # draw
 plt.plot(x, y1, marker='o', label='Full Self Attention')
 plt.plot(x, y2, marker='o', label='Atrous Self Attention(d=2)')
 plt.plot(x, y3, marker='o', label='Local Self Attention')
 plt.plot(x, y4, marker='o', label='Stride Sparse Self Attention')
 # plt.plot(x, y5, marker='o', label='Atrous Self Attention(d=3)')
-# plt.plot(x, y6, marker='o', label='Random Self Attention')
 
 
 # set y-axis to log scale
@@ -324,18 +342,12 @@ y4 = [15.491681067760004, 15.589832575098683, 15.663973687062441, 15.70649824257
 # modality-aware transformers
 y5 = [15.49229083432177, 15.592888048108476, 15.646147580348586, 15.653617242610963, 15.679543601852913, 15.704715510298538, 15.726393267161576]
 
-# Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
-# 自己寫的 multi-head self attention, random_self_attention
-# encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
-# modality-aware transformers
-y6 = [15.494442592010083, 15.609491910438882, 15.671919573771865, 15.707657914006779, 15.726012765282944, 15.731636832092104, 15.734998353604407]
 
 y1 = [value / 10 for value in y1]
 y2 = [value / 10 for value in y2]
 y3 = [value / 10 for value in y3]
 y4 = [value / 10 for value in y4]
 y5 = [value / 10 for value in y5]
-y6 = [value / 10 for value in y6]
 
 # draw
 plt.plot(x, y1, marker='o', label='Full Self Attention')
@@ -343,7 +355,6 @@ plt.plot(x, y2, marker='o', label='Atrous Self Attention')
 plt.plot(x, y3, marker='o', label='Local Self Attention')
 plt.plot(x, y4, marker='o', label='Stride Sparse Self Attention')
 # plt.plot(x, y5, marker='o', label='Atrous Self Attention(d=3)')
-# plt.plot(x, y6, marker='o', label='Random Self Attention')
 
 # set y-axis to log scale
 plt.yscale('log')
