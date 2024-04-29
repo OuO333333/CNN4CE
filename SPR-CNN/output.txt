@@ -1,11 +1,5 @@
 SNR(dB)                          NMSE      Sum rate(bandwidth = 10)
 Encoder *  2 , Decoder *  2 , reshape_type = (Nr, Nt, channel)
-     15           0.01439970824867487            15.720986492236719
+      5          0.017022011801600456            15.697436400207225
 Encoder *  2 , Decoder *  2 , reshape_type = (Nr, Nt, channel)
-     15          0.014515581540763378            15.719946664722254
-Encoder *  2 , Decoder *  2 , reshape_type = (Nr, Nt, channel)
-     15          0.015076925046741962            15.714908270519555
-Encoder *  2 , Decoder *  2 , reshape_type = (Nr, Nt, channel)
-     15          0.023808825761079788            15.636307060506201
-Encoder *  2 , Decoder *  2 , reshape_type = (Nr, Nt, channel)
-     15          0.014762941747903824            15.717726674370278
+      5           0.01648659072816372            15.702248021962497
