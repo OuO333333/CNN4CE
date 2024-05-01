@@ -9,6 +9,8 @@ import numpy as np
 import numpy.linalg as LA
 import os
 import sys
+import time
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import tensorflow as tf
 config = tf.compat.v1.ConfigProto()
@@ -260,6 +262,10 @@ print(len(row_num))
 print(H_test.shape, H_test_noisy.shape)
 print(((H_test)**2).mean())
 
+
+# 记录开始时间
+start_time = time.time()
+
 K=3
 input_dim=(Nr,Nt,2*fre*time_steps)
 model = Sequential()
@@ -293,6 +299,14 @@ adam=Adam(lr=1e-4, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
 model.compile(optimizer=adam, loss='mse')
 model.fit(H_train_noisy, H_train, epochs=200, batch_size=128, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
 print("H_train_noisy shape = ", H_train_noisy.shape, ", H_train shape = ", H_train.shape)
+
+# 记录结束时间
+end_time = time.time()
+
+# 计算执行时间
+execution_time = end_time - start_time
+
+print("执行时间：", execution_time, "秒")
 
 # load model
 CNN = load_model('2fre4time_SNR20_time4_16_4_200ep.hdf5')
