@@ -33,8 +33,8 @@ plt.yscale('log', base=2)
 
 # draw
 plt.plot(x, y1, marker='o', label='CNN')
-plt.plot(x, y4, marker='o', label='Attention-aided Autoencoder')
-plt.plot(x, y5, marker='o', label='Sparse Autoencoder')
+plt.plot(x, y4, marker='o', label='Attention-aided Auto-Encoder')
+plt.plot(x, y5, marker='o', label='Sparse Auto-Encoder')
 plt.plot(x, y2, marker='o', label='Transformers')
 plt.plot(x, y6, marker='o', label='FEDformer')
 plt.plot(x, y3, marker='o', label='Proposed Transformer')
@@ -85,8 +85,8 @@ plt.yscale('log', base=10)
 
 # draw
 plt.plot(x, y1, marker='o', label='CNN')
-plt.plot(x, y4, marker='o', label='Attention-aided Autoencoder')
-plt.plot(x, y5, marker='o', label='Sparse Autoencoder')
+plt.plot(x, y4, marker='o', label='Attention-aided Auto-Encoder')
+plt.plot(x, y5, marker='o', label='Sparse Auto-Encoder')
 plt.plot(x, y2, marker='o', label='Transformers')
 plt.plot(x, y6, marker='o', label='FEDformer')
 plt.plot(x, y3, marker='o', label='Proposed Transformer')
@@ -111,6 +111,27 @@ plt.savefig('Comparison of sum rate of CNN and Transformers and Proposed Transfo
 
 # display the plot
 plt.grid(True)
+plt.show()
+
+####################################################################################################################
+# 比例值
+values = [24.937631607055664, 34.374982595443726, 50.404070138931274, 233.8608410358429, 413.7626326084137, 265.59384655952454]
+labels = ['CNN', 'Attention-aided Auto-Encoder', 'Sparse Auto-Encoder', 'Transformers', 'FEDformer', 'Proposed Transformer']
+
+# 创建条形图
+plt.bar(labels, values)
+
+plt.xticks(fontsize=12)  # 调整x轴标签字体大小
+
+# 添加标题和标签
+plt.title('Comparison of Training Time', fontsize=fontsize)
+plt.xlabel('Categories', fontsize=fontsize)
+plt.ylabel('Time(s)', fontsize=fontsize)
+
+# save the plot
+plt.savefig('Comparison of Training Time')
+
+# 显示图形
 plt.show()
 ####################################################################################################################
 
