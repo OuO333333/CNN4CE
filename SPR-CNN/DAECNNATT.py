@@ -9,6 +9,8 @@ import numpy as np
 import numpy.linalg as LA
 import os
 import sys
+import time
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import tensorflow as tf
 config = tf.compat.v1.ConfigProto()
@@ -269,6 +271,8 @@ print("H_train shape = ", H_train.shape)
 print("H_test_noisy shape = ", H_test_noisy.shape)
 print("H_test shape = ", H_test.shape)
 
+# start time
+start_time = time.time()
 
 K=3
 input_dim = tf.keras.Input(shape=(Nr,Nt,2*fre*time_steps))
@@ -295,6 +299,12 @@ model.compile(optimizer=adam, loss='mse')
 model.fit(H_train_noisy, H_train, epochs=200, batch_size=32, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
 print("H_train_noisy shape = ", H_train_noisy.shape, ", H_train shape = ", H_train.shape)
 
+# end time
+end_time = time.time()
+
+# 计算执行时间
+execution_time = end_time - start_time
+print("执行时间：", execution_time, "秒")
 # load model
 CNN = load_model('2fre4time_SNR20_time4_16_4_200ep.tf')
 

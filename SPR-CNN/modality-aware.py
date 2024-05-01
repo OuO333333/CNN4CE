@@ -9,6 +9,8 @@ import numpy as np
 import numpy.linalg as LA
 import os
 import sys
+import time
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import tensorflow as tf
 config = tf.compat.v1.ConfigProto()
@@ -41,7 +43,7 @@ print("learning_rate_num = ", learning_rate_num)
 
 Nt=32
 Nr=16
-SNR_dB = 10
+SNR_dB = 20
 # get command line argv
 args = sys.argv
 if len(args) == 2:
@@ -306,6 +308,9 @@ H_train = np.reshape(H_train, (-1, 1, int(2048 / key_dim_num), key_dim_num))
 H_test_noisy = np.reshape(H_test_noisy, (-1, 1, int(8192 / key_dim_num), key_dim_num))
 H_test = np.reshape(H_test, (-1, 1, int(2048 / key_dim_num), key_dim_num))
 
+# start time
+start_time = time.time()
+
 # Add a rescaling layer to normalize inputs
 x = Rescaling(scale=1.0 / scale)(inputs)
 
@@ -454,6 +459,13 @@ callbacks_list = [checkpoint]
 print("H_train shape = ", H_train.shape, "H_train_noisy shape =", H_train_noisy.shape)
 model.fit(H_train_noisy, H_train, epochs=epochs_num, batch_size=batch_size_num, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
 
+# end time
+end_time = time.time()
+
+# 计算执行时间
+execution_time = end_time - start_time
+print("执行时间：", execution_time, "秒")
+
 # load model
 CNN = tf.keras.models.load_model('CNN_UMi_3path_2fre_SNRminus10dB_200ep.tf')
 
@@ -494,6 +506,7 @@ with open('output.txt', 'a') as f:
     sys.stdout = f
 
     # 执行print语句，输出将被重定向到文件中
+    # print("Execution_time: ", execution_time)
     print("Encoder * ", encoder_block_num, ", Decoder * ", decoder_block_num, ", reshape_type = ", end='')
     if reshape_type == (0, 1, 2, 3):
         print("(Nr, Nt, channel)")
