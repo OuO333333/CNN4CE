@@ -74,12 +74,10 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
         
         shape = inputs.get_shape().as_list()
         seq_len = int(shape[1] * shape[2] / self.d_model)
-
         # Initialize the total_output
         total_output = tf.zeros_like(inputs)
         # Process each head iteratively
         for i in range(self.num_heads):
-
             Q = tf.matmul(inputs, self.Wq[i])  # (B, L, d_k)
             if enc_output is not None:
                 K = tf.matmul(enc_output, self.Wk[i])  # (B, L, d_k)
@@ -238,15 +236,15 @@ class FFT(tf.keras.layers.Layer):
         super(FFT, self).__init__(**kwargs)
 
     @tf.function
-    def call(self, x):
+    def call(self, x, dim):
         # 假设 x 为(batchsize, 32, 256)的张量
         batch_size = tf.shape(x)[0]
-        result = tf.TensorArray(dtype=tf.float32, size=batch_size, element_shape=(32, 256))
+        result = tf.TensorArray(dtype=tf.float32, size=batch_size, element_shape=(8192//dim, dim))
 
         # 对每个张量执行FFT操作, q_fft 為 (32, 256)
         for i in tf.range(batch_size):
             q_batch = x[i]
-            q_fft = fft_single(q_batch)  # 假设已定义了 ifft_single 函数
+            q_fft = fft_single(q_batch, dim)  # 假设已定义了 ifft_single 函数
             result = result.write(i, q_fft)
         result = result.stack()
         return result
@@ -256,48 +254,48 @@ class IFFT(tf.keras.layers.Layer):
         super(IFFT, self).__init__(**kwargs)
 
     @tf.function
-    def call(self, x):
+    def call(self, x, dim):
         # 假设 x 为(batchsize, 32, 256)的张量
         batch_size = tf.shape(x)[0]
-        result = tf.TensorArray(dtype=tf.float32, size=batch_size, element_shape=(32, 256))
+        result = tf.TensorArray(dtype=tf.float32, size=batch_size, element_shape=(8192//dim, dim))
 
         # 对每个张量执行FFT操作, q_fft 為 (32, 256)
         for i in tf.range(batch_size):
             q_batch = x[i]
-            q_fft = ifft_single(q_batch)  # 假设已定义了 ifft_single 函数
+            q_fft = ifft_single(q_batch, dim)  # 假设已定义了 ifft_single 函数
             result = result.write(i, q_fft)
         result = result.stack()
         return result
 
 @tf.function
-def fft(x):
+def fft(x, dim):
     # 假设 x 为(batchsize, 32, 256)的张量
     batch_size = tf.shape(x)[0]
-    result = tf.TensorArray(dtype=tf.float32, size=batch_size, element_shape=(32, 256))
+    result = tf.TensorArray(dtype=tf.float32, size=batch_size, element_shape=(8192//dim, dim))
 
     # 对每个张量执行FFT操作, q_fft 為 (32, 256)
     for i in tf.range(batch_size):
         q_batch = x[i]
-        q_fft = fft_single(q_batch)
+        q_fft = fft_single(q_batch, dim)
         result = result.write(i, q_fft)
     result = result.stack()
     return result
 
 @tf.function
-def ifft(x):
+def ifft(x, dim):
     # 假设 x 为(batchsize, 32, 256)的张量
     batch_size = tf.shape(x)[0]
-    result = tf.TensorArray(dtype=tf.float32, size=batch_size, element_shape=(32, 256))
+    result = tf.TensorArray(dtype=tf.float32, size=batch_size, element_shape=(8192//dim, dim))
 
     # 对每个张量执行FFT操作, q_fft 為 (32, 256)
     for i in tf.range(batch_size):
         q_batch = x[i]
-        q_fft = ifft_single(q_batch)
+        q_fft = ifft_single(q_batch, dim)
         result = result.write(i, q_fft)
     result = result.stack()
     return result
 
-def fft_single(x):
+def fft_single(x, dim):
     # print("x shape = ", x.shape)
     x = tf.reshape(x, (16, 32, 4, 2, 2))
     # x = tf.reshape(x, (16, 32, 8, 2))
@@ -321,11 +319,11 @@ def fft_single(x):
     
     # 將實部和虛部合併為一個張量
     x = tf.concat([real_x, imag_x], axis=-1)
-    x = tf.reshape(x, (32, 256))
+    x = tf.reshape(x, (8192//dim, dim))
     # print("x shape 2 = ", x.shape)
     return x
 
-def ifft_single(x):
+def ifft_single(x, dim):
     # print("x shape = ", x.shape)
     x = tf.reshape(x, (16, 32, 4, 2, 2))
     # x = tf.reshape(x, (16, 32, 8, 2))
@@ -349,7 +347,7 @@ def ifft_single(x):
     
     # 將實部和虛部合併為一個張量
     x = tf.concat([real_x, imag_x], axis=-1)
-    x = tf.reshape(x, (32, 256))
+    x = tf.reshape(x, (8192//dim, dim))
     # print("x shape 2 = ", x.shape)
     return x
 
