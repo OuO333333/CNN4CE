@@ -96,6 +96,7 @@ class Multi_Head_Attention(tf.keras.layers.Layer):
             # mask = random_self_attention_mask(N = seq_len, Probability = 0.5)
             # mask = local_self_attention_mask(N = seq_len, window_size = 2)
             # mask = stride_sparse_self_attention_mask(N = seq_len, local_range = 2, stride = 2)
+            # mask = atrous_and_local_self_attention_mask(N = seq_len, dilation_rate = 2, window_size = 6)
             # scores = scores * mask - tf.constant(1e10, dtype=tf.float32) * (1 - mask)
 
             # Apply softmax for attention weights
@@ -169,6 +170,7 @@ class Inter_Modal_Multi_Head_Attention(tf.keras.layers.Layer):
             # mask = random_self_attention_mask(N = seq_len, Probability = 0.5)
             # mask = local_self_attention_mask(N = seq_len, window_size = 2)
             # mask = stride_sparse_self_attention_mask(N = seq_len, local_range = 2, stride = 2)
+            # mask = atrous_and_local_self_attention_mask(N = seq_len, dilation_rate = 2, window_size = 6)
             # scores = scores * mask - tf.constant(1e10, dtype=tf.float32) * (1 - mask)
 
             # Apply softmax for attention weights
@@ -229,6 +231,20 @@ def random_self_attention_mask(N, Probability):
     #  [0. 1. 0. 1. 0. 1.]]
     mask = np.random.rand(N, N)
     mask = (mask >= Probability).astype(int)
+    return mask
+
+def atrous_and_local_self_attention_mask(N, dilation_rate, window_size):
+    # [[1. 0. 1. 0. 1. 0.]
+    #  [0. 1. 0. 1. 0. 1.]
+    #  [1. 0. 1. 0. 1. 0.]
+    #  [0. 1. 0. 1. 0. 1.]
+    #  [1. 0. 1. 0. 1. 0.]
+    #  [0. 1. 0. 1. 0. 1.]]
+    mask = np.zeros((N, N))
+    for i in range(N):
+        for j in range(N):
+            if abs(i - j) % dilation_rate == 0 and abs(i - j) <= window_size:
+                mask[i, j] = 1
     return mask
 
 class FFT(tf.keras.layers.Layer):

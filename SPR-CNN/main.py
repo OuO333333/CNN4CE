@@ -383,7 +383,7 @@ for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     enc_output = enc_output  # Assuming encoder output is available
     # FFT
     # x = FFT_layer(x)
-    enc_output = FFT_layer(enc_output)
+    # enc_output = FFT_layer(enc_output)
     cross_attention_layer = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
     attn_output = cross_attention_layer(x, enc_output = enc_output)
     # IFFT
