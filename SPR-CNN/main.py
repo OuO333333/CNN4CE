@@ -49,6 +49,7 @@ args = sys.argv
 if len(args) == 2:
     try:
         SNR_dB = int(args[1])
+        # key_dim_num = int(args[1])
     except ValueError:
         print("intput not valid")
 SNR=10.0**(SNR_dB/10.0) # transmit power

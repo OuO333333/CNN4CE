@@ -338,7 +338,6 @@ enc_output = None
 FFT_layer = FFT()
 x_time = x
 x_fre = FFT_layer(x, key_dim_num)
-print("x_fre shape = ", x_fre.shape)
 for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
     
     # Transformer Encoder Layer
@@ -356,7 +355,6 @@ for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
 
     # Intra_Modal_Multi_Head_Attention_Fre
     Intra_Modal_Multi_Head_Attention_Fre = Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
-    print("x_fre shape = ", x_fre.shape)
     Intra_Modal_Multi_Head_Attention_Fre_Output = Intra_Modal_Multi_Head_Attention_Fre(x_fre)
     
     # Add & Norm
