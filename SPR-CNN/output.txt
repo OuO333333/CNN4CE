@@ -1,0 +1,27 @@
+SNR(dB)                          NMSE      Sum rate(bandwidth = 10)
+Encoder *  2 , Decoder *  2 , reshape_type = (Nr, Nt, channel)
+      5            0.0214163139462471            15.657886185586465
+Encoder *  2 , Decoder *  2 , reshape_type = (Nr, Nt, channel)
+      5          0.017465608194470406            15.693448818482453
+Encoder *  2 , Decoder *  2 , reshape_type = (Nr, Nt, channel)
+      5           0.01664339378476143            15.700839051225625
+Encoder *  2 , Decoder *  2 , reshape_type = (Nr, Nt, channel)
+      5           0.01674177125096321            15.699955045151622
+Encoder *  2 , Decoder *  2 , reshape_type = (Nr, Nt, channel)
+      5           0.02055048756301403            15.665687570104488
+Encoder *  2 , Decoder *  2 , reshape_type = (Nr, Nt, channel)
+      5          0.017339782789349556            15.694579971288995
+Encoder *  2 , Decoder *  2 , reshape_type = (Nr, Nt, channel)
+      5          0.016857020556926727            15.698919295663845
+Encoder *  2 , Decoder *  2 , reshape_type = (Nr, Nt, channel)
+      5           0.01819189079105854            15.686917720536531
+Encoder *  2 , Decoder *  2 , reshape_type = (Nr, Nt, channel)
+      5          0.016181347891688347            15.704990372922598
+Encoder *  2 , Decoder *  2 , reshape_type = (Nr, Nt, channel)
+      5          0.020922711119055748            15.662334231018416
+Encoder *  2 , Decoder *  2 , reshape_type = (Nr, Nt, channel)
+      5          0.021566195413470268             15.65653529604518
+Encoder *  2 , Decoder *  2 , reshape_type = (Nr, Nt, channel)
+      5          0.021995237097144127            15.652667624603229
+Encoder *  2 , Decoder *  2 , reshape_type = (Nr, Nt, channel)
+      5          0.016972938552498817            15.697877480357917
