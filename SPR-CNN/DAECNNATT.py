@@ -271,9 +271,6 @@ print("H_train shape = ", H_train.shape)
 print("H_test_noisy shape = ", H_test_noisy.shape)
 print("H_test shape = ", H_test.shape)
 
-# start time
-start_time = time.time()
-
 K=3
 input_dim = tf.keras.Input(shape=(Nr,Nt,2*fre*time_steps))
 x = SelfAttention(64,32)(input_dim)
@@ -299,16 +296,20 @@ model.compile(optimizer=adam, loss='mse')
 model.fit(H_train_noisy, H_train, epochs=200, batch_size=32, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
 print("H_train_noisy shape = ", H_train_noisy.shape, ", H_train shape = ", H_train.shape)
 
-# end time
-end_time = time.time()
-
-# 计算执行时间
-execution_time = end_time - start_time
-print("执行时间：", execution_time, "秒")
 # load model
 CNN = load_model('2fre4time_SNR20_time4_16_4_200ep.tf')
 
-decoded_channel = CNN.predict(H_test_noisy)
+for i in range(5):
+    # start time
+    start_time = time.time()
+    decoded_channel = CNN.predict(H_test_noisy)
+
+    # end time
+    end_time = time.time()
+    # 计算执行时间
+    execution_time = end_time - start_time
+    print("执行时间：", execution_time, "秒")
+
 nmse2=zeros((data_num_test-len(row_num),1), dtype=float)
 for n in range(data_num_test-len(row_num)):
     MSE = tf.reduce_sum(tf.square(H_test - decoded_channel))

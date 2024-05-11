@@ -165,9 +165,9 @@ y7 = [0.040216702967882156, 0.030808862298727036, 0.02333066239953041, 0.0193094
 
 # draw
 plt.plot(x, y1, marker='o', label='Transformers(Time domain only)')
-plt.plot(x, y7, marker='o', label='Proposed Transformer(No cross attention, no spatial)')
-plt.plot(x, y3, marker='o', label='Proposed Transformer(No spatial)')
-plt.plot(x, y2, marker='o', label='Proposed Transformer')
+plt.plot(x, y7, marker='o', label='Proposed Transformer(Frequency domain)')
+plt.plot(x, y3, marker='o', label='Proposed Transformer(Frequency domain & cross attention)')
+plt.plot(x, y2, marker='o', label='Proposed Transformer(Frequency domain & cross attention & spatial domain)')
 # plt.plot(x, y6, marker='o', label='FEDformer')
 
 # set y-axis to log scale
@@ -179,7 +179,7 @@ plt.xlabel('SNR (dB)', fontsize=fontsize)
 plt.ylabel('NMSE (log scale)', fontsize=fontsize)
 
 # add legend
-plt.legend(fontsize=fontsize)
+plt.legend(fontsize=18)
 
 # save the plot
 plt.savefig('Comparison of NMSE of Proposed Transformer and Others')
@@ -226,9 +226,9 @@ y7 = [value / 10 for value in y7]
 
 # draw
 plt.plot(x, y1, marker='o', label='Transformers(Time domain only)')
-plt.plot(x, y7, marker='o', label='Proposed Transformer(No cross attention, no spatial)')
-plt.plot(x, y3, marker='o', label='Proposed Transformer(No spatial)')
-plt.plot(x, y2, marker='o', label='Proposed Transformer')
+plt.plot(x, y7, marker='o', label='Proposed Transformer(Frequency domain)')
+plt.plot(x, y3, marker='o', label='Proposed Transformer(Frequency domain & cross attention)')
+plt.plot(x, y2, marker='o', label='Proposed Transformer(Frequency domain & cross attention & spatial domain)')
 # plt.plot(x, y6, marker='o', label='FEDformer')
 
 # set y-axis to log scale
@@ -240,7 +240,7 @@ plt.xlabel('SNR (dB)', fontsize=fontsize)
 plt.ylabel('sum rate(bandwith = 1) (log scale)', fontsize=fontsize)
 
 # add legend
-plt.legend(fontsize=fontsize)
+plt.legend(fontsize=18)
 
 # save the plot
 plt.savefig('Comparison of sum rate of Proposed Transformer and Others')

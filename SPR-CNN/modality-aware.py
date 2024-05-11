@@ -308,9 +308,6 @@ H_train = np.reshape(H_train, (-1, 1, int(2048 / key_dim_num), key_dim_num))
 H_test_noisy = np.reshape(H_test_noisy, (-1, 1, int(8192 / key_dim_num), key_dim_num))
 H_test = np.reshape(H_test, (-1, 1, int(2048 / key_dim_num), key_dim_num))
 
-# start time
-start_time = time.time()
-
 # Add a rescaling layer to normalize inputs
 x = Rescaling(scale=1.0 / scale)(inputs)
 
@@ -363,7 +360,7 @@ for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
 
     # Inter_Modal_Multi_Head_Attention_Time
     Inter_Modal_Multi_Head_Attention_Time = Inter_Modal_Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
-    Inter_Modal_Multi_Head_Attention_Time_Output = Inter_Modal_Multi_Head_Attention_Time(x_time, enc_output = x_time)
+    Inter_Modal_Multi_Head_Attention_Time_Output = Inter_Modal_Multi_Head_Attention_Time(x_time, enc_output = x_fre)
 
     # Add & Norm
     x_time = Add()([x_time, Inter_Modal_Multi_Head_Attention_Time_Output])
@@ -371,21 +368,21 @@ for _ in range(encoder_block_num):  # Repeat the encoder encoder_block_num times
 
     # Inter_Modal_Multi_Head_Attention_Fre
     Inter_Modal_Multi_Head_Attention_Fre = Inter_Modal_Multi_Head_Attention(d_k=key_dim_num, d_v=key_dim_num, d_model=key_dim_num, num_heads = num_heads)
-    Inter_Modal_Multi_Head_Attention_Fre_Output = Inter_Modal_Multi_Head_Attention_Fre(x_fre, enc_output = x_fre)
+    Inter_Modal_Multi_Head_Attention_Fre_Output = Inter_Modal_Multi_Head_Attention_Fre(x_fre, enc_output = x_time)
 
     # Add & Norm
     x_fre = Add()([x_fre, Inter_Modal_Multi_Head_Attention_Fre_Output])
     x_fre = LayerNormalization(epsilon=1e-6)(x_fre)
 
     # Feed Forward Layer Time
-    ff_output_encoder_1 = Dense(units=key_dim_num, activation='relu')(x_time)
-    # ff_output_encoder_1 = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_time)
+    # ff_output_encoder_1 = Dense(units=key_dim_num, activation='relu')(x_time)
+    ff_output_encoder_1 = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_time)
     x_time = Add()([x_time, ff_output_encoder_1])
     x_time = LayerNormalization(epsilon=1e-6)(x_time)
 
     # Feed Forward Layer Time
-    ff_output_encoder_2 = Dense(units=key_dim_num, activation='relu')(x_fre)
-    # ff_output_encoder_2 = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_fre)
+    # ff_output_encoder_2 = Dense(units=key_dim_num, activation='relu')(x_fre)
+    ff_output_encoder_2 = Conv1D(filters=key_dim_num, kernel_size=3, padding='same', activation='relu')(x_fre)
     x_fre = Add()([x_fre, ff_output_encoder_2])
     x_fre = LayerNormalization(epsilon=1e-6)(x_fre)
 
@@ -458,17 +455,20 @@ callbacks_list = [checkpoint]
 print("H_train shape = ", H_train.shape, "H_train_noisy shape =", H_train_noisy.shape)
 model.fit(H_train_noisy, H_train, epochs=epochs_num, batch_size=batch_size_num, callbacks=callbacks_list, verbose=2, shuffle=True, validation_split=0.1)
 
-# end time
-end_time = time.time()
-
-# 计算执行时间
-execution_time = end_time - start_time
-print("执行时间：", execution_time, "秒")
 
 # load model
 CNN = tf.keras.models.load_model('CNN_UMi_3path_2fre_SNRminus10dB_200ep.tf')
 
-decoded_channel = CNN.predict(H_test_noisy)
+for i in range(10):
+    # start time
+    start_time = time.time()
+    decoded_channel = CNN.predict(H_test_noisy)
+
+    # end time
+    end_time = time.time()
+    # 计算执行时间
+    execution_time = end_time - start_time
+    print("执行时间：", execution_time, "秒")
 
 nmse2=zeros((data_num_test-len(row_num),1), dtype=float)
 for n in range(data_num_test-len(row_num)):
