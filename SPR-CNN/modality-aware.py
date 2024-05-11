@@ -458,17 +458,7 @@ model.fit(H_train_noisy, H_train, epochs=epochs_num, batch_size=batch_size_num, 
 
 # load model
 CNN = tf.keras.models.load_model('CNN_UMi_3path_2fre_SNRminus10dB_200ep.tf')
-
-for i in range(10):
-    # start time
-    start_time = time.time()
-    decoded_channel = CNN.predict(H_test_noisy)
-
-    # end time
-    end_time = time.time()
-    # 计算执行时间
-    execution_time = end_time - start_time
-    print("执行时间：", execution_time, "秒")
+decoded_channel = CNN.predict(H_test_noisy)
 
 nmse2=zeros((data_num_test-len(row_num),1), dtype=float)
 for n in range(data_num_test-len(row_num)):

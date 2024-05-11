@@ -99,15 +99,15 @@ y5 = [value / 10 for value in y5]
 y6 = [value / 10 for value in y6]
 
 # add title and axis labels
-plt.title('Comparison of sum rate of CNN and Transformers and Proposed Transformer', fontsize=fontsize)
+plt.title('Comparison of Sum Rate of CNN and Transformers and Proposed Transformer', fontsize=fontsize)
 plt.xlabel('SNR (dB)', fontsize=fontsize)
-plt.ylabel('sum rate(bandwith = 1) (log scale)', fontsize=fontsize)
+plt.ylabel('Sum Rate(bandwith = 1) (log scale)', fontsize=fontsize)
 
 # add legend
 plt.legend(fontsize=fontsize)
 
 # save the plot
-plt.savefig('Comparison of sum rate of CNN and Transformers and Proposed Transformer')
+plt.savefig('Comparison of Sum Rate of CNN and Transformers and Proposed Transformer')
 
 # display the plot
 plt.grid(True)
@@ -235,15 +235,15 @@ plt.plot(x, y2, marker='o', label='Proposed Transformer(Frequency domain & cross
 plt.yscale('log')
 
 # add title and axis labels
-plt.title('Comparison of sum rate of Proposed Transformer and Others', fontsize=fontsize)
+plt.title('Comparison of Sum Rate of Proposed Transformer and Others', fontsize=fontsize)
 plt.xlabel('SNR (dB)', fontsize=fontsize)
-plt.ylabel('sum rate(bandwith = 1) (log scale)', fontsize=fontsize)
+plt.ylabel('Sum Rate(bandwith = 1) (log scale)', fontsize=fontsize)
 
 # add legend
 plt.legend(fontsize=18)
 
 # save the plot
-plt.savefig('Comparison of sum rate of Proposed Transformer and Others')
+plt.savefig('Comparison of Sum Rate of Proposed Transformer and Others')
 
 # display the plot
 plt.grid(True)
@@ -251,7 +251,7 @@ plt.show()
 ####################################################################################################################
 # 比例值
 values = [1.0, 0.5, 7/16, 4/16]
-labels = ['Full Self Attention', 'Atrous Self Attention', 'Local Self Attention', 'Atrous Local Self Attention']
+labels = ['Full Self Attention', 'Atrous Self Attention', 'Distance-based Self Attention', 'Atrous Distance-based Self Attention']
 
 # 创建条形图
 plt.bar(labels, values)
@@ -286,22 +286,22 @@ y1 = [0.039645493030548096, 0.02848387509584427, 0.02177749201655388, 0.01766580
 y2 = [0.038145072758197784, 0.027047526091337204, 0.02087853103876114, 0.016779784113168716, 0.014481263235211372, 0.01399294938892126, 0.01356890331953764]
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
-# 自己寫的 multi-head self attention, Local Self Attention
+# 自己寫的 multi-head self attention, Distance Self Attention
 # encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
 # modality-aware transformers
 y3 = [0.039379578083753586, 0.028154458850622177, 0.021071387454867363, 0.017013927921652794, 0.014845786616206169, 0.014248121529817581, 0.0137781398370862]
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
-# 自己寫的 multi-head self attention, atrous_and_local_self_attention, d = 2, windows = 6
+# 自己寫的 multi-head self attention, atrous_and_distance_self_attention, d = 2, windows = 6
 # encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
 # modality-aware transformers
-y4 = [0.03719576820731163, 0.02675441838800907, 0.02032649889588356, 0.016275744885206223, 0.014112374745309353, 0.01363054383546114, 0.013208819553256035]
+y4 = [0.037573281675577164, 0.026736173778772354, 0.02016441710293293, 0.016090845689177513, 0.014339765533804893, 0.013647235929965973, 0.013198921456933022]
 
 # draw
 plt.plot(x, y1, marker='o', label='Full Self Attention')
 plt.plot(x, y2, marker='o', label='Atrous Self Attention')
-plt.plot(x, y3, marker='o', label='Local Self Attention')
-plt.plot(x, y4, marker='o', label='Atrous Local Self Attention')
+plt.plot(x, y3, marker='o', label='Distance-based Self Attention')
+plt.plot(x, y4, marker='o', label='Atrous Distance-based Self Attention')
 
 
 # set y-axis to log scale
@@ -339,16 +339,16 @@ y1 = [15.49264954985823, 15.594047444695512, 15.65463062254004, 15.6916487854271
 y2 = [15.506321704157296, 15.60704432309743, 15.662732238044741, 15.6996133959397, 15.720254642621406, 15.724635949414886, 15.728439669153394]
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
-# 自己寫的 multi-head self attention, Local Self Attention
+# 自己寫的 multi-head self attention, Distance Self Attention
 # encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
 # modality-aware transformers
 y3 = [15.495073466994242, 15.597029174869308, 15.660994609097447, 15.697509075343214, 15.716983071441868, 15.722346618774578, 15.726562977136382]
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
-# 自己寫的 multi-head self attention, atrous_and_local_self_attention, d = 2, windows = 6
+# 自己寫的 multi-head self attention, atrous_and_distance_self_attention, d = 2, windows = 6
 # encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
 # modality-aware transformers
-y4 = [15.514965219088664, 15.609695093405547, 15.667704968574576, 15.704142340486547, 15.723564602694648, 15.727886811139943, 15.7316688188335]
+y4 = [15.511528572054784, 15.609860095464892, 15.669164710042915, 15.705803269277581, 15.721524322830959, 15.727737112861892, 15.731757566231902]
 
 
 y1 = [value / 10 for value in y1]
@@ -359,23 +359,23 @@ y4 = [value / 10 for value in y4]
 # draw
 plt.plot(x, y1, marker='o', label='Full Self Attention')
 plt.plot(x, y2, marker='o', label='Atrous Self Attention')
-plt.plot(x, y3, marker='o', label='Local Self Attention')
-plt.plot(x, y4, marker='o', label='Atrous Local Self Attention')
+plt.plot(x, y3, marker='o', label='Distance-based Self Attention')
+plt.plot(x, y4, marker='o', label='Atrous Distance-based Self Attention')
 
 
 # set y-axis to log scale
 plt.yscale('log')
 
 # add title and axis labels
-plt.title('Comparison of sum rate of Proposed Transformer of different Sparse Attention', fontsize=fontsize)
+plt.title('Comparison of Sum Rate of Proposed Transformer of different Sparse Attention', fontsize=fontsize)
 plt.xlabel('SNR (dB)', fontsize=fontsize)
-plt.ylabel('sum rate(bandwith = 1) (log scale)', fontsize=fontsize)
+plt.ylabel('Sum Rate(bandwith = 1) (log scale)', fontsize=fontsize)
 
 # add legend
 plt.legend(fontsize=fontsize)
 
 # save the plot
-plt.savefig('Comparison of sum rate of Proposed Transformer of different Sparse Attention')
+plt.savefig('Comparison of Sum Rate of Proposed Transformer of different Sparse Attention')
 
 # display the plot
 plt.grid(True)
