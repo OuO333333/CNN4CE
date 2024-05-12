@@ -244,7 +244,7 @@ def atrous_and_distance_self_attention_mask(N, dilation_rate):
     for i in range(N):
         for j in range(N):
             # abs(i - j) % dilation_rate == 0 and 
-            if ((abs(i - j) <= 6 and abs(i - j) >= 0) or (abs(i - j) <= 10 and abs(i - j) >= 9) or (abs(i - j) <= 14 and abs(i - j) >= 13)):
+            if abs(i - j) % dilation_rate == 0 and ((abs(i - j) <= 6 and abs(i - j) >= 0) or (abs(i - j) <= 10 and abs(i - j) >= 9) or (abs(i - j) <= 14 and abs(i - j) >= 13)):
                 mask[i, j] = 1
     return mask
 

@@ -250,13 +250,13 @@ plt.grid(True)
 plt.show()
 ####################################################################################################################
 # 比例值
-values = [1.0, 0.5, 7/16, 4/16]
+values = [1.0, 0.5, 538/1024, 280/1024]
 labels = ['Full Self Attention', 'Atrous Self Attention', 'Distance-based Self Attention', 'Atrous Distance-based Self Attention']
 
 # 创建条形图
 plt.bar(labels, values)
 
-plt.xticks(fontsize=20)  # 调整x轴标签字体大小
+plt.xticks(fontsize=14)  # 调整x轴标签字体大小
 
 # 添加标题和标签
 plt.title('Comparison of calculation loading ratio of different Sparse Attention and Full Self Attention', fontsize=fontsize)
@@ -289,13 +289,13 @@ y2 = [0.038145072758197784, 0.027047526091337204, 0.02087853103876114, 0.0167797
 # 自己寫的 multi-head self attention, Distance Self Attention
 # encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
 # modality-aware transformers
-y3 = [0.039379578083753586, 0.028154458850622177, 0.021071387454867363, 0.017013927921652794, 0.014845786616206169, 0.014248121529817581, 0.0137781398370862]
+y3 = [0.038724351674318314, 0.027728276327252388, 0.02133762463927269, 0.017316358163952827, 0.014847148209810257, 0.014284402132034302, 0.013717515394091606]
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
 # 自己寫的 multi-head self attention, atrous_and_distance_self_attention, d = 2, windows = 6
 # encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
 # modality-aware transformers
-y4 = [0.037573281675577164, 0.026736173778772354, 0.02016441710293293, 0.016090845689177513, 0.014339765533804893, 0.013647235929965973, 0.013198921456933022]
+y4 = [0.037573281675577164, 0.026736173778772354, 0.02016441710293293, 0.016315100714564323, 0.014203720726072788, 0.013647235929965973, 0.013198921456933022]
 
 # draw
 plt.plot(x, y1, marker='o', label='Full Self Attention')
@@ -342,13 +342,13 @@ y2 = [15.506321704157296, 15.60704432309743, 15.662732238044741, 15.699613395939
 # 自己寫的 multi-head self attention, Distance Self Attention
 # encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
 # modality-aware transformers
-y3 = [15.495073466994242, 15.597029174869308, 15.660994609097447, 15.697509075343214, 15.716983071441868, 15.722346618774578, 15.726562977136382]
+y3 = [15.501044656005213, 15.600885983690185, 15.658595399333276, 15.694790560164428, 15.716970865372833, 15.722021087263872, 15.727106743935753]
 
 # Transformers(Encoder * 2 + Decoder * 2, (16 * 32 * 4)), epochs = 200, lr = 0.0001, batch_size = 32
 # 自己寫的 multi-head self attention, atrous_and_distance_self_attention, d = 2, windows = 6
 # encoder ff layer 用 Conv1D, decoder ff layer 用 ffn
 # modality-aware transformers
-y4 = [15.511528572054784, 15.609860095464892, 15.669164710042915, 15.705803269277581, 15.721524322830959, 15.727737112861892, 15.731757566231902]
+y4 = [15.511528572054784, 15.609860095464892, 15.669164710042915, 15.703788696782645, 15.722745045439746, 15.727737112861892, 15.731757566231902]
 
 
 y1 = [value / 10 for value in y1]

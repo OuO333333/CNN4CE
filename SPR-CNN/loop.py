@@ -22,40 +22,10 @@ SNR_dB_range = range(-10, 101, 5)
 # 遍历 SNR_dB 参数的范围
 for SNR_dB in SNR_dB_range:
     # 构建完整的命令字符串
-    command = f"{base_command} -10"
-    
-    # 执行命令
-    result = subprocess.run(command, shell=True)
-    # 构建完整的命令字符串
-    command = f"{base_command} -5"
-    
-    # 执行命令
-    result = subprocess.run(command, shell=True)
-    # 构建完整的命令字符串
-    command = f"{base_command} 0"
-    
-    # 执行命令
-    result = subprocess.run(command, shell=True)
-    # 构建完整的命令字符串
-    command = f"{base_command} 5"
-    
-    # 执行命令
-    result = subprocess.run(command, shell=True)
-    # 构建完整的命令字符串
     command = f"{base_command} 10"
     
     # 执行命令
-    result = subprocess.run(command, shell=True)
-    # 构建完整的命令字符串
-    command = f"{base_command} 15"
-    
-    # 执行命令
-    result = subprocess.run(command, shell=True)
-    # 构建完整的命令字符串
-    command = f"{base_command} 20"
-    
-    # 执行命令
-    result = subprocess.run(command, shell=True)    
+    result = subprocess.run(command, shell=True)   
     
     # 检查命令的执行结果
     if result.returncode == 0:
