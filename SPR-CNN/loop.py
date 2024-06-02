@@ -17,12 +17,12 @@ with open('output.txt', 'a') as f:
 base_command = "python3 modality-aware.py"
 
 # 要执行的 SNR_dB 参数的范围
-SNR_dB_range = range(-10, 101, 5)
+SNR_dB_range = range(-10, 21, 5)
 
 # 遍历 SNR_dB 参数的范围
 for SNR_dB in SNR_dB_range:
     # 构建完整的命令字符串
-    command = f"{base_command} 10"
+    command = f"{base_command} SNR_dB"
     
     # 执行命令
     result = subprocess.run(command, shell=True)   

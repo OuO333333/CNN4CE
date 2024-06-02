@@ -133,3 +133,26 @@ plt.savefig('Comparison of sum rate of Proposed Transformer of different Sparse 
 # display the plot
 plt.grid(True)
 plt.show()
+
+####################################################################################################################
+
+
+# 模型名稱和Gbps數據
+models = ['CNN', 'Attention-aided Auto-Encoder', 'Sparse Auto-Encoder', 'Transformers', 'FEDformer', 'Proposed Transformers']
+gbps = [3.47520, 3.59586, 3.61614, 4.09746, 4.09782, 4.10230]
+
+# 繪製條形圖
+plt.figure(figsize=(10, 6))
+plt.bar(models, gbps, color='skyblue')
+plt.xlabel('Model')
+plt.ylabel('Gbps')
+plt.title('Comparison of Gbps for Different Models')
+# plt.xticks(rotation=45, ha='right')
+
+# 设置y轴起始值不为0
+plt.ylim(min(gbps) - 0.2, max(gbps))
+
+plt.tight_layout()
+
+# 顯示圖形
+plt.show()
