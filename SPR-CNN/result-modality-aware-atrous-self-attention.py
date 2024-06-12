@@ -150,7 +150,7 @@ plt.title('Comparison of Gbps for Different Models')
 # plt.xticks(rotation=45, ha='right')
 
 # 设置y轴起始值不为0
-plt.ylim(min(gbps) - 0.2, max(gbps))
+plt.ylim(min(gbps) - 0.2, max(gbps) + 0.005)
 
 plt.tight_layout()
 

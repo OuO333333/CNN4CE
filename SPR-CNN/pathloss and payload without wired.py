@@ -2,9 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Given data
-models = ['Wired', 'Wired + CNN', 'Wired + Attention-aided Auto-Encoder', 'Wired + Sparse Auto-Encoder', 'Wired + Transformers', 'Wired + FEDformer', 'Wired + Proposed Transformer']
-nmse = [0.001, 0.11196449103168699, 0.10238436697803815, 0.08761300950468075, 0.014378390274941921, 0.014243846759200096, 0.013198921456933022]
-gbps = [1.00000, 2.47520, 2.59586, 2.61614, 3.09746, 3.09782, 3.10230]  # in Gbps
+models = ['CNN', 'Attention-aided Auto-Encoder', 'Sparse Auto-Encoder', 'Transformers', 'FEDformer', 'Proposed Transformer']
+nmse = [0.11196449103168699, 0.10238436697803815, 0.08761300950468075, 0.014378390274941921, 0.014243846759200096, 0.013198921456933022]
+gbps = [2.47520, 2.59586, 2.61614, 3.09746, 3.09782, 3.10230]  # in Gbps
 
 # Parameters
 packet_size = 1024  # Number of bits per packet
@@ -12,12 +12,7 @@ num_packets = 1000  # Number of packets to be simulated
 
 def simulate_ber(nmse, gbps):
     """Simulate Bit Error Rate (BER) from NMSE."""
-    wired_patial = 1 / (1 + gbps)
-    wireless_patial = 1 - wired_patial
-    if nmse == 0.001:
-        return 0.00005 * nmse  # Simplified example relationship
-    else:
-        return 0.001 * 0.00005 * wired_patial + nmse * 0.00005 * wireless_patial
+    return 0.00005 * nmse  # Simplified example relationship
 
 def simulate_packet_loss_rate(ber, packet_size):
     """Simulate Packet Loss Rate from BER."""
@@ -27,10 +22,7 @@ def calculate_payload(sum_rate, packet_loss_rate, num_packets, packet_size):
     """Calculate effective payload based on the sum rate, packet loss rate, number of packets, and packet size."""
     effective_num_packets = num_packets * (1 - packet_loss_rate)
     # 一秒會有多少 有效的 packet(bit)
-    if sum_rate == 1:
-        total_payload = sum_rate / packet_size * (1 - packet_loss_rate) * packet_size# Correct calculation
-    else:
-        total_payload = (sum_rate + 1e9) / packet_size * (1 - packet_loss_rate) * packet_size# Correct calculation
+    total_payload = sum_rate / packet_size * (1 - packet_loss_rate) * packet_size# Correct calculation
     return total_payload
 
 # Initialize results
@@ -73,7 +65,7 @@ plt.subplot(2, 2, 1)
 plt.bar([r[0] for r in nmse_filtered], nmse_filtered['nmse'], color='skyblue')
 plt.xlabel('Models')
 plt.ylabel('NMSE')
-plt.title('NMSE by Model')
+plt.title('NMSE by Wireless Model')
 plt.xticks(rotation=45)
 plt.grid(axis='y')
 
@@ -82,7 +74,7 @@ plt.subplot(2, 2, 2)
 plt.bar([r[0] for r in results_np], results_np['packet_loss_rate'], color='lightgreen')
 plt.xlabel('Models')
 plt.ylabel('Packet Loss Rate')
-plt.title('Packet Loss Rate by Model')
+plt.title('Packet Loss Rate by Wireless Model')
 plt.xticks(rotation=45)
 plt.grid(axis='y')
 
@@ -91,8 +83,8 @@ plt.subplot(2, 2, 3)
 plt.bar([r[0] for r in results_np], results_np['sum_rate'] / 1e9, color='salmon')  # Convert bps back to Gbps for plotting
 plt.xlabel('Models')
 plt.ylabel('Sum Rate (Gbps)')
-plt.title('Sum Rate by Model')
-plt.ylim(0.8, 3.2)  # Set the y-axis range
+plt.title('Sum Rate by Wireless Model')
+plt.ylim(2.4, 3.15)  # Set the y-axis range
 plt.xticks(rotation=45)
 plt.grid(axis='y')
 
@@ -101,8 +93,8 @@ plt.subplot(2, 2, 4)
 plt.bar([r[0] for r in results_np], results_np['payload'], color='lightcoral')
 plt.xlabel('Models')
 plt.ylabel('Effective Payload (bits)')
-plt.title('Effective Payload by Model')
-plt.ylim(1.8 * 1e9, 4.2 * 1e9)  # Set the y-axis range
+plt.title('Effective Payload by Wireless Model')
+plt.ylim(2.4 * 1e9, 3.15 * 1e9)  # Set the y-axis range
 plt.xticks(rotation=45)
 plt.grid(axis='y')
 
