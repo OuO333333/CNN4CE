@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 # Given data
 models = ['Wired', 'CNN', 'Attention-aided Auto-Encoder', 'Sparse Auto-Encoder', 'Transformers', 'FEDformer', 'Proposed Transformer']
 nmse = [0.001, 0.11196449103168699, 0.10238436697803815, 0.08761300950468075, 0.014378390274941921, 0.014243846759200096, 0.013198921456933022]
-gbps = [1.00000, 3.47520, 3.59586, 3.61614, 4.09746, 4.09782, 4.10230]  # in Gbps
+gbps = [1.00000, 2.47520, 2.59586, 2.61614, 3.09746, 3.09782, 3.10230]  # in Gbps
 
 # Parameters
 packet_size = 1024  # Number of bits per packet
@@ -21,7 +21,8 @@ def simulate_packet_loss_rate(ber, packet_size):
 def calculate_payload(sum_rate, packet_loss_rate, num_packets, packet_size):
     """Calculate effective payload based on the sum rate, packet loss rate, number of packets, and packet size."""
     effective_num_packets = num_packets * (1 - packet_loss_rate)
-    total_payload = sum_rate * (1 - packet_loss_rate) * packet_size * num_packets  # Correct calculation
+    # 一秒會有多少 有效的 packet(bit)
+    total_payload = sum_rate / packet_size * (1 - packet_loss_rate) * packet_size# Correct calculation
     return total_payload
 
 # Initialize results
