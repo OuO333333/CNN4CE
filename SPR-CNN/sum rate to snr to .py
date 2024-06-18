@@ -2,41 +2,63 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Define the SNR values (assuming -10 to 50 with a step of 2)
-SNR_values = np.arange(-10, 52, 2)
+SNR_values = np.arange(-10, 50, 2)
 
 # BER values for PSK and QAM
 PSK_BER = {
-    '2-PSK': [3.269e-01 2.856e-01 2.390e-01 1.860e-01 1.305e-01 7.940e-02 3.769e-02 1.268e-02 2.330e-03 1.400e-04,
-              1.000e-05 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00,
-              0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00,
-              0.000e+00 ],
-    '4-PSK': [6.098e-01 5.717e-01 5.229e-01 4.565e-01 3.824e-01 2.896e-01 1.995e-01 1.101e-01 4.550e-02 1.199e-02,
-              1.330e-03 9.000e-05 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00,
-              0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00,
-              0.000e+00 ],
-    '8-PSK': [7.952e-01 7.719e-01 7.406e-01 6.999e-01 6.482e-01 5.761e-01 4.894e-01 3.888e-01 2.786e-01 1.740e-01 8.668e-02 3.142e-02 6.660e-03 7.000e-04 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 0.000e+00 ],
-    '16-PSK': [8.975e-01, 8.847e-01, 8.697e-01, 8.460e-01, 8.168e-01, 7.734e-01, 7.253e-01, 6.622e-01, 5.833e-01, 4.876e-01, 3.852e-01, 2.737e-01],
-    '32-PSK': [9.492e-01, 9.420e-01, 9.335e-01, 9.222e-01, 9.067e-01, 8.855e-01, 8.591e-01, 8.266e-01, 7.837e-01, 7.295e-01, 6.609e-01, 5.808e-01],
-    '4-QAM': [3.274e-01, 2.867e-01, 2.392e-01, 1.861e-01, 1.306e-01, 7.865e-02, 3.751e-02, 1.250e-02, 2.388e-03, 1.909e-04, 3.872e-06, 9.006e-09],
-    '16-QAM': [3.709e-01, 3.326e-01, 2.868e-01, 2.367e-01, 1.872e-01, 1.410e-01, 9.774e-02, 5.862e-02, 2.787e-02, 9.247e-03, 1.754e-03, 1.387e-04],
-    '64-QAM': [3.931e-01, 3.634e-01, 3.286e-01, 2.888e-01, 2.450e-01, 1.998e-01, 1.570e-01, 1.185e-01, 8.382e-02, 5.233e-02, 2.653e-02, 9.724e-03],
-    '256-QAM': [4.068e-01, 3.824e-01, 3.545e-01, 3.234e-01, 2.900e-01, 2.546e-01, 2.171e-01, 1.783e-01, 1.411e-01, 1.079e-01, 7.860e-02, 5.208e-02]
+    '2-PSK': [3.269e-01, 2.856e-01, 2.390e-01, 1.860e-01, 1.305e-01, 7.940e-02, 3.769e-02, 1.268e-02, 2.330e-03, 1.400e-04,
+              1.000e-05, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00,
+              0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00,
+              0.000e+00],
+    '4-PSK': [6.098e-01, 5.717e-01, 5.229e-01, 4.565e-01, 3.824e-01, 2.896e-01, 1.995e-01, 1.101e-01, 4.550e-02, 1.199e-02,
+              1.330e-03, 9.000e-05, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00,
+              0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00,
+              0.000e+00],
+    '8-PSK': [7.952e-01, 7.719e-01, 7.406e-01, 6.999e-01, 6.482e-01, 5.761e-01, 4.894e-01, 3.888e-01, 2.786e-01, 1.740e-01,
+              8.668e-02, 3.142e-02, 6.660e-03, 7.000e-04, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00,
+              0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00,
+              0.000e+00],
+    '16-PSK': [8.980e-01, 8.845e-01, 8.685e-01, 8.478e-01, 8.154e-01, 7.774e-01, 7.264e-01, 6.590e-01, 5.829e-01, 4.891e-01,
+               3.821e-01, 2.720e-01, 1.662e-01, 8.248e-02, 2.778e-02, 6.000e-03, 5.100e-04, 0.000e+00, 0.000e+00, 0.000e+00,
+               0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00,
+               0.000e+00],
+    '32-PSK': [9.487e-01, 9.422e-01, 9.331e-01, 9.207e-01, 9.088e-01, 8.883e-01, 8.616e-01, 8.265e-01, 7.821e-01, 7.276e-01,
+               6.600e-01, 5.835e-01, 4.899e-01, 3.833e-01, 2.714e-01, 1.665e-01, 8.252e-02, 2.792e-02, 6.280e-03, 5.700e-04,
+               2.000e-05, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00,
+               0.000e+00],
+    '4-QAM': [3.274e-01, 2.867e-01, 2.392e-01, 1.861e-01, 1.306e-01, 7.865e-02, 3.751e-02, 1.250e-02, 2.388e-03, 1.909e-04,
+              3.872e-06, 9.006e-09, 6.810e-13, 2.267e-19, 1.396e-29, 1.044e-45, 3.296e-71, 1.444e-111, 1.795e-175, 1.068e-276,
+              0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00,
+              0.000e+00],
+    '16-QAM': [3.709e-01, 3.326e-01, 2.868e-01, 2.367e-01, 1.872e-01, 1.410e-01, 9.774e-02, 5.862e-02, 2.787e-02, 9.247e-03,
+               1.754e-03, 1.387e-04, 2.763e-06, 6.250e-09, 4.522e-13, 1.404e-19, 7.738e-30, 4.857e-46, 1.161e-71, 3.274e-112,
+               2.023e-176, 3.980e-278, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00,
+               0.000e+00],
+    '64-QAM': [3.931e-01, 3.634e-01, 3.286e-01, 2.888e-01, 2.450e-01, 1.998e-01, 1.570e-01, 1.185e-01, 8.382e-02, 5.233e-02, 
+               2.653e-02, 9.724e-03, 2.154e-03, 2.172e-04, 6.351e-06, 2.634e-08, 4.974e-12, 7.059e-18, 4.322e-27, 1.232e-41, 
+               1.245e-64, 5.103e-101, 1.246e-158, 6.991e-250, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 
+               0.000e+00 ],
+    '256-QAM': [4.068e-01, 3.824e-01, 3.545e-01, 3.234e-01, 2.900e-01, 2.546e-01, 2.171e-01, 1.783e-01, 1.411e-01, 1.079e-01, 
+                7.860e-02, 5.208e-02, 2.910e-02, 1.240e-02, 3.472e-03, 5.053e-04, 2.634e-05, 2.720e-07, 2.177e-10, 3.040e-15, 
+                6.968e-23, 6.181e-35, 5.582e-54, 4.180e-84, 8.572e-132, 2.574e-207, 0.000e+00, 0.000e+00, 0.000e+00, 0.000e+00, 
+                0.000e+00 ]
+
 }
 
 def get_BER(modulation, SNR):
     if SNR < -10 or SNR > 50:
-        raise ValueError("SNR out of range. Valid range is -10 to 50.")
+        raise ValueError("SNR 超出范围。有效范围是 -10 到 50。")
     
-    # Determine the closest SNR points
-    idx = (SNR - (-10)) // 2
+    # 计算最近的 SNR 点
+    idx = int((SNR - (-10)) // 2)  # 确保 idx 是整数
     low_SNR = -10 + idx * 2
     high_SNR = low_SNR + 2
     
-    # Interpolate BER values based on the SNR points
+    # 获取对应的 BER 值
     low_BER = PSK_BER[modulation][idx]
     high_BER = PSK_BER[modulation][idx + 1]
     
-    # Linear interpolation
+    # 线性插值
     if low_SNR != high_SNR:
         interpolated_BER = low_BER + (high_BER - low_BER) * (SNR - low_SNR) / (high_SNR - low_SNR)
     else:
@@ -44,8 +66,16 @@ def get_BER(modulation, SNR):
     
     return interpolated_BER
 
+# Parameters
+packet_size = 100  # Number of bits per packet
+num_packets = 1000  # Number of packets to be simulated
+
+def simulate_packet_loss_rate(ber, packet_size):
+    """Simulate Packet Loss Rate from BER."""
+    return 1 - (1 - ber)**packet_size
+
 # Example usage:
-modulation = '16-QAM'
+modulation = '32-PSK'
 input_SNR = 20  # Example SNR value
 resulting_BER = get_BER(modulation, input_SNR)
 print(f"For SNR = {input_SNR} dB and {modulation}, interpolated BER = {resulting_BER:.2e}")
@@ -75,15 +105,21 @@ Gbps_values = [
 ]
 
 # Calculate SNR(dB) for each model
-snr_db_values = []
+all_ber_model = []
+all_plr_model = []
 
 for model in Gbps_values:
-    snr_db_model = []
+    ber_model = []
+    path_loss_rate_model = []
     for C in model:
         SNR = 2**(C / bandwidth) - 1
         SNR_dB = 10 * np.log2(SNR)
-        snr_db_model.append(SNR_dB)
-    snr_db_values.append(snr_db_model)
+        BER = get_BER('32-PSK', SNR_dB)
+        ber_model.append(BER)
+        PLR = simulate_packet_loss_rate(BER, packet_size)
+        path_loss_rate_model.append(PLR)
+    all_ber_model.append(ber_model)
+    all_plr_model.append(path_loss_rate_model)
 
 # Plotting the results
 plt.figure(figsize=(12, 8))
@@ -97,12 +133,24 @@ labels = [
     "Proposed Transformer"
 ]
 
-for i, snr_db_model in enumerate(snr_db_values):
-    plt.plot(snr_db_model, marker='o', label=labels[i])
+# Plot BER for each model using predefined SNR_dB_values for the x-axis
+for i, ber_model in enumerate(all_ber_model):
+    plt.plot(SNR_dB_values, ber_model, marker='o', label=labels[i])
 
-plt.title('SNR(dB) for Different Models')
-plt.xlabel('Data Point')
-plt.ylabel('SNR (dB)')
+plt.title('BER for Different Models')
+plt.xlabel('SNR(dB)')
+plt.ylabel('BER')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# Plot path loss rate for each model using predefined SNR_dB_values for the x-axis
+for i, all_plr_model in enumerate(all_plr_model):
+    plt.plot(SNR_dB_values, all_plr_model, marker='o', label=labels[i])
+
+plt.title('Path Loss Rate for Different Models')
+plt.xlabel('SNR(dB)')
+plt.ylabel('Path Loss Rate')
 plt.legend()
 plt.grid(True)
 plt.show()
