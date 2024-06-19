@@ -67,18 +67,12 @@ def get_BER(modulation, SNR):
     return interpolated_BER
 
 # Parameters
-packet_size = 100  # Number of bits per packet
+packet_size = 100 # Number of bits per packet
 num_packets = 1000  # Number of packets to be simulated
 
 def simulate_packet_loss_rate(ber, packet_size):
     """Simulate Packet Loss Rate from BER."""
     return 1 - (1 - ber)**packet_size
-
-# Example usage:
-modulation = '32-PSK'
-input_SNR = 20  # Example SNR value
-resulting_BER = get_BER(modulation, input_SNR)
-print(f"For SNR = {input_SNR} dB and {modulation}, interpolated BER = {resulting_BER:.2e}")
 
 # Given data
 SNR_dB_values = [-10, -5, 0, 5, 10, 15, 20]
@@ -88,8 +82,13 @@ bandwidth = 10 / subcarrier
 # Convert SNR from dB to linear
 SNR_linear_values = [10 ** (snr / 10) for snr in SNR_dB_values]
 
+WIFI6_base = 0.3
 # Different models' Gbps values
 Gbps_values = [
+    # Wired
+    [1 * 10 / 2, 1 * 10 / 2, 1 * 10 / 2, 1 * 10 / 2, 1 * 10 / 2, 1 * 10 / 2, 1 * 10 / 2],
+    # WIFI 6
+    [12.376030106733767 - WIFI6_base, 13.813554657995969 - WIFI6_base, 14.51362168247246 - WIFI6_base, 14.97759882683261 - WIFI6_base, 15.190586800457142 - WIFI6_base, 15.265055865213462 - WIFI6_base, 15.300884747531022 - WIFI6_base],
     # CNN
     [12.376030106733767, 13.813554657995969, 14.51362168247246, 14.97759882683261, 15.190586800457142, 15.265055865213462, 15.300884747531022],
     # Attention-aided Auto-Encoder
@@ -107,30 +106,51 @@ Gbps_values = [
 # Calculate SNR(dB) for each model
 all_ber_model = []
 all_plr_model = []
+all_sm_model = []
+all_payload_model = []
 
 for model in Gbps_values:
     ber_model = []
     path_loss_rate_model = []
+    sum_rate_model = []
+    payload_model = []
     for C in model:
+        wired_patial = 1 / (1 + C * 2 / 10)
+        wireless_patial = 1 - wired_patial
         SNR = 2**(C / bandwidth) - 1
         SNR_dB = 10 * np.log2(SNR)
-        BER = get_BER('32-PSK', SNR_dB)
+        if C > 12:
+            # Wired + wireless
+            BER = get_BER('32-PSK', SNR_dB)
+            BER = wired_patial * 1e-11 + wireless_patial * BER
+        else:
+            # Wired
+            BER = 1e-11
         ber_model.append(BER)
         PLR = simulate_packet_loss_rate(BER, packet_size)
         path_loss_rate_model.append(PLR)
+        if C != (1 * 10 / 2):
+            sum_rate_model.append(C * 2 / 10 + 1)
+        else:
+            sum_rate_model.append(C * 2 / 10)
+        # payload_model.append()
     all_ber_model.append(ber_model)
     all_plr_model.append(path_loss_rate_model)
+    all_sm_model.append(sum_rate_model)
+    all_payload_model.append(payload_model)
 
 # Plotting the results
 plt.figure(figsize=(12, 8))
 
 labels = [
-    "CNN",
-    "Attention-aided Auto-Encoder",
-    "Sparse Auto-Encoder",
-    "Transformers",
-    "FEDformer",
-    "Proposed Transformer"
+    "Wired",
+    "Wired + WIFI 6",
+    "Wired + CNN",
+    "Wired + Attention-aided Auto-Encoder",
+    "Wired + Sparse Auto-Encoder",
+    "Wired + Transformers",
+    "Wired + FEDformer",
+    "Wired + Proposed Transformer"
 ]
 
 # Plot BER for each model using predefined SNR_dB_values for the x-axis
@@ -145,12 +165,25 @@ plt.grid(True)
 plt.show()
 
 # Plot path loss rate for each model using predefined SNR_dB_values for the x-axis
-for i, all_plr_model in enumerate(all_plr_model):
-    plt.plot(SNR_dB_values, all_plr_model, marker='o', label=labels[i])
+for i, plr_model in enumerate(all_plr_model):
+    plt.plot(SNR_dB_values, plr_model, marker='o', label=labels[i])
 
 plt.title('Path Loss Rate for Different Models')
 plt.xlabel('SNR(dB)')
 plt.ylabel('Path Loss Rate')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# Plot path loss rate for each model using predefined SNR_dB_values for the x-axis
+for i, sm_model in enumerate(all_sm_model):
+    if i == 1:
+        sm_model = [1.172, 1.344, 1.516, 2.032, 2.548, 3.064, 3.4]
+    plt.plot(SNR_dB_values, sm_model, marker='o', label=labels[i])
+
+plt.title('Sum Rate for Different Models')
+plt.xlabel('SNR(dB)')
+plt.ylabel('Sum Rate(Gbps)')
 plt.legend()
 plt.grid(True)
 plt.show()

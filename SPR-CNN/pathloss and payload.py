@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 # Given data
 SNR_dB_values = [-10, -5, 0, 5, 10, 15, 20]
 BER_values = [0.2132280184, 0.1583683188, 0.0786496035, 0.0228784076, 0.0011908930, 0.0000033627, 0.0000000225]
-models = ['Wired', 'Wired + 4G WIFI', 'Wired + CNN', 'Wired + Attention-aided Auto-Encoder', 'Wired + Sparse Auto-Encoder', 'Wired + Transformers', 'Wired + FEDformer', 'Wired + Proposed Transformer']
+models = ['Wired', 'Wired + WIFI 6 ', 'Wired + CNN', 'Wired + Attention-aided Auto-Encoder', 'Wired + Sparse Auto-Encoder', 'Wired + Transformers', 'Wired + FEDformer', 'Wired + Proposed Transformer']
 const_x = 0.00005
 # 各SNR值對應的NMSE和Gbps列表
 NMSE_values = [
