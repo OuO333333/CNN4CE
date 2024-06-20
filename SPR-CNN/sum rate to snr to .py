@@ -76,7 +76,7 @@ def simulate_packet_loss_rate(ber, packet_size):
 
 # Given data
 SNR_dB_values = [-10, -5, 0, 5, 10, 15, 20]
-subcarrier = 2
+subcarrier = 2.00
 bandwidth = 10 / subcarrier
 
 # Convert SNR from dB to linear
@@ -119,7 +119,7 @@ for model in Gbps_values:
         wireless_patial = 1 - wired_patial
         SNR = 2**(C / bandwidth) - 1
         SNR_dB = 10 * np.log2(SNR)
-        if C > 12:
+        if C != (1 * 10 / 2):
             # Wired + wireless
             BER = get_BER('32-PSK', SNR_dB)
             BER = wired_patial * 1e-11 + wireless_patial * BER
@@ -130,8 +130,10 @@ for model in Gbps_values:
         PLR = simulate_packet_loss_rate(BER, packet_size)
         path_loss_rate_model.append(PLR)
         if C != (1 * 10 / 2):
+            # Wired + wireless
             sum_rate_model.append(C * 2 / 10 + 1)
         else:
+            # Wired
             sum_rate_model.append(C * 2 / 10)
         # payload_model.append()
     all_ber_model.append(ber_model)
@@ -187,3 +189,19 @@ plt.ylabel('Sum Rate(Gbps)')
 plt.legend()
 plt.grid(True)
 plt.show()
+
+# Payload/s for each model using predefined SNR_dB_values for the x-axis
+for i, (sm_model, plr_model) in enumerate(zip(all_sm_model, all_plr_model)):
+    if i == 0 or i == 1:
+        payload_model = [sm * (1 - plr) * 0.90 for sm, plr in zip(sm_model, plr_model)]
+    else:
+        payload_model = [sm * (1 - plr) * 0.95 for sm, plr in zip(sm_model, plr_model)]
+    plt.plot(SNR_dB_values, payload_model, marker='o', label=labels[i])
+
+plt.title('Payload for Different Models')
+plt.xlabel('SNR(dB)')
+plt.ylabel('Payload/s(bits)')
+plt.legend()
+plt.grid(True)
+plt.show()
+
