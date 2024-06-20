@@ -159,7 +159,7 @@ labels = [
 for i, ber_model in enumerate(all_ber_model):
     plt.plot(SNR_dB_values, ber_model, marker='o', label=labels[i])
 
-plt.title('BER for Different Models')
+plt.title('Bit Error Rate for Different Models')
 plt.xlabel('SNR(dB)')
 plt.ylabel('BER')
 plt.legend()
@@ -170,9 +170,9 @@ plt.show()
 for i, plr_model in enumerate(all_plr_model):
     plt.plot(SNR_dB_values, plr_model, marker='o', label=labels[i])
 
-plt.title('Path Loss Rate for Different Models')
+plt.title('Packet Loss Rate for Different Models')
 plt.xlabel('SNR(dB)')
-plt.ylabel('Path Loss Rate')
+plt.ylabel('Packet Loss Rate')
 plt.legend()
 plt.grid(True)
 plt.show()
@@ -200,7 +200,7 @@ for i, (sm_model, plr_model) in enumerate(zip(all_sm_model, all_plr_model)):
 
 plt.title('Payload for Different Models')
 plt.xlabel('SNR(dB)')
-plt.ylabel('Payload/s(bits)')
+plt.ylabel('Payload / s(bits)')
 plt.legend()
 plt.grid(True)
 plt.show()
